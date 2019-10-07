@@ -7,17 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class UsuarioDTO {
-	
-	private String email;
-	private String cpf;
-	private String nome;
-	@JsonIgnore
-	private String senha;
-	private String celular;
+
+    private String email;
+    private String cpf;
+    private String nome;
+    @JsonIgnore private String senha;
+    private String celular;
 
 }

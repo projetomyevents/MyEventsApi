@@ -8,30 +8,42 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Positive;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
+/**
+ * Representa um evento.
+ */
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id")
+@ToString
 public class Evento implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Getter private long cdEvento;
-	@Getter @Setter private String nomeCompleto;
-	@Getter @Setter private LocalDate data;
-	@Getter @Setter  private String precoEntrada;
-	@Getter @Setter private byte limiteAcompanhantes;
-	@Getter @Setter private byte idadeMinima;
-	@Getter @Setter private String traje;
-	@Getter @Setter private String descrição;
-	@Getter @Setter private byte[] imagem;
-	@Getter @Setter private String cronograma;
-	@Getter @Setter private byte[] anexos;
-	
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * A chave primária de um usuário.
+     */
+    @Positive
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Setter(value = AccessLevel.NONE) private long id;
+
+    // TODO: arrumar essa classe
+    private String nomeCompleto;
+    private LocalDate data;
+    private String precoEntrada;
+    private byte limiteAcompanhantes;
+    private byte idadeMinima;
+    private String traje;
+    private String descricao;
+    private byte[] imagem;
+    private String cronograma;
+    private byte[] anexos;
+
 }

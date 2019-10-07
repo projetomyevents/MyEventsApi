@@ -21,57 +21,56 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.myevents.dto.CredenciaisDTO;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-	
-	private AuthenticationManager authenticationManager;
-	
-	private JWTUtil jwtUtil;
-	
+
+    private AuthenticationManager authenticationManager;
+
+    private JWTUtil jwtUtil;
+
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
-    	setAuthenticationFailureHandler(new JWTAuthenticationFailureHandler());
+        setAuthenticationFailureHandler(new JWTAuthenticationFailureHandler());
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
     }
-	
-	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-		try {
-			CredenciaisDTO credenciais = new ObjectMapper().readValue(request.getInputStream(), CredenciaisDTO.class);
-			
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(credenciais.getEmail(), credenciais.getSenha(), new ArrayList<>());
-			
-			Authentication auth = authenticationManager.authenticate(authToken);
-			
-			return auth;
-		} catch (IOException e) {
-			throw new RuntimeException();
-		}
-	}
-	
-	@Override
-	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-		String username = ((UserSS) authResult.getPrincipal()).getUsername();
-		String token = jwtUtil.gerateToken(username);
-		response.addHeader("Authorization", "Bearer" + token);
-	}
-	
-	private class JWTAuthenticationFailureHandler implements AuthenticationFailureHandler {
-		 
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        try {
+            CredenciaisDTO credenciais = new ObjectMapper().readValue(request.getInputStream(), CredenciaisDTO.class);
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(credenciais.getEmail(), credenciais.getSenha(), new ArrayList<>());
+
+            return authenticationManager.authenticate(authToken);
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        String username = ((UserSS) authResult.getPrincipal()).getUsername();
+        String token = jwtUtil.gerateToken(username);
+        response.addHeader("Authorization", "Bearer" + token);
+    }
+
+    private static class JWTAuthenticationFailureHandler implements AuthenticationFailureHandler {
+
         @Override
         public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
                 throws IOException, ServletException {
             response.setStatus(401);
-            response.setContentType("application/json"); 
+            response.setContentType("application/json");
             response.getWriter().append(json());
         }
-        
+
         private String json() {
             long date = new Date().getTime();
             return "{\"timestamp\": " + date + ", "
-                + "\"status\": 401, "
-                + "\"error\": \"Não autorizado\", "
-                + "\"message\": \"Email ou senha inválidos\", "
-                + "\"path\": \"/login\"}";
+                    + "\"status\": 401, "
+                    + "\"error\": \"Não autorizado\", "
+                    + "\"message\": \"Email ou senha inválidos\", "
+                    + "\"path\": \"/login\"}";
         }
+
     }
 
 }

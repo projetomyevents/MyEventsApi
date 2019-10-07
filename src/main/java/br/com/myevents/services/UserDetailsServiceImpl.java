@@ -13,7 +13,7 @@ import br.com.myevents.security.UserSS;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	private UsuarioRepository repository;
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Usuario user = repository.findByEmail(email);

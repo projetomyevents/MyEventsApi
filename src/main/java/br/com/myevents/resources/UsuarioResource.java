@@ -4,7 +4,10 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,14 +19,18 @@ import br.com.myevents.services.UsuarioService;
 
 @RestController
 @RequestMapping(value ="/cadastro-usuario")
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class UsuarioResource {
-	
-	UsuarioService userService;
-	
-	@RequestMapping(method = RequestMethod.POST) // POST: metódo utilziado para inserção
-	public ResponseEntity<Void> insert(@Valid @RequestBody Usuario user) {
-		user = userService.insert(user);			
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
-		return ResponseEntity.created(uri).build();
-	}
+
+    private final UsuarioService usuarioService;
+
+    // Método utilizado para inserção
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Void> insert(@Validated @RequestBody Usuario usuario) {
+        return ResponseEntity.created(
+                ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(usuarioService.insert(usuario).getId()).toUri()
+        ).build();
+    }
 }

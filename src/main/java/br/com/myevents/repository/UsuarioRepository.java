@@ -6,10 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.myevents.domain.Usuario;
 
+/**
+ * O repositório responsável pela persistência de {@link Usuario}.
+ */
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
-	
-	@Transactional(readOnly=true)
-	Usuario findByEmail(String email);
-	
+
+    @Transactional(readOnly = true)
+    Usuario findByEmail(String email);
+
 }
