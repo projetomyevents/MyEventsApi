@@ -29,7 +29,6 @@ public class Evento implements Serializable {
     /**
      * A chave primária de um usuário.
      */
-    @Positive
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Setter(value = AccessLevel.NONE) private long id;

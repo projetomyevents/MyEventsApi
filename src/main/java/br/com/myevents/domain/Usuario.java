@@ -12,10 +12,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import br.com.myevents.domain.enums.Perfil;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * Representa um usuário.
@@ -32,7 +29,6 @@ public class Usuario implements Serializable {
     /**
      * A chave primária de um usuário.
      */
-    @Positive
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -82,6 +78,7 @@ public class Usuario implements Serializable {
         addPerfil();
     }
 
+    @Builder
     protected Usuario(int id, String email, String cpf, String nome, String senha, String celular, Set<Integer> perfis) {
         super();
         this.id = id;
@@ -93,7 +90,7 @@ public class Usuario implements Serializable {
         addPerfil();
     }
 
-    private void addPerfil() {
+    public void addPerfil() {
         perfis.add(Perfil.ADMIN.getId());
     }
 
