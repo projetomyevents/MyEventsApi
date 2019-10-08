@@ -45,6 +45,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         response.addHeader("Authorization", "Bearer" + jwtUtil.gerateToken(((UserSS)authResult.getPrincipal()).getUsername()));
+        response.addHeader("access-control-expose-headers", "Authorization");
     }
 
     private static class JWTAuthenticationFailureHandler implements AuthenticationFailureHandler {
