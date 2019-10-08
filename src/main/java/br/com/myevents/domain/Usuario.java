@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import br.com.myevents.domain.enums.Perfil;
@@ -90,7 +89,7 @@ public class Usuario implements Serializable {
         addPerfil();
     }
 
-    public void addPerfil() {
+    private void addPerfil() {
         perfis.add(Perfil.ADMIN.getId());
     }
 

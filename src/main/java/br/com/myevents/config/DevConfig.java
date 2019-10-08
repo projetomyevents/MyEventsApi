@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
@@ -25,8 +24,6 @@ public class DevConfig {
     protected void populateDatabaseForTesting() {
         Usuario usuario1 = Usuario.builder().email("gustavoheidemann@gmail.com").nome("Gustavo Heidemann")
                 .cpf("23423424323").celular("82377832").senha(pe.encode("123456")).build();
-
-        usuario1.addPerfil();  // pq eu usei builder
 
         userRepo.save(usuario1);
     }
