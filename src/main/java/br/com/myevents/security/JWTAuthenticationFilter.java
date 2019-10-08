@@ -1,8 +1,9 @@
 package br.com.myevents.security;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,9 +23,8 @@ import br.com.myevents.dto.CredenciaisDTO;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager;
-
-    private JWTUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
+    private final JWTUtil jwtUtil;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
         setAuthenticationFailureHandler(new JWTAuthenticationFailureHandler());
@@ -36,10 +36,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
             CredenciaisDTO credenciais = new ObjectMapper().readValue(request.getInputStream(), CredenciaisDTO.class);
-
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(credenciais.getEmail(), credenciais.getSenha(), new ArrayList<>());
-
-            return authenticationManager.authenticate(authToken);
+            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credenciais.getEmail(), credenciais.getSenha(), new ArrayList<>()));
         } catch (IOException e) {
             throw new RuntimeException();
         }
@@ -47,27 +44,24 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        String username = ((UserSS) authResult.getPrincipal()).getUsername();
-        String token = jwtUtil.gerateToken(username);
-        response.addHeader("Authorization", "Bearer" + token);
+        response.addHeader("Authorization", "Bearer" + jwtUtil.gerateToken(((UserSS)authResult.getPrincipal()).getUsername()));
     }
 
     private static class JWTAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
         @Override
         public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
-                throws IOException, ServletException {
+                throws IOException {
             response.setStatus(401);
             response.setContentType("application/json");
             response.getWriter().append(json());
         }
 
         private String json() {
-            long date = new Date().getTime();
-            return "{\"timestamp\": " + date + ", "
+            return "{\"timestamp\": " + LocalDateTime.now().atZone(ZoneId.of("Z")).toInstant().toEpochMilli() + ", "
                     + "\"status\": 401, "
-                    + "\"error\": \"Não autorizado\", "
-                    + "\"message\": \"Email ou senha inválidos\", "
+                    + "\"error\": \"Não autorizado!\", "
+                    + "\"message\": \"Email ou senha inválidos.\", "
                     + "\"path\": \"/login\"}";
         }
 
