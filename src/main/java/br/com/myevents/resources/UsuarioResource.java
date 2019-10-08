@@ -1,9 +1,5 @@
 package br.com.myevents.resources;
 
-import java.net.URI;
-
-import javax.validation.Valid;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
