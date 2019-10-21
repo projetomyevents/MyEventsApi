@@ -13,8 +13,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -97,6 +101,9 @@ public class Evento implements Serializable {
     /**
      * Os arquivos em anexo do evento.
      */
-    private List<byte[]> anexos;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ANEXOS", foreignKey = @ForeignKey(name = "evento_anexo_fkey"))
+    @Column(name = "arquivo")
+    private List<@NotNull byte[]> anexos;
 
 }
