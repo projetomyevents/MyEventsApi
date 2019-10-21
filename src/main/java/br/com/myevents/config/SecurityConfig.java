@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailService;
     private final JWTUtil jwtUtil;
     
-	private static final String[] PUBLIC_MATCHERS_POST = {"/cadastro-usuario/**"};
+	private static final String[] PUBLIC_MATCHERS_POST = {"/usuario/**"};
 
 
     @Override
