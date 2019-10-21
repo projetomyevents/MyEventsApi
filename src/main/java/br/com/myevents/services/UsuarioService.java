@@ -26,5 +26,5 @@ public class UsuarioService {
         user.setSenha(pe.encode(user.getSenha()));
         return repository.save(user);
     }
-    
+
 }

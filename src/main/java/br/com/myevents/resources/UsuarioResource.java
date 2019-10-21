@@ -14,19 +14,21 @@ import br.com.myevents.domain.Usuario;
 import br.com.myevents.services.UsuarioService;
 
 @RestController
-@RequestMapping(value ="/cadastro-usuario")
+@RequestMapping(value ="/usuario")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class UsuarioResource {
 
     private final UsuarioService usuarioService;
 
-    // Método utilizado para inserção
+    // Método utilizado para inserção de usuários
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert(@Validated @RequestBody Usuario usuario) {
+    public ResponseEntity<Void> postUsuario(@Validated @RequestBody Usuario usuario) {
         return ResponseEntity.created(
                 ServletUriComponentsBuilder.fromCurrentRequest()
                         .path("/{id}")
-                        .buildAndExpand(usuarioService.insert(usuario).getId()).toUri()
+                        .buildAndExpand(usuarioService.insert(usuario).getId())
+                        .toUri()
         ).build();
     }
+
 }

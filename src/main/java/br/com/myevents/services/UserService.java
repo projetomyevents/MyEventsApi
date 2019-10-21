@@ -8,11 +8,12 @@ public class UserService {
 
 	public static UserSS authenticated() {
 		try {
-			return (UserSS) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //apenas retorna o usuário logado.
+			//apenas retorna o usuário logado.
+			return (UserSS) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		}
 		catch (Exception e) {
 			return null;
 		}
 	}
-	
+
 }

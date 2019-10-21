@@ -24,7 +24,7 @@ public class JWTUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(SignatureAlgorithm.HS512, secret.getBytes()).compact();
     }
-    
+
 	public boolean tokenValido(String token) {
 		Claims claims = getClaims(token);
 		if (claims != null) {
@@ -45,7 +45,7 @@ public class JWTUtil {
 		}
 		return null;
 	}
-	
+
 	private Claims getClaims(String token) {
 		try {
 			return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
