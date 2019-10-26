@@ -54,6 +54,7 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
                 "Bearer%s",
                 tokenService.generateToken((authResult.getPrincipal().toString()))));
         response.addHeader("access-control-expose-headers", "Authorization");
+        response.setContentType("application/json");
         response.getWriter()
                 .append("{\"message\": \"Autênticação bem sucedida.\"}");
     }
