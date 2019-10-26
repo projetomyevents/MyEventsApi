@@ -185,6 +185,17 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(requestError, requestError.getStatus());
     }
 
+    @ExceptionHandler({ EmailExistsException.class, CPFExistsException.class })
+    public ResponseEntity<Object> handleExistsException(
+            EmailExistsException ex
+    ) {
+        RequestError apiError = RequestError.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .message(ex.getLocalizedMessage())
+                .build();
+        return new ResponseEntity<>(apiError, apiError.getStatus());
+    }
+
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleAll(Exception ex) {
         RequestError requestError = RequestError.builder()

@@ -18,6 +18,7 @@ public class UserDTO implements Serializable {
     /**
      * O email de um usuário.
      */
+    @NotBlank(message = "O email não deve ficar em branco.")
     @Email(message = "O email não deve ser inválido.")
     private String email;
 
