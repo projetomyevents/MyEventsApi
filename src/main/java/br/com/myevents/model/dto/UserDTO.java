@@ -1,6 +1,8 @@
 package br.com.myevents.model.dto;
 
+import br.com.myevents.validation.PhoneNumberBR;
 import lombok.Data;
+import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -38,17 +40,17 @@ public class UserDTO implements Serializable {
     /**
      * O CPF de um usuário.
      */
-    // TODO: adicionar validação para CPFs
-    @NotBlank(message = "O cpf não deve ficar em branco.")
-    @Size(message = "O cpf deve ter exatamente 11 dígitos.", min = 11, max = 11)
+    @NotBlank(message = "O CPF não deve ficar em branco.")
+    @Size(message = "O CPF deve ter exatamente 11 dígitos.", min = 11, max = 11)
+    @CPF(message = "O CPF não é válido.")
     private String cpf;
 
     /**
-     * O número de celular de um usuário.
+     * O número de celular ou telefone de um usuário.
      */
-    // TODO: adicionar validação para números de celulares
-    @NotBlank(message = "O número de celular não deve ficar em branco.")
-    @Size(message = "O número de celular deve ter entre 10 e 11 dígitos.", min = 10, max = 11)
+    @NotBlank(message = "O número de celular ou telefone não deve ficar em branco.")
+    @Size(message = "O número de celular ou telefone deve ter entre 10 e 11 dígitos.", min = 10, max = 11)
+    @PhoneNumberBR(message = "O número de celular ou telefone não é válido.")
     private String phoneNumber;
 
 }
