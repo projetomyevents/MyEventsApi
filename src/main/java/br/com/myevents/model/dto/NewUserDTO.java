@@ -1,6 +1,6 @@
 package br.com.myevents.model.dto;
 
-import br.com.myevents.annotation.ConfirmPassword;
+import br.com.myevents.validation.ConfirmPassword;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

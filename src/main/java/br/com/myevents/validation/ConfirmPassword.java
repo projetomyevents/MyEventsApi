@@ -1,7 +1,6 @@
-package br.com.myevents.annotation;
+package br.com.myevents.validation;
 
 import br.com.myevents.model.dto.NewUserDTO;
-import br.com.myevents.validation.ConfirmPasswordValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
