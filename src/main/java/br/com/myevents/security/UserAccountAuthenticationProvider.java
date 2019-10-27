@@ -12,7 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Determina se uma requisição de autênticação é válida.
+ * Determina se uma requisição de autenticação é válida.
  */
 public class UserAccountAuthenticationProvider implements AuthenticationProvider {
 
@@ -36,7 +36,7 @@ public class UserAccountAuthenticationProvider implements AuthenticationProvider
 
         UserAccountDetails userAccountDetails = userAccountDetailsService.loadUserAccoutByEmail(email);
         if (!passwordEncoder.matches(password, userAccountDetails.getPassword())) {
-            throw new BadCredentialsException(String.format("Autênticação falhou para '%s'.", email));
+            throw new BadCredentialsException(String.format("Autenticação falhou para '%s'.", email));
         }
 
         // checar por anomalias na conta de usuário

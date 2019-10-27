@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 /**
- * Filtro responsável por processar qualquer requisição de autênticação na url <strong>/usuario/login</strong>.
+ * Filtro responsável por processar qualquer requisição de autenticação na url <strong>/usuario/login</strong>.
  */
 public class UserAccountAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -35,7 +35,7 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
             throws AuthenticationException, IOException {
         if (!request.getMethod().equals("POST"))
             throw new AuthenticationServiceException(
-                    String.format("Método '%s' de autênticação não suportado.", request.getMethod()));
+                    String.format("Método '%s' de autenticação não suportado.", request.getMethod()));
 
         UserAccountDTO userAccount = new ObjectMapper().readValue(request.getInputStream(), UserAccountDTO.class);
 
@@ -56,7 +56,7 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
         response.addHeader("access-control-expose-headers", "Authorization");
         response.setContentType("application/json");
         response.getWriter()
-                .append("{\"message\": \"Autênticação bem sucedida.\"}");
+                .append("{\"message\": \"Autenticação bem sucedida.\"}");
     }
 
     @Override
@@ -71,7 +71,7 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
                 .append('{')
                 .append("\"status\": 401,")
                 .append(String.format("\"timestamp\": %s,", Instant.now().getEpochSecond()))
-                .append("\"message\": \"Falha na autênticação! Verifique se seu email e senha estão corretos.\",")
+                .append("\"message\": \"Falha na autenticação! Verifique se seu email e senha estão corretos.\",")
                 .append(String.format("\"debugMessage\": \"%s\",", failed.getLocalizedMessage()/*.replace('"', '\'')*/))
                 .append('}');
     }

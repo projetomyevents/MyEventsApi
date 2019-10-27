@@ -22,12 +22,12 @@ public class UserAccountDetails {
     @Getter private Integer id;
 
     /**
-     * O email usado para autênticar a conta de usuário.
+     * O email usado para autenticar a conta de usuário.
      */
     private String email;
 
     /**
-     * A senha usada para autênticar a conta de um usuário.
+     * A senha usada para autenticar a conta de um usuário.
      */
     private String password;
 
@@ -38,25 +38,25 @@ public class UserAccountDetails {
 
     /**
      * Indica se a conta de usuário está ativada.
-     * Uma conta de usuário desativada não pode ser autênticada.
+     * Uma conta de usuário desativada não pode ser autenticada.
      */
     private boolean enabled;
 
     /**
      * Indica se a conta de usuário está expirada.
-     * Uma conta de usuário expirada não pode ser autênticada.
+     * Uma conta de usuário expirada não pode ser autenticada.
      */
     private boolean accountNonExpired;
 
     /**
      * Indica se a conta de usuário está bloqueada.
-     * Uma conta de usuário bloqueada não pode ser autênticada.
+     * Uma conta de usuário bloqueada não pode ser autenticada.
      */
     private boolean accountNonLocked;
 
     /**
      * Indica se as credenciais de um usuário (senha) está expirada
-     * Credenciais expiradas não deixam a conta de usuário ser autênticada.
+     * Credenciais expiradas não deixam a conta de usuário ser autenticada.
      */
     private boolean credentialsNonExpired;
 

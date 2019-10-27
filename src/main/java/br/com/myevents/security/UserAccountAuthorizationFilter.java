@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Filtro responsável por processar qualquer requisição de autênticação com o cabeçalho
+ * Filtro responsável por processar qualquer requisição de autenticação com o cabeçalho
  * <strong>Authorization</strong>.
  */
 public class UserAccountAuthorizationFilter extends BasicAuthenticationFilter {
@@ -43,10 +43,10 @@ public class UserAccountAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     /**
-     * Retorna um token com as informações de autênticação de uma conta de usuário a partir de um token.
+     * Retorna um token com as informações de autenticação de uma conta de usuário a partir de um token.
      *
      * @param token o token
-     * @return o token com as informações de autênticação de uma conta de usuário
+     * @return o token com as informações de autenticação de uma conta de usuário
      */
     private UserAccountAuthenticationToken getAuthentication(String token) {
         if (tokenService.isValid(token)) {
