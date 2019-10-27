@@ -17,13 +17,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  * A classe responsável pelo tratamento de requisições de {@link User}.
  */
 @RestController
-@RequestMapping(value = "/usuario")
+@RequestMapping(value = "/user")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping(value = "/cadastro")
+    @PostMapping(value = "/register")
     public ResponseEntity<?> registerUser(@Validated @RequestBody NewUserDTO newUser) {
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(userService.registerUser(newUser)).toUri()

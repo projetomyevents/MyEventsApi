@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 /**
- * Filtro responsável por processar qualquer requisição de autenticação na url <strong>/usuario/login</strong>.
+ * Filtro responsável por processar qualquer requisição de autenticação na url <strong>/user/login</strong>.
  */
 public class UserAccountAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -25,7 +25,7 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
     private final TokenService tokenService;
 
     public UserAccountAuthenticationFilter(AuthenticationManager authenticationManager, TokenService tokenService) {
-        super(new AntPathRequestMatcher("/usuario/login", "POST"));
+        super(new AntPathRequestMatcher("/user/login", "POST"));
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
     }

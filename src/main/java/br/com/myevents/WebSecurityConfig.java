@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * URLs de POST com acesso liberado pra geral.
      */
-    private static final String[] PUBLIC_MATCHERS_POST = {"/usuario/cadastro", "/usuario/login"};
+    private static final String[] PUBLIC_MATCHERS_POST = {"/user/register", "/uer/login"};
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
