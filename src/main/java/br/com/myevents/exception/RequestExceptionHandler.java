@@ -1,12 +1,13 @@
 package br.com.myevents.exception;
 
-import br.com.myevents.error.RequestError;
 import br.com.myevents.error.FieldError;
 import br.com.myevents.error.ObjectError;
+import br.com.myevents.error.RequestError;
 import br.com.myevents.error.RequestMultipleErrors;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -44,7 +46,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                                 .stream().map(String::valueOf).collect(Collectors.joining(", "))))
                 .debugMessage(ex.getLocalizedMessage())
                 .build();
-        return new ResponseEntity<>(requestError, requestError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -62,7 +64,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                                 .stream().map(String::valueOf).collect(Collectors.joining(", "))))
                 .debugMessage(ex.getLocalizedMessage())
                 .build();
-        return new ResponseEntity<>(requestError, requestError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -77,7 +79,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(String.format("Parâmetro '%s' está ausente.", ex.getParameterName()))
                 .debugMessage(ex.getLocalizedMessage())
                 .build();
-        return new ResponseEntity<>(requestError, requestError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -93,7 +95,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                         ex.getValue(), ex.getPropertyName(), ex.getRequiredType()))
                 .debugMessage(ex.getLocalizedMessage())
                 .build();
-        return new ResponseEntity<>(requestError, requestError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -122,7 +124,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                                 .build())
                         .collect(Collectors.toSet()))
                 .build();
-        return new ResponseEntity<>(requestError, requestError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -137,7 +139,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(String.format("A parte da requisição '%s' está ausente.", ex.getRequestPartName()))
                 .debugMessage(ex.getLocalizedMessage())
                 .build();
-        return new ResponseEntity<>(requestError, requestError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -166,7 +168,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                                 .build())
                         .collect(Collectors.toSet()))
                 .build();
-        return new ResponseEntity<>(requestError, requestError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -182,18 +184,18 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                         ex.getHttpMethod(), ex.getRequestURL()))
                 .debugMessage(ex.getLocalizedMessage())
                 .build();
-        return new ResponseEntity<>(requestError, requestError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
     @ExceptionHandler({ EmailExistsException.class, CPFExistsException.class })
     public ResponseEntity<Object> handleExistsException(
             EmailExistsException ex
     ) {
-        RequestError apiError = RequestError.builder()
+        RequestError requestError = RequestError.builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(ex.getLocalizedMessage())
                 .build();
-        return new ResponseEntity<>(apiError, apiError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
     @ExceptionHandler({ Exception.class })
@@ -203,7 +205,18 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .message("Um erro interno ocorreu.")
                 .debugMessage(ex.getLocalizedMessage())
                 .build();
-        return new ResponseEntity<>(requestError, requestError.getStatus());
+        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+    }
+
+    /**
+     * Retorna um cabeçalho HTTP com codificação de caratéres UTF8 e tipo de conteúdo "application/json".
+     *
+     * @return o cabeçalho HTTP
+     */
+    private HttpHeaders getUTF8Headers() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
+        return headers;
     }
 
 }

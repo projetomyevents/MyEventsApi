@@ -47,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterAfter(
                         new UserAccountAuthenticationFilter(
-                                authenticationManager(), tokenService),BasicAuthenticationFilter.class)
+                                authenticationManager(), tokenService), BasicAuthenticationFilter.class)
                 .addFilter(
                         new UserAccountAuthorizationFilter(
                                 authenticationManager(), userAccountDetailsService, tokenService));
