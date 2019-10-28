@@ -64,7 +64,7 @@ public class User implements Serializable {
      * O nome completo de um usuário.
      */
     @Column(nullable = false)
-    private String fullName;
+    private String name;
 
     /**
      * O CPF de um usuário.
@@ -76,7 +76,7 @@ public class User implements Serializable {
      * O número de celular de um usuário.
      */
     @Column(nullable = false, length = 11)
-    private String phoneNumber;
+    private String phone;
 
     /**
      * Os cargos de um usuário.

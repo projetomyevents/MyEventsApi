@@ -2,6 +2,8 @@ package br.com.myevents.model.dto;
 
 import br.com.myevents.validation.PhoneNumberBR;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
@@ -12,7 +14,9 @@ import java.io.Serializable;
 /**
  * Representa um contrato de um usuário.
  */
+@SuperBuilder
 @Data
+@NoArgsConstructor
 public class UserDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,7 +39,7 @@ public class UserDTO implements Serializable {
      * O nome completo de um usuário.
      */
     @NotBlank(message = "O nome não deve ficar em branco.")
-    private String fullName;
+    private String name;
 
     /**
      * O CPF de um usuário.
@@ -43,7 +47,7 @@ public class UserDTO implements Serializable {
     @NotBlank(message = "O CPF não deve ficar em branco.")
     @Size(message = "O CPF deve ter exatamente 11 dígitos.", min = 11, max = 11)
     @CPF(message = "O CPF não é válido.")
-    private String cpf;
+    private String CPF;
 
     /**
      * O número de celular ou telefone de um usuário.
@@ -51,6 +55,6 @@ public class UserDTO implements Serializable {
     @NotBlank(message = "O número de celular ou telefone não deve ficar em branco.")
     @Size(message = "O número de celular ou telefone deve ter entre 10 e 11 dígitos.", min = 10, max = 11)
     @PhoneNumberBR(message = "O número de celular ou telefone não é válido.")
-    private String phoneNumber;
+    private String phone;
 
 }
