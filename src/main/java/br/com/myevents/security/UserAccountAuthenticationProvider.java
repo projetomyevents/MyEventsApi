@@ -3,8 +3,6 @@ package br.com.myevents.security;
 import br.com.myevents.exception.UserAccountDisabledException;
 import br.com.myevents.exception.UserAccountExpiredException;
 import br.com.myevents.exception.UserAccountLockedException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -15,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * Determina se uma requisição de autenticação é válida.
  */
 public class UserAccountAuthenticationProvider implements AuthenticationProvider {
-
-    private final Log logger = LogFactory.getLog(getClass());
 
     private final UserAccountDetailsService userAccountDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -40,18 +36,15 @@ public class UserAccountAuthenticationProvider implements AuthenticationProvider
         }
 
         // checar por anomalias na conta de usuário
+        if (!userAccountDetails.isEnabled()) {
+            throw new UserAccountDisabledException("Conta de usuário está desativada. Verifique seu email.");
+        }
+
         if (!userAccountDetails.isAccountNonLocked()) {
-            logger.debug("Conta de usuário está bloqueada");
             throw new UserAccountLockedException("Conta de usuário está bloqueada.");
         }
 
-        if (!userAccountDetails.isEnabled()) {
-            logger.debug("Conta de usuário está desativada");
-            throw new UserAccountDisabledException("Conta de usuário está desativada.");
-        }
-
         if (!userAccountDetails.isAccountNonExpired()) {
-            logger.debug("Conta de usuário está expirada");
             throw new UserAccountExpiredException("Conta de usuário está expirada.");
         }
 

@@ -78,6 +78,8 @@ public class User implements Serializable {
     @Column(nullable = false, length = 11)
     private String phone;
 
+    private boolean enabled;
+
     /**
      * Os cargos de um usuário.
      */

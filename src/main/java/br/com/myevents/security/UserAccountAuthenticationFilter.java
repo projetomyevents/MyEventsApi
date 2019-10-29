@@ -34,9 +34,10 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
-        if (!request.getMethod().equals("POST"))
+        if (!request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException(
                     String.format("Método '%s' de autenticação não suportado.", request.getMethod()));
+        }
 
         UserAccountDTO userAccount;
         try {
@@ -45,8 +46,8 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
             throw new AuthenticationServiceException("Argumentos inválidos.");
         }
 
-        return authenticationManager.authenticate(
-                new UserAccountAuthenticationToken(userAccount.getEmail(), userAccount.getPassword(), new ArrayList<>()));
+        return authenticationManager.authenticate(new UserAccountAuthenticationToken(
+                userAccount.getEmail(), userAccount.getPassword(), new ArrayList<>()));
     }
 
     @Override
@@ -72,7 +73,7 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
     ) throws IOException {
         RequestError requestError = RequestError.builder()
                 .status(HttpStatus.UNAUTHORIZED)
-                .message("Falha na autenticação! Verifique se seu email e senha estão corretos.")
+                .message("Falha na autenticação!")
                 .debugMessage(failed.getLocalizedMessage())
                 .build();
 

@@ -6,6 +6,7 @@ import br.com.myevents.model.dto.UserDTO;
 import br.com.myevents.service.UserService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -36,12 +38,6 @@ public class UserController {
     @GetMapping(value = "/{email}")
     public ResponseEntity<UserDTO> getUser(@PathVariable String email) {
         User user = userService.getUser(email);
-        UserDTO userDTO = new UserDTO();
-        userDTO.setEmail(user.getEmail());
-        userDTO.setPassword(user.getPassword());
-        userDTO.setName(user.getName());
-        userDTO.setCPF(user.getCPF());
-        userDTO.setPhone(user.getPhone());
         return ResponseEntity.ok(UserDTO.builder()
                 .email(user.getEmail())
                 .password(user.getPassword())
@@ -49,6 +45,11 @@ public class UserController {
                 .CPF(user.getCPF())
                 .phone(user.getPhone())
                 .build());
+    }
+
+    @PostMapping(value = "/confirm", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> confirmUser(@RequestParam(value = "token") String token) {
+        return ResponseEntity.ok(userService.confirmUser(token));
     }
 
 }

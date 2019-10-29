@@ -187,8 +187,14 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
 
-    @ExceptionHandler({ EmailExistsException.class, CPFExistsException.class })
-    public ResponseEntity<Object> handleExistsException(
+    @ExceptionHandler({
+            EmailExistsException.class,
+            CPFExistsException.class,
+            ConfirmationTokenNotFoundException.class,
+            ConfirmationTokenExpiredException.class,
+            ConfirmationTokenUserNotFoundException.class
+    })
+    public ResponseEntity<Object> handleMessageException(
             EmailExistsException ex
     ) {
         RequestError requestError = RequestError.builder()

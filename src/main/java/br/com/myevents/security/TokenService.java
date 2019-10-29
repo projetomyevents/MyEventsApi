@@ -7,10 +7,11 @@ import io.jsonwebtoken.impl.TextCodec;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 /**
- * Implementa JWT (Json Web Tokens).
+ * Implementação dos serviços de JWT (Json Web Tokens).
  */
 @Service
 public class TokenService {
@@ -31,7 +32,7 @@ public class TokenService {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(60)))
+                .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.WEEKS)))
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
                 .compact();
     }
@@ -45,16 +46,16 @@ public class TokenService {
     public boolean isValid(String token) {
         Claims claims = getClaims(token);
         if (claims != null) {
-            Date expirationDate = claims.getExpiration();
+            Instant expiration = claims.getExpiration().toInstant();
             return claims.getSubject() != null
-                    && expirationDate != null
-                    && Instant.now().isBefore(expirationDate.toInstant());
+                    && expiration != null
+                    && Instant.now().isBefore(expiration);
         }
         return false;
     }
 
     /**
-     * TODO: idk
+     * Recuperar o email que foi usado para montar o token.
      *
      * @param token o token
      * @return o email
@@ -65,10 +66,10 @@ public class TokenService {
     }
 
     /**
-     * TODO: idk
+     * Retorna um corpo JSON contido em {@link Claims} com as informações do token.
      *
      * @param token o token
-     * @return TODO: idk
+     * @return as informações do token
      */
     private Claims getClaims(String token) {
         try {

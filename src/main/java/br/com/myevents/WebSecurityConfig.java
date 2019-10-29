@@ -33,24 +33,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenService tokenService;
 
     /**
-     * URLs de POST com acesso liberado pra geral.
+     * URLs do usuário com acesso liberado pra geral.
      */
-    private static final String[] PUBLIC_MATCHERS_POST = {"/user/register", "/uer/login"};
+    private static final String[] PUBLIC_MATCHERS_USER = {
+            "/user/register",
+            "/user/login",
+            "/user/confirm**"
+    };
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_USER).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterAfter(
-                        new UserAccountAuthenticationFilter(
-                                authenticationManager(), tokenService), BasicAuthenticationFilter.class)
-                .addFilter(
-                        new UserAccountAuthorizationFilter(
-                                authenticationManager(), userAccountDetailsService, tokenService));
+                .addFilter(new UserAccountAuthorizationFilter(
+                        authenticationManager(), userAccountDetailsService, tokenService))
+                .addFilterAfter(new UserAccountAuthenticationFilter(
+                        authenticationManager(), tokenService), BasicAuthenticationFilter.class);
     }
 
     @Override

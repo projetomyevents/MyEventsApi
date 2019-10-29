@@ -40,7 +40,7 @@ public class UserAccountDetailsService {
                 .authorities(user.getRoles()
                         .stream().map(role -> new SimpleGrantedAuthority(role.getName()))
                         .collect(Collectors.toSet()))
-                .enabled(true)
+                .enabled(user.isEnabled())
                 .accountNonExpired(true)
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)

@@ -27,7 +27,7 @@ public class UserAccountDetails {
     private String email;
 
     /**
-     * A senha usada para autenticar a conta de um usuário.
+     * A senha usada para autenticar a conta de usuário.
      */
     private String password;
 
@@ -55,8 +55,8 @@ public class UserAccountDetails {
     private boolean accountNonLocked;
 
     /**
-     * Indica se as credenciais de um usuário (senha) está expirada
-     * Credenciais expiradas não deixam a conta de usuário ser autenticada.
+     * Indica se as credenciais da conta de usuário (senha) está expirada.
+     * Uma conta de usuário com credenciais expiradas não pode ser autenticada.
      */
     private boolean credentialsNonExpired;
 
