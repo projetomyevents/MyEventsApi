@@ -14,14 +14,13 @@ import br.com.myevents.repository.UserRepository;
 import br.com.myevents.security.enums.Role;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.MailParseException;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -72,28 +71,20 @@ public class UserService {
 
         // enviar mensagem de confirmação para o email do usuário
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
-            messageHelper.setTo(user.getEmail());
-            messageHelper.setSubject("Verificação de Conta MyEvents");
-            messageHelper.setText(String.format("Olá %s, percebemos que você se cadastrou no site " +
-                            "<a href='http://localhost:4200/'>MyEvents</a>, para ativar sua conta " +
-                            "<a href='http://localhost:8080/user/confirm?token=%s'>clique aqui</a>.",
-                    user.getName(),
-                    confirmationToken.getToken()), true);
-
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            SimpleMailMessage message = new SimpleMailMessage();
+            MimeMailMessage message = new MimeMailMessage(mailSender.createMimeMessage());
             message.setTo(user.getEmail());
             message.setSubject("Verificação de Conta MyEvents");
-            message.setText(String.format("Olá %s, percebemos que você se cadastrou no site MyEvents " +
-                            "(http://localhost:4200/), para ativar sua conta siga esse link: " +
-                            "http://localhost:8080/user/confirm?token=%s.",
-                    user.getName(),
-                    confirmationToken.getToken()));
+            message.getMimeMessageHelper().setText(
+                    String.format("Olá %s, percebemos que você se cadastrou no site " +
+                            "<a href='http://localhost:4200/'>MyEvents</a>, para ativar sua conta " +
+                            "<a href='http://localhost:8080/user/confirm?token=%s'>clique aqui</a>.",
+                            user.getName(),
+                            confirmationToken.getToken()),
+                    true);
 
-            mailSender.send(message);
+            mailSender.send(message.getMimeMessage());
+        } catch (MessagingException e) {
+            throw new MailParseException(e);
         }
 
         return user;
@@ -134,24 +125,18 @@ public class UserService {
 
         // enviar mensagem confirmando que a conta do usuário foi ativada
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper messageHelper = new MimeMessageHelper(message, true);
-            messageHelper.setTo(user.getEmail());
-            messageHelper.setSubject("Sua Conta MyEvents foi Ativada");
-            messageHelper.setText(String.format("Olá %s, sua conta no site " +
-                            "<a href='http://localhost:4200/'>MyEvents</a> foi ativada com sucesso.",
-                    user.getName()), true);
-
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            SimpleMailMessage message = new SimpleMailMessage();
+            MimeMailMessage message = new MimeMailMessage(mailSender.createMimeMessage());
             message.setTo(user.getEmail());
-            message.setSubject("Verificação de Conta MyEvents");
-            message.setText(String.format("Olá %s, sua conta no site MyEvents " +
-                            "(http://localhost:4200/) foi ativada com sucesso.",
-                    user.getName()));
+            message.setSubject("Ativação de Conta MyEvents");
+            message.getMimeMessageHelper().setText(
+                    String.format("Olá %s, sua conta no site " +
+                            "<a href='http://localhost:4200/'>MyEvents</a> foi ativada com sucesso.",
+                            user.getName()),
+                    true);
 
-            mailSender.send(message);
+            mailSender.send(message.getMimeMessage());
+        } catch (MessagingException e) {
+            throw new MailParseException(e);
         }
 
         return String.format(
