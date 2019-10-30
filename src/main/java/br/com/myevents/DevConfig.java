@@ -34,6 +34,7 @@ public class DevConfig {
                 .CPF("52829612884")
                 .phone("8888888888")
                 .role(Role.ADMIN.getId())
+                .enabled(true)
                 .build();
         userRepository.save(adminUser);
     }
