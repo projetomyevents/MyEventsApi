@@ -55,6 +55,7 @@ public class UserService {
                     String.format("O CPF '%s' já está vinculado a uma conta de usuário.", newUser.getCPF()));
         }
 
+        // após passar pelas validações, salvar o usuário (desativado) na base de dados
         User user = userRepository.save(User.builder()
                 .email(newUser.getEmail())
                 .password(passwordEncoder.encode(newUser.getPassword()))
@@ -64,28 +65,8 @@ public class UserService {
                 .role(Role.USUARIO.getId())
                 .build());
 
-        // criar e salvar token de confirmação de conta de usuário
-        ConfirmationToken confirmationToken = confirmationTokenRepository.save(ConfirmationToken.builder()
-                .user(user)
-                .build());
-
-        // enviar mensagem de confirmação para o email do usuário
-        try {
-            MimeMailMessage message = new MimeMailMessage(mailSender.createMimeMessage());
-            message.setTo(user.getEmail());
-            message.setSubject("Verificação de Conta MyEvents");
-            message.getMimeMessageHelper().setText(
-                    String.format("Olá %s, percebemos que você se cadastrou no site " +
-                            "<a href='http://localhost:4200/'>MyEvents</a>, para ativar sua conta " +
-                            "<a href='http://localhost:8080/user/confirm?token=%s'>clique aqui</a>.",
-                            user.getName(),
-                            confirmationToken.getToken()),
-                    true);
-
-            mailSender.send(message.getMimeMessage());
-        } catch (MessagingException e) {
-            throw new MailParseException(e);
-        }
+        // enviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
+        this.sendConfirmationEmail(user);
 
         return user;
     }
@@ -98,15 +79,17 @@ public class UserService {
      * @throws EmailNotFoundException levantada sempre que nenhum usuário esteja vinculado ao email
      */
     public User getUser(String email) {
-        Optional<User> optionalUser =  userRepository.findByEmail(email);
-        if (optionalUser.isPresent()) {
-            return optionalUser.get();
-        } else {
-            throw new EmailNotFoundException(
-                    String.format("O email '%s' não está vinculado a nenhum usuário conhecido.", email));
-        }
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new EmailNotFoundException(
+                        String.format("O email '%s' não está vinculado a nenhum usuário conhecido.", email)));
     }
 
+    /**
+     * Tenta ativar uma conta de usuário através de um token de confirmação.
+     *
+     * @param token o token de confirmação
+     * @return o resultado
+     */
     public String confirmUser(String token) {
         ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token).orElseThrow(
                 () -> new ConfirmationTokenNotFoundException(
@@ -116,14 +99,19 @@ public class UserService {
             throw new ConfirmationTokenExpiredException(String.format("O token de confirmação '%s' expirou.", token));
         }
 
-        User user = userRepository.findByEmail(confirmationToken.getUser().getEmail()).orElseThrow(
+        User user = Optional.of(confirmationToken.getUser()).orElseThrow(
                 () -> new ConfirmationTokenUserNotFoundException(
                         String.format("O token de confirmação '%s' não está vinculado a nenhuma conta de usuário.",
                                 token)));
+
+        // ativar a conta do usuário
         user.setEnabled(true);
         userRepository.save(user);
 
-        // enviar mensagem confirmando que a conta do usuário foi ativada
+        // com a conta do usuário ativada podemos remover todos os tokens vinculados a ela
+        confirmationTokenRepository.findAllByUser(user).forEach(confirmationTokenRepository::delete);
+
+        // enviar mensagem confirmando que a conta foi ativada para o email do usuário
         try {
             MimeMailMessage message = new MimeMailMessage(mailSender.createMimeMessage());
             message.setTo(user.getEmail());
@@ -141,6 +129,32 @@ public class UserService {
 
         return String.format(
                 "{\"message\": \"A conta de usuário com email '%s' foi confirmada e ativada.\"}", user.getEmail());
+    }
+
+    /**
+     * Envia o email de confirmação para a conta de usuário.
+     *
+     * @param user o usuário
+     */
+    private void sendConfirmationEmail(User user) {
+        try {
+            MimeMailMessage message = new MimeMailMessage(mailSender.createMimeMessage());
+            message.setTo(user.getEmail());
+            message.setSubject("Verificação de Conta MyEvents");
+            message.getMimeMessageHelper().setText(
+                    String.format("Olá %s, uma conta foi registrada com o seu email no site " +
+                                    "<a href='http://localhost:4200/'>MyEvents</a>, para ativar sua conta " +
+                                    "<a href='http://localhost:8080/confirm?token=%s'>clique aqui</a>.",
+                            user.getName(),
+                            // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
+                            confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build())
+                                    .getToken()),
+                    true);
+
+            mailSender.send(message.getMimeMessage());
+        } catch (MessagingException e) {
+            throw new MailParseException(e);
+        }
     }
 
 }
