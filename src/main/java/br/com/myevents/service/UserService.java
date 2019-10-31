@@ -118,7 +118,8 @@ public class UserService {
             message.setSubject("Ativação de Conta MyEvents");
             message.getMimeMessageHelper().setText(
                     String.format("Olá %s, sua conta no site " +
-                            "<a href='http://localhost:4200/'>MyEvents</a> foi ativada com sucesso.",
+                            "<a href='http://localhost:4200/'>MyEvents</a> foi ativada com sucesso, " +
+                            "<a href='http://localhost:4200/user/signin'>clique aqui</a> para entrar.",
                             user.getName()),
                     true);
 
@@ -128,7 +129,7 @@ public class UserService {
         }
 
         return String.format(
-                "{\"message\": \"A conta de usuário com email '%s' foi confirmada e ativada.\"}", user.getEmail());
+                "{\"message\": \"A conta de usuário com email '%s' foi ativada.\"}", user.getEmail());
     }
 
     /**
@@ -143,8 +144,9 @@ public class UserService {
             message.setSubject("Verificação de Conta MyEvents");
             message.getMimeMessageHelper().setText(
                     String.format("Olá %s, uma conta foi registrada com o seu email no site " +
-                                    "<a href='http://localhost:4200/'>MyEvents</a>, para ativar sua conta " +
-                                    "<a href='http://localhost:8080/confirm?token=%s'>clique aqui</a>.",
+                                    "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
+                                    "<a href='http://localhost:8080/user/confirm?token=%s'>clique aqui</a>. " +
+                                    "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
                             user.getName(),
                             // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
                             confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build())
