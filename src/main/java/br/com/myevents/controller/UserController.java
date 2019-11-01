@@ -2,6 +2,7 @@ package br.com.myevents.controller;
 
 import br.com.myevents.model.User;
 import br.com.myevents.model.dto.NewUserDTO;
+import br.com.myevents.model.dto.UserAccountDTO;
 import br.com.myevents.model.dto.UserDTO;
 import br.com.myevents.service.UserService;
 import lombok.AccessLevel;
@@ -50,6 +51,11 @@ public class UserController {
     @PostMapping(value = "/confirm", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> confirmUser(@RequestParam(value = "token") String token) {
         return ResponseEntity.ok(userService.confirmUser(token));
+    }
+
+    @PostMapping(value = "/resend-confirmation", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> resendUserConfirmation(@RequestBody UserAccountDTO userAccount) {
+        return ResponseEntity.ok(userService.resendUserConfirmation(userAccount));
     }
 
 }

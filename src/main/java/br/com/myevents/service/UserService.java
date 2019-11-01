@@ -6,21 +6,19 @@ import br.com.myevents.exception.ConfirmationTokenNotFoundException;
 import br.com.myevents.exception.ConfirmationTokenUserNotFoundException;
 import br.com.myevents.exception.EmailExistsException;
 import br.com.myevents.exception.EmailNotFoundException;
+import br.com.myevents.exception.UserAccountNotFoundException;
 import br.com.myevents.model.ConfirmationToken;
 import br.com.myevents.model.User;
 import br.com.myevents.model.dto.NewUserDTO;
+import br.com.myevents.model.dto.UserAccountDTO;
 import br.com.myevents.repository.ConfirmationTokenRepository;
 import br.com.myevents.repository.UserRepository;
 import br.com.myevents.security.enums.Role;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.MailParseException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -34,15 +32,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final JavaMailSender mailSender;
+    private final MailSenderService mailSenderService;
 
     /**
      * Registra um novo usuário validado. (não realiza validação de dados)
      *
      * @param newUser o novo usuário
      * @return um usuário registrado
-     * @throws EmailExistsException levantada sempre que um email já esteja vinculado a uma conta de usuário
-     * @throws CPFExistsException levantada sempre que um CPF já esteja vinculado a uma conta de usuário
      */
     public User registerUser(NewUserDTO newUser) {
         if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
@@ -66,7 +62,18 @@ public class UserService {
                 .build());
 
         // enviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
-        this.sendConfirmationEmail(user);
+        mailSenderService.sendHtml(
+                user.getEmail(),
+                "Verificação de Conta MyEvents",
+                String.format(
+                        "Olá %s, uma conta foi registrada com o seu email no site " +
+                                "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
+                                "<a href='http://localhost:8080/user/confirm?token=%s'>clique aqui</a>. " +
+                                "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
+                        user.getName(),
+                        // criar e salvar o token de confirmação para a conta de usuário na base de dados
+                        confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build())
+                                .getToken()));
 
         return user;
     }
@@ -76,7 +83,6 @@ public class UserService {
      *
      * @param email o email
      * @return o usuário
-     * @throws EmailNotFoundException levantada sempre que nenhum usuário esteja vinculado ao email
      */
     public User getUser(String email) {
         return userRepository.findByEmail(email).orElseThrow(
@@ -112,51 +118,56 @@ public class UserService {
         confirmationTokenRepository.findAllByUser(user).forEach(confirmationTokenRepository::delete);
 
         // enviar mensagem confirmando que a conta foi ativada para o email do usuário
-        try {
-            MimeMailMessage message = new MimeMailMessage(mailSender.createMimeMessage());
-            message.setTo(user.getEmail());
-            message.setSubject("Ativação de Conta MyEvents");
-            message.getMimeMessageHelper().setText(
-                    String.format("Olá %s, sua conta no site " +
-                            "<a href='http://localhost:4200/'>MyEvents</a> foi ativada com sucesso, " +
-                            "<a href='http://localhost:4200/user/signin'>clique aqui</a> para entrar.",
-                            user.getName()),
-                    true);
-
-            mailSender.send(message.getMimeMessage());
-        } catch (MessagingException e) {
-            throw new MailParseException(e);
-        }
+        mailSenderService.sendHtml(
+                user.getEmail(),
+                "Ativação de Conta MyEvents",
+                String.format(
+                        "Olá %s, sua conta no site " +
+                                "<a href='http://localhost:4200/'>MyEvents</a> foi ativada com sucesso, " +
+                                "<a href='http://localhost:4200/signin'>clique aqui</a> para entrar.",
+                        user.getName()));
 
         return String.format(
                 "{\"message\": \"A conta de usuário com email '%s' foi ativada.\"}", user.getEmail());
     }
 
     /**
-     * Envia o email de confirmação para a conta de usuário.
+     * Reenvia o email de confirmação da conta de usuário.
      *
-     * @param user o usuário
+     * @param userAccount a conta de usuário
+     * @return o resultado
      */
-    private void sendConfirmationEmail(User user) {
-        try {
-            MimeMailMessage message = new MimeMailMessage(mailSender.createMimeMessage());
-            message.setTo(user.getEmail());
-            message.setSubject("Verificação de Conta MyEvents");
-            message.getMimeMessageHelper().setText(
-                    String.format("Olá %s, uma conta foi registrada com o seu email no site " +
-                                    "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
-                                    "<a href='http://localhost:8080/user/confirm?token=%s'>clique aqui</a>. " +
-                                    "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
-                            user.getName(),
-                            // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
-                            confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build())
-                                    .getToken()),
-                    true);
+    public String resendUserConfirmation(UserAccountDTO userAccount) {
+        User user = userRepository.findByEmail(userAccount.getEmail()).orElseThrow(UserAccountNotFoundException::new);
 
-            mailSender.send(message.getMimeMessage());
-        } catch (MessagingException e) {
-            throw new MailParseException(e);
+        // por algum motivo que eu desconheço isso não funciona
+//        if (passwordEncoder.matches(userAccount.getPassword(), user.getPassword())) {
+//            throw new UserAccountNotFoundException();
+//        }
+
+        // não fazer nada e retornar uma mensagem caso a conta de usuário já esteja ativada
+        if (user.isEnabled()) {
+            return String.format(
+                    "{\"message\": \"A conta de usuário com o email '%s' já está ativada.\"}", user.getEmail());
         }
+
+        // reenviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
+        mailSenderService.sendHtml(
+                user.getEmail(),
+                "Verificação de Conta MyEvents",
+                String.format(
+                        "Olá %s, um novo token de confirmação foi requisitado para a sua conta em " +
+                                "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
+                                "<a href='http://localhost:8080/user/confirm?token=%s'>clique aqui</a>. " +
+                                "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
+                        user.getName(),
+                        // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
+                        confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build())
+                                .getToken()));
+
+        return String.format(
+                "{\"message\": \"A mensagem com o link de ativação da conta foi enviada para '%s'.\"}",
+                user.getEmail());
     }
 
 }

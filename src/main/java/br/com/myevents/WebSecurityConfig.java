@@ -38,7 +38,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] PUBLIC_MATCHERS_USER = {
             "/user/register",
             "/user/login",
-            "/user/confirm**"
+            "/user/confirm**",
+            "/user/resend-confirmation"
     };
 
     @Override
