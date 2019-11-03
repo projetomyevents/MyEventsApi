@@ -35,20 +35,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * URLs do usuário com acesso liberado pra geral.
      */
-    private static final String[] PUBLIC_MATCHERS_USER = {
+    private static final String[] PUBLIC_POST_MATCHERS_USER = {
             "/user/register",
             "/user/login",
+            "/user/password-reset"
+    };
+
+    private static final String[] PUBLIC_GET_MATCHERS_USER = {
             "/user/confirm**",
             "/user/resend-confirmation/**",
-            "/user/send-password-reset/**",
-            "/user/password-reset"
+            "/user/send-password-reset/**"
     };
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_USER).permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_POST_MATCHERS_USER).permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, PUBLIC_GET_MATCHERS_USER).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new UserAccountAuthorizationFilter(

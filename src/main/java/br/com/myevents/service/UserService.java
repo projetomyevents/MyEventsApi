@@ -72,7 +72,7 @@ public class UserService {
                 String.format(
                         "Olá %s, uma conta foi registrada com o seu email no site " +
                                 "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
-                                "<a href='http://localhost:8080/user/confirm?token=%s'>clique aqui</a>. " +
+                                "<a href='http://localhost:4200/confirm;token=%s'>clique aqui</a>. " +
                                 "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
                         user.getName(),
                         // criar e salvar o token de confirmação para a conta de usuário na base de dados
@@ -128,7 +128,7 @@ public class UserService {
                                 "<a href='http://localhost:4200/signin'>clique aqui</a> para entrar.",
                         user.getName()));
 
-        return SimpleMessage.builder().message("O usuário foi ativado.").build();
+        return SimpleMessage.builder().message("Sua conta foi ativada.").build();
     }
 
     /**
@@ -143,7 +143,7 @@ public class UserService {
 
         // não fazer nada e retornar uma mensagem caso a conta de usuário já esteja ativada
         if (user.isEnabled()) {
-            return SimpleMessage.builder().message("O usuário já está ativado.").build();
+            return SimpleMessage.builder().message("Sua conta já está ativada.").build();
         }
 
         // reenviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
@@ -153,13 +153,15 @@ public class UserService {
                 String.format(
                         "Olá %s, um novo token de confirmação foi requisitado para a sua conta em " +
                                 "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
-                                "<a href='http://localhost:8080/user/confirm?token=%s'>clique aqui</a>. " +
+                                "<a href='http://localhost:4200/confirm;token=%s'>clique aqui</a>. " +
                                 "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
                         user.getName(),
                         // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
                         confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build()).getToken()));
 
-        return SimpleMessage.builder().message("O link de ativação do usuário foi enviado.").build();
+        return SimpleMessage.builder()
+                .message("Mensagem enviada! Verifique seu email e siga o link para ativar sua conta.")
+                .build();
     }
 
     /**
@@ -188,7 +190,7 @@ public class UserService {
         // com a senha do usuário atualizada podemos remover todos os tokens de redefinição de senha vinculados a ele
         passwordResetTokenRepository.findAllByUser(user).forEach(passwordResetTokenRepository::delete);
 
-        return SimpleMessage.builder().message("A senha do usuário foi atualizada.").build();
+        return SimpleMessage.builder().message("Sua senha foi atualizada.").build();
     }
 
     /**
@@ -197,24 +199,26 @@ public class UserService {
      * @param email o email do usuário
      * @return o resultado
      */
-    public SimpleMessage sendPasswordReset(String email) {
+    public SimpleMessage sendUserPasswordReset(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserAccountNotFoundException("O email não pertence a nenhum usuário conhecido."));
 
-        // reenviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
+        // enviar mensagme com o link para a página de redefinição de senha
         mailSenderService.sendHtml(
                 user.getEmail(),
                 "Redefinição de Senha MyEvents",
                 String.format(
                         "Olá %s, um token de redefinição de senha foi requisitado para a sua conta em " +
                                 "<a href='http://localhost:4200/'>MyEvents</a>, para atualizar sua senha " +
-                                "<a href='http://localhost:8080/user/password-reset?token=%s'>clique aqui</a>. " +
+                                "<a href='http://localhost:4200/password-reset;token=%s'>clique aqui</a>. " +
                                 "Caso voçê não tenha requisitado uma redefinição de senha ignore esta mensagem.",
                         user.getName(),
                         // criar e salvar um novo token de redefinição de senha para a conta de usuário na base de dados
                         passwordResetTokenRepository.save(PasswordResetToken.builder().user(user).build()).getToken()));
 
-        return SimpleMessage.builder().message("O link de ativação do usuário foi enviado.").build();
+        return SimpleMessage.builder()
+                .message("Mensagem enviada! Verifique seu email e siga o link para redefinir sua senha.")
+                .build();
     }
 
 }

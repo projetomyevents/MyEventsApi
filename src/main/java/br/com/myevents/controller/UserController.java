@@ -5,6 +5,7 @@ import br.com.myevents.model.dto.NewPasswordDTO;
 import br.com.myevents.model.dto.NewUserDTO;
 import br.com.myevents.model.dto.UserDTO;
 import br.com.myevents.service.UserService;
+import br.com.myevents.utils.SimpleMessage;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +30,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Void> registerUser(@Validated @RequestBody NewUserDTO newUser) {
+    public ResponseEntity<Object> registerUser(@Validated @RequestBody NewUserDTO newUser) {
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(userService.registerUser(newUser)).toUri()
-        ).build();
+        ).body(SimpleMessage.builder()
+                .message("Registrado com sucesso! Verifique seu email e ative sua conta.")
+                .build());
     }
 
     @GetMapping("/{email}")
@@ -47,12 +50,12 @@ public class UserController {
                 .build());
     }
 
-    @PostMapping("/confirm")
+    @GetMapping("/confirm")
     public ResponseEntity<Object> confirmUser(@RequestParam("token") String token) {
         return ResponseEntity.ok(userService.confirmUser(token));
     }
 
-    @PostMapping("/resend-confirmation/{email}")
+    @GetMapping("/resend-confirmation/{email}")
     public ResponseEntity<Object> resendUserConfirmation(@PathVariable String email) {
         return ResponseEntity.ok(userService.resendUserConfirmation(email));
     }
@@ -62,15 +65,12 @@ public class UserController {
             @RequestParam("token") String token,
             @Validated @RequestBody NewPasswordDTO newPassword
     ) {
-        System.out.println(token);
-        System.out.println(newPassword);
         return ResponseEntity.ok(userService.resetUserPassword(token, newPassword));
     }
 
-    @PostMapping("/send-password-reset/{email}")
-    public ResponseEntity<Object> sendPasswordReset(@PathVariable String email) {
-        System.out.println(email);
-        return ResponseEntity.ok(userService.sendPasswordReset(email));
+    @GetMapping("/send-password-reset/{email}")
+    public ResponseEntity<Object> sendUserPasswordReset(@PathVariable String email) {
+        return ResponseEntity.ok(userService.sendUserPasswordReset(email));
     }
 
 }
