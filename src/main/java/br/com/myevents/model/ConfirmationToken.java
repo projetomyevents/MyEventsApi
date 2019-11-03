@@ -25,7 +25,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 /**
- * Representa um token de confirmação de uma conta de usuário.
+ * Representa um token de confirmação de um usuário.
  */
 @Entity
 @Table(name = "ctoken")
@@ -41,28 +41,29 @@ public class ConfirmationToken implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * A chave primária de um token de confirmação.
+     * A chave primária do token de confirmação.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * O token.
+     * O valor do token de confirmação.
      */
     @Column(nullable = false)
-    @Builder.Default private String token = UUID.randomUUID().toString();
+    @Setter(AccessLevel.NONE) @Builder.Default private final String token = UUID.randomUUID().toString();
 
     /**
-     * O usuário vinculado ao token.
+     * O usuário vinculado ao token de confirmação.
      */
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "ctoken_user_fkey"))
     private User user;
 
     /**
-     * A data de expiração do token.
+     * A data de expiração do token de confirmação.
      */
-    @Builder.Default private Instant expiration = Instant.now().plus(1, ChronoUnit.DAYS);
+    @Setter(AccessLevel.NONE) @Builder.Default private final Instant expiration =
+            Instant.now().plus(1, ChronoUnit.DAYS);
 
 }

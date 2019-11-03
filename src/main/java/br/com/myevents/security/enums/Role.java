@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 public enum Role {
 
     ADMIN(0, "ROLE_ADMIN"),
-    USUARIO(1, "ROLE_USER");
+    USER(1, "ROLE_USER");
 
     /**
      * O identificador de um cargo.

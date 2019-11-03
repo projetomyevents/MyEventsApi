@@ -3,7 +3,7 @@ package br.com.myevents.exception;
 import org.springframework.security.core.AuthenticationException;
 
 /**
- * Levantada para indicar que uma conta de usuário está expirada.
+ * Levantada se um usuário, que está expirado, tentar autenticar-se.
  */
 public class UserAccountExpiredException extends AuthenticationException {
 

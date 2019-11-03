@@ -42,46 +42,49 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * A chave primária de um usuário.
+     * A chave primária do usuário.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     /**
-     * O email de um usuário.
+     * O email do usuário.
      */
     @Column(nullable = false, unique = true)
     private String email;
 
     /**
-     * A senha de um usuário.
+     * A senha do usuário.
      */
-    @Column(nullable = false, length = 127)
+    @Column(nullable = false, length = 60)
     private String password;
 
     /**
-     * O nome completo de um usuário.
+     * O nome completo do usuário.
      */
     @Column(nullable = false)
     private String name;
 
     /**
-     * O CPF de um usuário.
+     * O CPF do usuário.
      */
     @Column(nullable = false, unique = true, length = 11)
     private String CPF;
 
     /**
-     * O número de celular de um usuário.
+     * O número de celular do usuário.
      */
     @Column(nullable = false, length = 11)
     private String phone;
 
+    /**
+     * O estado de confirmação do usuário.
+     */
     private boolean enabled;
 
     /**
-     * Os cargos de um usuário.
+     * Os cargos do usuário.
      */
     @ElementCollection(fetch= FetchType.EAGER)
     @CollectionTable(name="ROLE", foreignKey = @ForeignKey(name = "user_role_fkey"))

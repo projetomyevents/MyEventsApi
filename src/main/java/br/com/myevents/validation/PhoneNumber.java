@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 })
 @Constraint(validatedBy = { })
 @Documented
-public @interface PhoneNumberBR {
+public @interface PhoneNumber {
 
     String message() default "O número de telefone é inválido.";
 

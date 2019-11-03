@@ -3,7 +3,7 @@ package br.com.myevents.exception;
 import org.springframework.security.core.AuthenticationException;
 
 /**
- * Levantada para indicar que uma conta de usuário está desativada.
+ * Levantada se um usuário, que está desativado, tentar autenticar-se.
  */
 public class UserAccountDisabledException extends AuthenticationException {
 

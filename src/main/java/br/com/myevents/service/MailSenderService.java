@@ -19,6 +19,14 @@ public class MailSenderService {
 
     private final JavaMailSender mailSender;
 
+    /**
+     * Monta uma mensagem de email com suporta a tags html e a envia para o endereço informado.
+     *
+     * @param email o endereço de email de destinatário
+     * @param subject o título da mensagem
+     * @param htmlText o conteúdo da mensagem
+     * @throws MailParseException idk
+     */
     @Async
     public void sendHtml(String email, String subject, String htmlText) throws MailParseException {
         try {

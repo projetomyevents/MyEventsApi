@@ -1,8 +1,7 @@
 package br.com.myevents.exception;
 
 /**
- * Levantada para indicar que um email de uma conta de usuário
- * já está vinculado a outra conta de usuário na base de dados.
+ * Levantada se um email de um usuário já está vinculado a outro usuário.
  */
 public class EmailExistsException extends RuntimeException {
 

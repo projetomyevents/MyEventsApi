@@ -45,6 +45,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                         Objects.requireNonNull(ex.getSupportedHttpMethods())
                                 .stream().map(String::valueOf).collect(Collectors.joining(", "))))
                 .debugMessage(ex.getLocalizedMessage())
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
@@ -63,6 +64,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                         Objects.requireNonNull(ex.getSupportedMediaTypes())
                                 .stream().map(String::valueOf).collect(Collectors.joining(", "))))
                 .debugMessage(ex.getLocalizedMessage())
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
@@ -78,6 +80,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .message(String.format("Parâmetro '%s' está ausente.", ex.getParameterName()))
                 .debugMessage(ex.getLocalizedMessage())
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
@@ -94,6 +97,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(String.format("O valor '%s' da propriedade '%s' deve ser de tipo '%s'.",
                         ex.getValue(), ex.getPropertyName(), ex.getRequiredType()))
                 .debugMessage(ex.getLocalizedMessage())
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
@@ -123,6 +127,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                                 .object(globalError.getObjectName())
                                 .build())
                         .collect(Collectors.toSet()))
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
@@ -138,6 +143,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .message(String.format("A parte da requisição '%s' está ausente.", ex.getRequestPartName()))
                 .debugMessage(ex.getLocalizedMessage())
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
@@ -167,6 +173,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                                 .object(globalError.getObjectName())
                                 .build())
                         .collect(Collectors.toSet()))
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
@@ -183,6 +190,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(String.format("Nenhum tratamento encontrado para %s %s.",
                         ex.getHttpMethod(), ex.getRequestURL()))
                 .debugMessage(ex.getLocalizedMessage())
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
@@ -190,16 +198,18 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({
             EmailExistsException.class,
             CPFExistsException.class,
-            ConfirmationTokenNotFoundException.class,
-            ConfirmationTokenExpiredException.class,
-            ConfirmationTokenUserNotFoundException.class
+            TokenNotFoundException.class,
+            TokenExpiredException.class,
+            TokenUserNotFoundException.class,
+            UserAccountNotFoundException.class
     })
     public ResponseEntity<Object> handleMessageException(
-            EmailExistsException ex
+            RuntimeException ex
     ) {
         RequestError requestError = RequestError.builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(ex.getLocalizedMessage())
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }
@@ -210,6 +220,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .message("Um erro interno ocorreu.")
                 .debugMessage(ex.getLocalizedMessage())
+                .exception(ex.getClass().getSimpleName())
                 .build();
         return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
     }

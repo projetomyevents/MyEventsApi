@@ -3,7 +3,7 @@ package br.com.myevents.exception;
 import org.springframework.security.core.AuthenticationException;
 
 /**
- * Levantada se um email não está vinculado a nenhuma conta de usuário conhecido.
+ * Levantada se um email não está vinculado a nenhum usuário.
  */
 public class EmailNotFoundException extends AuthenticationException {
 

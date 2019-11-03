@@ -1,19 +1,19 @@
 package br.com.myevents.service;
 
 import br.com.myevents.exception.CPFExistsException;
-import br.com.myevents.exception.ConfirmationTokenExpiredException;
-import br.com.myevents.exception.ConfirmationTokenNotFoundException;
-import br.com.myevents.exception.ConfirmationTokenUserNotFoundException;
 import br.com.myevents.exception.EmailExistsException;
 import br.com.myevents.exception.EmailNotFoundException;
+import br.com.myevents.exception.TokenExpiredException;
+import br.com.myevents.exception.TokenNotFoundException;
+import br.com.myevents.exception.TokenUserNotFoundException;
 import br.com.myevents.exception.UserAccountNotFoundException;
 import br.com.myevents.model.ConfirmationToken;
 import br.com.myevents.model.User;
 import br.com.myevents.model.dto.NewUserDTO;
-import br.com.myevents.model.dto.UserAccountDTO;
 import br.com.myevents.repository.ConfirmationTokenRepository;
 import br.com.myevents.repository.UserRepository;
 import br.com.myevents.security.enums.Role;
+import br.com.myevents.utils.SimpleMessage;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,7 +35,7 @@ public class UserService {
     private final MailSenderService mailSenderService;
 
     /**
-     * Registra um novo usuário validado. (não realiza validação de dados)
+     * Registra um novo usuário.
      *
      * @param newUser o novo usuário
      * @return um usuário registrado
@@ -43,12 +43,12 @@ public class UserService {
     public User registerUser(NewUserDTO newUser) {
         if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
             throw new EmailExistsException(
-                    String.format("O email '%s' já está vinculado a uma conta de usuário.", newUser.getEmail()));
+                    String.format("O email '%s' já está vinculado a um usuário.", newUser.getEmail()));
         }
 
         if (userRepository.findByCPF(newUser.getCPF()).isPresent()) {
             throw new CPFExistsException(
-                    String.format("O CPF '%s' já está vinculado a uma conta de usuário.", newUser.getCPF()));
+                    String.format("O CPF '%s' já está vinculado a um usuário.", newUser.getCPF()));
         }
 
         // após passar pelas validações, salvar o usuário (desativado) na base de dados
@@ -58,7 +58,7 @@ public class UserService {
                 .name(newUser.getName())
                 .CPF(newUser.getCPF())
                 .phone(newUser.getPhone())
-                .role(Role.USUARIO.getId())
+                .role(Role.USER.getId())
                 .build());
 
         // enviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
@@ -91,30 +91,27 @@ public class UserService {
     }
 
     /**
-     * Tenta ativar uma conta de usuário através de um token de confirmação.
+     * Ativa um usuário através do seu token de confirmação.
      *
      * @param token o token de confirmação
      * @return o resultado
      */
-    public String confirmUser(String token) {
+    public SimpleMessage confirmUser(String token) {
         ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token).orElseThrow(
-                () -> new ConfirmationTokenNotFoundException(
-                        String.format("O token de confirmação '%s' não existe.", token)));
+                () -> new TokenNotFoundException("O token de confirmação não existe."));
 
         if (confirmationToken.getExpiration().isBefore(Instant.now())) {
-            throw new ConfirmationTokenExpiredException(String.format("O token de confirmação '%s' expirou.", token));
+            throw new TokenExpiredException("O token de confirmação expirou.");
         }
 
         User user = Optional.of(confirmationToken.getUser()).orElseThrow(
-                () -> new ConfirmationTokenUserNotFoundException(
-                        String.format("O token de confirmação '%s' não está vinculado a nenhuma conta de usuário.",
-                                token)));
+                () -> new TokenUserNotFoundException("O token de confirmação não está vinculado a nenhum usuário."));
 
         // ativar a conta do usuário
         user.setEnabled(true);
         userRepository.save(user);
 
-        // com a conta do usuário ativada podemos remover todos os tokens vinculados a ela
+        // com a conta do usuário ativada podemos remover todos os tokens de confirmação vinculados a ela
         confirmationTokenRepository.findAllByUser(user).forEach(confirmationTokenRepository::delete);
 
         // enviar mensagem confirmando que a conta foi ativada para o email do usuário
@@ -127,28 +124,22 @@ public class UserService {
                                 "<a href='http://localhost:4200/signin'>clique aqui</a> para entrar.",
                         user.getName()));
 
-        return String.format(
-                "{\"message\": \"A conta de usuário com email '%s' foi ativada.\"}", user.getEmail());
+        return SimpleMessage.builder().message("O usuário foi ativado.").build();
     }
 
     /**
-     * Reenvia o email de confirmação da conta de usuário.
+     * Reenvia a mensagem de email com um link de confirmação de usuário.
      *
-     * @param userAccount a conta de usuário
+     * @param email o email do usuário
      * @return o resultado
      */
-    public String resendUserConfirmation(UserAccountDTO userAccount) {
-        User user = userRepository.findByEmail(userAccount.getEmail()).orElseThrow(UserAccountNotFoundException::new);
-
-        // por algum motivo que eu desconheço isso não funciona
-//        if (passwordEncoder.matches(userAccount.getPassword(), user.getPassword())) {
-//            throw new UserAccountNotFoundException();
-//        }
+    public SimpleMessage resendUserConfirmation(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserAccountNotFoundException("O email não pertence a nenhum usuário conhecido."));
 
         // não fazer nada e retornar uma mensagem caso a conta de usuário já esteja ativada
         if (user.isEnabled()) {
-            return String.format(
-                    "{\"message\": \"A conta de usuário com o email '%s' já está ativada.\"}", user.getEmail());
+            return SimpleMessage.builder().message("O usuário já está ativado.").build();
         }
 
         // reenviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
@@ -162,12 +153,9 @@ public class UserService {
                                 "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
                         user.getName(),
                         // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
-                        confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build())
-                                .getToken()));
+                        confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build()).getToken()));
 
-        return String.format(
-                "{\"message\": \"A mensagem com o link de ativação da conta foi enviada para '%s'.\"}",
-                user.getEmail());
+        return SimpleMessage.builder().message("O link de ativação do usuário foi enviado.").build();
     }
 
 }

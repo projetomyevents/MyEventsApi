@@ -22,16 +22,17 @@ public class UserAccountDetailsService {
     private final UserRepository userRepository;
 
     /**
-     * Localiza um usuário a partir de seu email e retorna os detalhes da sua conta.
+     * Localiza um usuário pelo seu email e retorna os detalhes da sua conta.
      *
      * @param email o email que será usado para localizar o usuário
      * @return os detalhes da conta de usuário
      * @throws EmailNotFoundException se o email não está vinculado a nenhum usuário conhecido
      */
     public UserAccountDetails loadUserAccoutByEmail(String email) throws EmailNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new EmailNotFoundException(
-                        String.format("O email '%s' não está vinculado a nenhum usuário conhecido.", email)));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> {
+            throw new EmailNotFoundException(
+                    String.format("O email '%s' não está vinculado a nenhum usuário conhecido.", email));
+        });
 
         return UserAccountDetails.builder()
                 .id(user.getId())

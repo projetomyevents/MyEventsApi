@@ -43,7 +43,8 @@ public class UserAccountAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     /**
-     * Retorna um token com as informações básicas de autenticação de uma conta de usuário a partir de um token.
+     * Retorna um {@link UserAccountAuthenticationToken} com as informações básicas de autenticação
+     * de uma conta de usuário a partir de um token.
      *
      * @param token o token
      * @return o token com as informações básicas de autenticação de uma conta de usuário

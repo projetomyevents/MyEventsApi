@@ -6,7 +6,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Representa um erro de violação de validação de um atributo em um objeto.
+ * Representa um erro de um atributo em um objeto.
  */
 @SuperBuilder
 @Data

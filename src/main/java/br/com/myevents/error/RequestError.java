@@ -1,7 +1,9 @@
 package br.com.myevents.error;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 
@@ -22,7 +24,7 @@ public class RequestError {
     /**
      * O instante em que o erro ocorreu.
      */
-    @Builder.Default private final Instant timestamp = Instant.now();
+    @Setter(AccessLevel.NONE) @Builder.Default private final Instant timestamp = Instant.now();
 
     /**
      * A mensagem sobre o erro.
@@ -33,5 +35,10 @@ public class RequestError {
      * A mensagem de depuração sobre o erro.
      */
     private String debugMessage;
+
+    /**
+     * O nome da exceção.
+     */
+    private String exception;
 
 }

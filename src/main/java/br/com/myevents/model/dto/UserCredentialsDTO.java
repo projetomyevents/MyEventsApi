@@ -5,20 +5,20 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * Representa as informações básicas de uma conta de usuário.
+ * Representa as credenciais de um usuário.
  */
 @Data
-public class UserAccountDTO implements Serializable {
+public class UserCredentialsDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * O email de uma conta de usuário.
+     * O email do usuário.
      */
     private String email;
 
     /**
-     * A senha de uma conta de usuário.
+     * A senha do usuário.
      */
     private String password;
 

@@ -1,6 +1,6 @@
 package br.com.myevents.model.dto;
 
-import br.com.myevents.validation.ConfirmPassword;
+import br.com.myevents.validation.FieldsMatch;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,11 +15,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@ConfirmPassword
+@FieldsMatch(message = "As senhas são diferentes.", firstField = "password", secondField = "confirmedPassword")
 public class NewUserDTO extends UserDTO {
 
     /**
-     * A senha confirmada de um usuário.
+     * A senha confirmada do usuário.
      */
     private String confirmedPassword;
 

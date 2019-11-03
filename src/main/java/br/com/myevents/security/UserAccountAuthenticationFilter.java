@@ -1,8 +1,11 @@
 package br.com.myevents.security;
 
 import br.com.myevents.error.RequestError;
-import br.com.myevents.model.dto.UserAccountDTO;
+import br.com.myevents.model.dto.UserCredentialsDTO;
+import br.com.myevents.utils.SimpleMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -25,10 +28,17 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
+    private final ObjectMapper objectMapper;
+
     public UserAccountAuthenticationFilter(AuthenticationManager authenticationManager, TokenService tokenService) {
         super(new AntPathRequestMatcher("/user/login", "POST"));
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
+        this.objectMapper = new ObjectMapper();
+
+        // especificar como uma data deve ser convertida pelo ObjectMapper
+        this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
     @Override
@@ -39,15 +49,16 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
                     String.format("Método '%s' de autenticação não suportado.", request.getMethod()));
         }
 
-        UserAccountDTO userAccount;
+        UserCredentialsDTO userCredentials;
         try {
-            userAccount = new ObjectMapper().readValue(request.getInputStream(), UserAccountDTO.class);
+            userCredentials = objectMapper.readValue(request.getInputStream(), UserCredentialsDTO.class);
         } catch (Exception e) {
-            throw new AuthenticationServiceException("Argumentos inválidos.");
+            throw new AuthenticationServiceException(
+                    "Formato do corpo da requisição inválido para as credenciais de usuário.");
         }
 
         return authenticationManager.authenticate(new UserAccountAuthenticationToken(
-                userAccount.getEmail(), userAccount.getPassword(), new ArrayList<>()));
+                userCredentials.getEmail(), userCredentials.getPassword(), new ArrayList<>()));
     }
 
     @Override
@@ -60,9 +71,10 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
         response.addHeader("Authorization", String.format(
                 "Bearer %s", tokenService.generateToken(authResult.getPrincipal().toString())));
         response.addHeader("access-control-expose-headers", "Authorization");
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter()
-                .append("{\"message\": \"Autenticação bem sucedida.\"}");
+        response.setContentType("application/json");
+        response.getWriter().append(objectMapper.writeValueAsString(SimpleMessage.builder()
+                .message("Autenticação bem sucedida.")
+                .build()));
     }
 
     @Override
@@ -71,15 +83,14 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
             HttpServletResponse response,
             AuthenticationException failed
     ) throws IOException {
-        RequestError requestError = RequestError.builder()
-                .status(HttpStatus.UNAUTHORIZED)
-                .message("Falha na autenticação!")
-                .debugMessage(failed.getLocalizedMessage())
-                .build();
-
-        response.setStatus(requestError.getStatus().value());
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().append(new ObjectMapper().writeValueAsString(requestError));
+        response.setStatus(401);
+        response.setContentType("application/json");
+        response.getWriter().append(objectMapper.writeValueAsString(
+                RequestError.builder()
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .message(failed.getLocalizedMessage())
+                        .exception(failed.getClass().getSimpleName())
+                        .build()));
     }
 
 }

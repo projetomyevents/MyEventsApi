@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 import java.util.Set;
 
 /**
- * Representa múltiplos erros de requisição HTTP.
+ * Representa uma coleção de erros de requisição HTTP.
  */
 @SuperBuilder
 @Data
@@ -18,8 +18,8 @@ import java.util.Set;
 public class RequestMultipleErrors extends RequestError {
 
     /**
-     * O conjunto de erros.
+     * A coleção de erros.
      */
-    @Singular private Set<SimpleError> errors;
+    @Singular private Set<ObjectError> errors;
 
 }
