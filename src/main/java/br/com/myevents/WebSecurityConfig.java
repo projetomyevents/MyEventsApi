@@ -39,7 +39,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/user/register",
             "/user/login",
             "/user/confirm**",
-            "/user/resend-confirmation/**"
+            "/user/resend-confirmation/**",
+            "/user/send-password-reset/**",
+            "/user/password-reset"
     };
 
     @Override

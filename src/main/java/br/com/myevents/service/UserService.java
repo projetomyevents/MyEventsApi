@@ -8,9 +8,12 @@ import br.com.myevents.exception.TokenNotFoundException;
 import br.com.myevents.exception.TokenUserNotFoundException;
 import br.com.myevents.exception.UserAccountNotFoundException;
 import br.com.myevents.model.ConfirmationToken;
+import br.com.myevents.model.PasswordResetToken;
 import br.com.myevents.model.User;
+import br.com.myevents.model.dto.NewPasswordDTO;
 import br.com.myevents.model.dto.NewUserDTO;
 import br.com.myevents.repository.ConfirmationTokenRepository;
+import br.com.myevents.repository.PasswordResetTokenRepository;
 import br.com.myevents.repository.UserRepository;
 import br.com.myevents.security.enums.Role;
 import br.com.myevents.utils.SimpleMessage;
@@ -31,6 +34,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final MailSenderService mailSenderService;
 
@@ -154,6 +158,61 @@ public class UserService {
                         user.getName(),
                         // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
                         confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build()).getToken()));
+
+        return SimpleMessage.builder().message("O link de ativação do usuário foi enviado.").build();
+    }
+
+    /**
+     * Realiza a redefinição da senha do usuário.
+     *
+     * @param token o token
+     * @param newPassword a nova senha
+     * @return o resultado
+     */
+    public SimpleMessage resetUserPassword(String token, NewPasswordDTO newPassword) {
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token).orElseThrow(
+                () -> new TokenNotFoundException("O token de redefinição de senha não existe."));
+
+        if (passwordResetToken.getExpiration().isBefore(Instant.now())) {
+            throw new TokenExpiredException("O token de redefinição de senha expirou.");
+        }
+
+        User user = Optional.of(passwordResetToken.getUser()).orElseThrow(
+                () -> new TokenUserNotFoundException(
+                        "O token de redefinição de senha não está vinculado a nenhum usuário."));
+
+        // atualizar a senha do usuário
+        user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
+        userRepository.save(user);
+
+        // com a senha do usuário atualizada podemos remover todos os tokens de redefinição de senha vinculados a ele
+        passwordResetTokenRepository.findAllByUser(user).forEach(passwordResetTokenRepository::delete);
+
+        return SimpleMessage.builder().message("A senha do usuário foi atualizada.").build();
+    }
+
+    /**
+     * Envia uma mensagem de email com um link de redefinição de senha de usuário.
+     *
+     * @param email o email do usuário
+     * @return o resultado
+     */
+    public SimpleMessage sendPasswordReset(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserAccountNotFoundException("O email não pertence a nenhum usuário conhecido."));
+
+        // reenviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
+        mailSenderService.sendHtml(
+                user.getEmail(),
+                "Redefinição de Senha MyEvents",
+                String.format(
+                        "Olá %s, um token de redefinição de senha foi requisitado para a sua conta em " +
+                                "<a href='http://localhost:4200/'>MyEvents</a>, para atualizar sua senha " +
+                                "<a href='http://localhost:8080/user/password-reset?token=%s'>clique aqui</a>. " +
+                                "Caso voçê não tenha requisitado uma redefinição de senha ignore esta mensagem.",
+                        user.getName(),
+                        // criar e salvar um novo token de redefinição de senha para a conta de usuário na base de dados
+                        passwordResetTokenRepository.save(PasswordResetToken.builder().user(user).build()).getToken()));
 
         return SimpleMessage.builder().message("O link de ativação do usuário foi enviado.").build();
     }

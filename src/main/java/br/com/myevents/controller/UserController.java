@@ -12,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,6 +55,22 @@ public class UserController {
     @PostMapping("/resend-confirmation/{email}")
     public ResponseEntity<Object> resendUserConfirmation(@PathVariable String email) {
         return ResponseEntity.ok(userService.resendUserConfirmation(email));
+    }
+
+    @PostMapping("/password-reset")
+    public ResponseEntity<Object> resetUserPassword(
+            @RequestParam("token") String token,
+            @Validated @RequestBody NewPasswordDTO newPassword
+    ) {
+        System.out.println(token);
+        System.out.println(newPassword);
+        return ResponseEntity.ok(userService.resetUserPassword(token, newPassword));
+    }
+
+    @PostMapping("/send-password-reset/{email}")
+    public ResponseEntity<Object> sendPasswordReset(@PathVariable String email) {
+        System.out.println(email);
+        return ResponseEntity.ok(userService.sendPasswordReset(email));
     }
 
 }
