@@ -20,6 +20,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
@@ -90,6 +91,12 @@ public class User implements Serializable {
     @CollectionTable(name="ROLE", foreignKey = @ForeignKey(name = "user_role_fkey"))
     @Column(name = "role_name")
     @Singular private Set<Integer> roles;
+
+    /**
+     * Os eventos de um usuário.
+     */
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
+    @Singular private Set<Event> events;
 
     //<editor-fold desc="Custom getters and setters">
 
