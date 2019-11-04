@@ -1,5 +1,6 @@
 package br.com.myevents.model;
 
+import br.com.myevents.model.enums.PresenceStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -64,7 +65,7 @@ public class Guest implements Serializable {
      * O status de presença do convidado.
      */
     @Column(nullable = false)
-    private Integer presenceStatus;
+    private PresenceStatus presenceStatus;
 
     /**
      * O evento do convidado.
