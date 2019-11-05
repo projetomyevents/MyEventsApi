@@ -88,7 +88,7 @@ public class UserService {
      * @param email o email
      * @return o usuário
      */
-    public User getUser(String email) {
+    public User retrieveUser(String email) {
         return userRepository.findByEmail(email).orElseThrow(
                 () -> new EmailNotFoundException(
                         String.format("O email '%s' não está vinculado a nenhum usuário conhecido.", email)));

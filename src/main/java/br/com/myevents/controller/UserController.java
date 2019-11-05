@@ -40,7 +40,7 @@ public class UserController {
 
     @GetMapping("/{email}")
     public ResponseEntity<UserDTO> getUser(@PathVariable String email) {
-        User user = userService.getUser(email);
+        User user = userService.retrieveUser(email);
         return ResponseEntity.ok(UserDTO.builder()
                 .email(user.getEmail())
                 .password(user.getPassword())
