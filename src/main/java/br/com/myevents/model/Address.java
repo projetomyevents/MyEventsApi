@@ -17,9 +17,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -45,25 +42,10 @@ public class Address implements Serializable {
     private Long id;
 
     /**
-     * O nome do logradouro de um endereço postal.
+     * O CEP de um endereço postal.
      */
-    @Column(nullable = false)
-    @NotBlank private String street;
-
-    /**
-     * O número/identificador da residência de um endereço postal. (Pode conter letras.)
-     */
-    private String number;
-
-    /**
-     * O número/identificador do apartamento/quarto de um endereço postal. (Pode conter letras.)
-     */
-    private String numberAptRoom;
-
-    /**
-     * As informações adicionais de um endereço postal.
-     */
-    private String complement;
+    @Column(nullable = false, length = 8)
+    private String CEP;
 
     /**
      * O nome do bairro de um endereço postal.
@@ -71,17 +53,27 @@ public class Address implements Serializable {
     private String neighborhood;
 
     /**
-     * O código postal de um endereço postal.
+     * O nome do logradouro de um endereço postal.
      */
-    @Column(nullable = false, length = 12)
-    @NotBlank @Size(min = 2, max = 12) private String postalCode;
+    @Column(nullable = false)
+    private String street;
+
+    /**
+     * O número/identificador da residência de um endereço postal. (Pode conter letras.)
+     */
+    private String number;
+
+    /**
+     * As informações adicionais de um endereço postal.
+     */
+    private String complement;
 
     /**
      * A cidade em que um endereço postal reside.
      */
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false, foreignKey = @ForeignKey(name = "address_city_fkey"))
-    @NotNull private City city;
+    private City city;
 
     // O estado está implícito em uma cidade.
 

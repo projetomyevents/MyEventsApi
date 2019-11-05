@@ -15,8 +15,6 @@ import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -44,14 +42,13 @@ public class City implements Serializable {
      * O nome de uma cidade.
      */
     @Column(nullable = false)
-    @NotBlank private String name;
+    private String name;
 
     /**
      * O estado em que uma cidade reside.
      */
     @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false,
-            foreignKey = @ForeignKey(name = "city_state_fkey"))
-    @NotNull private State state;
+    @JoinColumn(name = "state_id", nullable = false, foreignKey = @ForeignKey(name = "city_state_fkey"))
+    private State state;
 
 }

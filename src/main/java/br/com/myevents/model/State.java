@@ -12,9 +12,6 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -35,7 +32,6 @@ public class State implements Serializable {
     /**
      * A chave primária de um estado.
      */
-    @Positive
     @Id
     private Integer id;
 
@@ -43,12 +39,12 @@ public class State implements Serializable {
      * A abreviação de uma unidade federal.
      */
     @Column(name = "abbr", unique = true, nullable = false, length = 2)
-    @NotBlank @Size(min = 2, max = 2) private String abbreviation;
+    private String abbreviation;
 
     /**
      * O nome de uma unidade federal.
      */
     @Column(unique = true, nullable = false)
-    @NotBlank private String name;
+    private String name;
 
 }
