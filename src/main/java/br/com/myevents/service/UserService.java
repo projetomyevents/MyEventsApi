@@ -12,6 +12,7 @@ import br.com.myevents.model.PasswordResetToken;
 import br.com.myevents.model.User;
 import br.com.myevents.model.dto.NewPasswordDTO;
 import br.com.myevents.model.dto.NewUserDTO;
+import br.com.myevents.model.dto.UserDTO;
 import br.com.myevents.repository.ConfirmationTokenRepository;
 import br.com.myevents.repository.PasswordResetTokenRepository;
 import br.com.myevents.repository.UserRepository;
@@ -85,10 +86,18 @@ public class UserService {
      * @param email o email
      * @return o usuário
      */
-    public User retrieveUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
+    public UserDTO retrieveUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new EmailNotFoundException(
                         String.format("O email '%s' não está vinculado a nenhum usuário conhecido.", email)));
+
+        return UserDTO.builder()
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .name(user.getName())
+                .CPF(user.getCPF())
+                .phone(user.getPhone())
+                .build();
     }
 
     /**

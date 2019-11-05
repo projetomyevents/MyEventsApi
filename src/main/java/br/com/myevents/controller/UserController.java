@@ -38,14 +38,7 @@ public class UserController {
 
     @GetMapping("/{email}")
     public ResponseEntity<UserDTO> getUser(@PathVariable String email) {
-        User user = userService.retrieveUser(email);
-        return ResponseEntity.ok(UserDTO.builder()
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .name(user.getName())
-                .CPF(user.getCPF())
-                .phone(user.getPhone())
-                .build());
+        return ResponseEntity.ok(userService.retrieveUser(email));
     }
 
     @GetMapping("/confirm")
