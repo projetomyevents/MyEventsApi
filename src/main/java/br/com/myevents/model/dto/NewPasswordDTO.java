@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  * Representa uma nova senha para um usuário.
@@ -17,7 +18,9 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldsMatch(message = "As senhas são diferentes.", firstField = "password", secondField = "confirmedPassword")
-public class NewPasswordDTO {
+public class NewPasswordDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * A nova senha.
