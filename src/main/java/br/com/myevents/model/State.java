@@ -11,16 +11,14 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
- * Representa uma cidade.
+ * Representa uma unidade federal.
  */
 @Entity
 @Builder
@@ -30,28 +28,27 @@ import java.io.Serializable;
 @Setter
 @EqualsAndHashCode(of = "id")
 @ToString
-public class City implements Serializable {
+public class State implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * A chave primária de uma cidade.
+     * A chave primária de um estado.
      */
+    @Positive
     @Id
     private Integer id;
 
     /**
-     * O nome de uma cidade.
+     * A abreviação de uma unidade federal.
      */
-    @Column(nullable = false)
-    @NotBlank private String name;
+    @Column(name = "abbr", unique = true, nullable = false, length = 2)
+    @NotBlank @Size(min = 2, max = 2) private String abbreviation;
 
     /**
-     * O estado em que uma cidade reside.
+     * O nome de uma unidade federal.
      */
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false,
-            foreignKey = @ForeignKey(name = "city_state_fkey"))
-    @NotNull private State state;
+    @Column(unique = true, nullable = false)
+    @NotBlank private String name;
 
 }
