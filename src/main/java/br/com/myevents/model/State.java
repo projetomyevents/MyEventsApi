@@ -30,19 +30,13 @@ public class State implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * A chave primária de um estado.
+     * A chave primária do estado.
      */
     @Id
     private Integer id;
 
     /**
-     * A abreviação de uma unidade federal.
-     */
-    @Column(name = "abbr", unique = true, nullable = false, length = 2)
-    private String abbreviation;
-
-    /**
-     * O nome de uma unidade federal.
+     * O nome do estado.
      */
     @Column(unique = true, nullable = false)
     private String name;

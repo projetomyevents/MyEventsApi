@@ -33,19 +33,19 @@ public class City implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * A chave primária de uma cidade.
+     * A chave primária da cidade.
      */
     @Id
     private Integer id;
 
     /**
-     * O nome de uma cidade.
+     * O nome da cidade.
      */
     @Column(nullable = false)
     private String name;
 
     /**
-     * O estado em que uma cidade reside.
+     * O estado em que a cidade reside.
      */
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false, foreignKey = @ForeignKey(name = "city_state_fkey"))

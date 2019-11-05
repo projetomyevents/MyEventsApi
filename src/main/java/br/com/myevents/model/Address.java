@@ -35,46 +35,46 @@ public class Address implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * A chave primária de um endereço postal.
+     * A chave primária do endereço postal.
      */
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * O CEP de um endereço postal.
+     * O CEP do endereço postal.
      */
     @Column(nullable = false, length = 8)
     private String CEP;
 
     /**
-     * O nome do bairro de um endereço postal.
+     * O nome do bairro do endereço postal.
      */
     private String neighborhood;
 
     /**
-     * O nome do logradouro de um endereço postal.
+     * O nome do logradouro do endereço postal.
      */
     @Column(nullable = false)
     private String street;
 
     /**
-     * O número/identificador da residência de um endereço postal. (Pode conter letras.)
+     * O número/identificador da residência do endereço postal. (Pode conter letras.)
      */
     private String number;
 
     /**
-     * As informações adicionais de um endereço postal.
+     * As informações adicionais do endereço postal.
      */
     private String complement;
 
     /**
-     * A cidade em que um endereço postal reside.
+     * A cidade em que o endereço postal reside.
      */
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false, foreignKey = @ForeignKey(name = "address_city_fkey"))
     private City city;
 
-    // O estado está implícito em uma cidade.
+    // O estado está implícito na cidade.
 
 }
