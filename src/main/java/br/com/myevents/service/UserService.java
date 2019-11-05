@@ -42,9 +42,8 @@ public class UserService {
      * Registra um novo usuário.
      *
      * @param newUser o novo usuário
-     * @return um usuário registrado
      */
-    public User registerUser(NewUserDTO newUser) {
+    public void registerUser(NewUserDTO newUser) {
         if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
             throw new EmailExistsException(
                     String.format("O email '%s' já está vinculado a um usuário.", newUser.getEmail()));
@@ -78,8 +77,6 @@ public class UserService {
                         // criar e salvar o token de confirmação para a conta de usuário na base de dados
                         confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build())
                                 .getToken()));
-
-        return user;
     }
 
     /**

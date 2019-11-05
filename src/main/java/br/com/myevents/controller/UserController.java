@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * A classe responsável pelo tratamento de requisições de {@link User}.
@@ -31,9 +30,8 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Object> registerUser(@Validated @RequestBody NewUserDTO newUser) {
-        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(userService.registerUser(newUser)).toUri()
-        ).body(SimpleMessage.builder()
+        userService.registerUser(newUser);
+        return ResponseEntity.ok(SimpleMessage.builder()
                 .message("Registrado com sucesso! Verifique seu email e ative sua conta.")
                 .build());
     }
