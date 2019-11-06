@@ -62,24 +62,9 @@ public class Event implements Serializable {
     private LocalDate startDate;
 
     /**
-     * O preço de entrada do evento.
-     */
-    private String admissionPrice;
-
-    /**
      * O limite de acompanhantes do evento.
      */
     private byte companionLimit;
-
-    /**
-     * A idade mínima permitida no evento.
-     */
-    private byte minAge;
-
-    /**
-     * O traje recomendado para o evento.
-     */
-    private String attire;
 
     /**
      * A descrição do evento.
@@ -94,14 +79,19 @@ public class Event implements Serializable {
     private String schedule;
 
     /**
-     * Uma imagem ilustrativa do evento.
+     * O preço de entrada do evento.
      */
-    private byte[] image;
+    private String admissionPrice;
 
     /**
-     * Os anexos do evento.
+     * A idade mínima permitida no evento.
      */
-    private byte[] attachments;
+    private byte minAge;
+
+    /**
+     * O traje recomendado para o evento.
+     */
+    private String attire;
 
     /**
      * Endereço postal em que ocorrerá o evento.
@@ -112,11 +102,14 @@ public class Event implements Serializable {
     private Address address;
 
     /**
-     * Os convidados de um evento.
+     * Uma imagem ilustrativa do evento.
      */
-    @JsonManagedReference
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", orphanRemoval = true)
-    @Singular private Set<Guest> guests;
+    private byte[] image;
+
+    /**
+     * Os anexos do evento.
+     */
+    private byte[] attachments;
 
     /**
      * O dono do evento.
@@ -124,5 +117,12 @@ public class Event implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "user_event_fkey"))
     private User user;
+
+    /**
+     * Os convidados de um evento.
+     */
+    @JsonManagedReference
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", orphanRemoval = true)
+    @Singular private Set<Guest> guests;
 
 }
