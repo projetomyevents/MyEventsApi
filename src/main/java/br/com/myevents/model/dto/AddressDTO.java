@@ -24,17 +24,20 @@ public class AddressDTO implements Serializable {
      * O CEP do endereço postal.
      */
     // TODO: validar CEP
-    @NotBlank private String CEP;
+    @NotBlank(message = "O CEP não deve ficar em branco.")
+    private String CEP;
 
     /**
      * O nome do bairro do endereço postal.
      */
-    @NotBlank private String neighborhood;
+    @NotBlank(message = "O bairro não deve ficar em branco.")
+    private String neighborhood;
 
     /**
      * O nome do logradouro do endereço postal.
      */
-    @NotBlank private String street;
+    @NotBlank(message = "A rua não deve ficar em branco.")
+    private String street;
 
     /**
      * O número/identificador da residência do endereço postal. (Pode conter letras.)
@@ -49,6 +52,7 @@ public class AddressDTO implements Serializable {
     /**
      * O identificador da cidade em que o endereço postal reside.
      */
-    @NotNull private Integer cityId;
+    @NotNull(message = "O identificador da cidade não deve ser nulo.")
+    private Integer cityId;
 
 }
