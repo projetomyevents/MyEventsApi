@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Singular;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Representa um contrato de um evento.
@@ -107,7 +109,7 @@ public class EventDTO implements Serializable {
     /**
      * Os anexos do evento.
      */
-    private byte[] attachments;
+    @Singular private List<byte[]> attachments;
 
     /**
      * Informações básicas do usuário dono do evento.

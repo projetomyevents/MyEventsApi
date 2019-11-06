@@ -12,7 +12,9 @@ import lombok.Singular;
 import lombok.ToString;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -25,6 +27,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -109,7 +112,10 @@ public class Event implements Serializable {
     /**
      * Os anexos do evento.
      */
-    private byte[] attachments;
+    @ElementCollection(fetch= FetchType.EAGER)
+    @CollectionTable(name="ATTACHMENT", foreignKey = @ForeignKey(name = "event_attachments_fkey"))
+    @Column(name = "attachment_data")
+    @Singular private List<byte[]> attachments;
 
     /**
      * O dono do evento.

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Singular;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.FutureOrPresent;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Representa um contrato de um novo evento.
@@ -117,7 +119,7 @@ public class NewEventDTO implements Serializable {
     /**
      * Os anexos do evento.
      */
-    private byte[] attachments;
+    @Singular private List<byte[]> attachments;
 
     /**
      * O email do usuário dono do evento.
