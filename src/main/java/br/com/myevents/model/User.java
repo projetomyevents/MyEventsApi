@@ -89,7 +89,7 @@ public class User implements Serializable {
      */
     @ElementCollection(fetch= FetchType.EAGER)
     @CollectionTable(name="ROLE", foreignKey = @ForeignKey(name = "user_role_fkey"))
-    @Column(name = "role_name")
+    @Column(name = "role_id")
     @Singular private Set<Integer> roles;
 
     /**
