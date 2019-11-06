@@ -1,5 +1,7 @@
 package br.com.myevents;
 
+import br.com.myevents.model.Address;
+import br.com.myevents.model.City;
 import br.com.myevents.model.Event;
 import br.com.myevents.model.Guest;
 import br.com.myevents.model.User;
@@ -13,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
@@ -25,6 +28,7 @@ import java.util.Arrays;
 @Configuration
 @ConditionalOnProperty(prefix = "spring.jpa.hibernate", name = "ddl-auto",
         havingValue = "create-drop")
+@DependsOn({"initializeStates", "initializeCities"})
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class DevConfig {
 
@@ -75,6 +79,12 @@ public class DevConfig {
                 .startDate(LocalDate.now().plus(8, ChronoUnit.DAYS))
                 .description("bruh")
                 .schedule("18:00 -> Começa")
+                .address(Address.builder()
+                        .CEP("12312122")
+                        .neighborhood("bruh bairro")
+                        .street("bruh rua")
+                        .city(City.builder().id(12).build())
+                        .build())
                 .user(user1)
                 .build();
 
@@ -83,6 +93,12 @@ public class DevConfig {
                 .startDate(LocalDate.now().plus(9, ChronoUnit.DAYS))
                 .description("?")
                 .schedule("16:00 -> Começa")
+                .address(Address.builder()
+                        .CEP("12313123")
+                        .neighborhood("? bairro")
+                        .street("? rua")
+                        .city(City.builder().id(512).build())
+                        .build())
                 .user(user2)
                 .build();
 

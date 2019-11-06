@@ -8,8 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.ToString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
@@ -101,11 +104,19 @@ public class Event implements Serializable {
     private byte[] attachments;
 
     /**
+     * Endereço postal em que ocorrerá o evento.
+     */
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JoinColumn(name = "address_id", unique = true, nullable = false,
+            foreignKey = @ForeignKey(name = "event_address_fkey"))
+    private Address address;
+
+    /**
      * Os convidados de um evento.
      */
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", orphanRemoval = true)
-    private Set<Guest> guests;
+    @Singular private Set<Guest> guests;
 
     /**
      * O dono do evento.
