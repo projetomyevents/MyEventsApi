@@ -110,6 +110,16 @@ public class NewEventDTO implements Serializable {
     private String complement;
 
     /**
+     * Uma imagem ilustrativa do evento.
+     */
+    private byte[] image;
+
+    /**
+     * Os anexos do evento.
+     */
+    private byte[] attachments;
+
+    /**
      * O email do usuário dono do evento.
      */
     @NotBlank(message = "O email não deve ficar em branco.")
