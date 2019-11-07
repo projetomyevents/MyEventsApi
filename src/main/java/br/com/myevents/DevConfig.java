@@ -16,8 +16,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -41,7 +43,7 @@ public class DevConfig {
      * Preencher a base de dados com dados de amostra para testes.
      */
     @Bean
-    protected void populateDatabaseForTesting() {
+    protected void populateDatabaseForTesting() throws IOException {
         User adminUser = User.builder()
                 .email("admin@admin")
                 .password(passwordEncoder.encode("123456"))
@@ -85,6 +87,7 @@ public class DevConfig {
                         .street("bruh rua")
                         .city(City.builder().id(12).build())
                         .build())
+                .image(new ClassPathResource("test.png").getInputStream().readAllBytes())
                 .user(user1)
                 .build();
 
@@ -99,6 +102,8 @@ public class DevConfig {
                         .street("? rua")
                         .city(City.builder().id(512).build())
                         .build())
+                .attachment(new ClassPathResource("test.png").getInputStream().readAllBytes())
+                .attachment(new ClassPathResource("test.png").getInputStream().readAllBytes())
                 .user(user2)
                 .build();
 
