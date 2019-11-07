@@ -107,7 +107,22 @@ public class DevConfig {
                 .user(user2)
                 .build();
 
-        eventRepository.saveAll(Arrays.asList(event1, event2));
+        Event event3 = Event.builder()
+                .name("Reunião 2")
+                .startDate(LocalDate.now().plus(10, ChronoUnit.DAYS))
+                .description("?")
+                .schedule("9:00 -> Começa")
+                .address(Address.builder()
+                        .CEP("53223411")
+                        .neighborhood("? bairro")
+                        .street("? rua")
+                        .city(City.builder().id(1231).build())
+                        .build())
+                .image(new ClassPathResource("test.png").getInputStream().readAllBytes())
+                .user(user2)
+                .build();
+
+        eventRepository.saveAll(Arrays.asList(event1, event2, event3));
 
         Guest guest1 = Guest.builder()
                 .name("guest1")
