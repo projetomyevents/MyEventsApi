@@ -9,6 +9,7 @@ import br.com.myevents.model.Event;
 import br.com.myevents.model.User;
 import br.com.myevents.model.dto.EventDTO;
 import br.com.myevents.model.dto.NewEventDTO;
+import br.com.myevents.model.dto.SimpleEventDTO;
 import br.com.myevents.model.dto.SimpleUserDTO;
 import br.com.myevents.repository.CityRepository;
 import br.com.myevents.repository.EventRepository;
@@ -17,6 +18,9 @@ import br.com.myevents.security.UserAccountDetails;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementa a lógica de serviços de {@link Event}.
@@ -101,6 +105,22 @@ public class EventService {
                         .phone(event.getUser().getPhone())
                         .build())
                 .build();
+    }
+
+    /**
+     * Retorna uma lista com todos os eventos do usuário.
+     *
+     * @param userAccountDetails o usuário
+     * @return uma lista com todos os eventos do usuário
+     */
+    public List<SimpleEventDTO> retrieveEvents(UserAccountDetails userAccountDetails) {
+        return eventRepository.findAllByUser_Email(userAccountDetails.getEmail()).stream()
+                .map(event -> SimpleEventDTO.builder()
+                        .id(event.getId())
+                        .name(event.getName())
+                        .description(event.getDescription())
+                        .image(event.getImage())
+                        .build()).collect(Collectors.toList());
     }
 
 }
