@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -120,12 +119,5 @@ public class NewEventDTO implements Serializable {
      * Os anexos do evento.
      */
     @Singular private List<byte[]> attachments;
-
-    /**
-     * O email do usuário dono do evento.
-     */
-    @NotBlank(message = "O email não deve ficar em branco.")
-    @Email(message = "O email não deve ser inválido.")
-    private String userEmail;
 
 }

@@ -13,6 +13,7 @@ import br.com.myevents.model.dto.SimpleUserDTO;
 import br.com.myevents.repository.CityRepository;
 import br.com.myevents.repository.EventRepository;
 import br.com.myevents.repository.UserRepository;
+import br.com.myevents.security.UserAccountDetails;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,10 +34,10 @@ public class EventService {
      *
      * @param newEvent o novo evento
      */
-    public void registerEvent(NewEventDTO newEvent) {
-        User user = userRepository.findByEmail(newEvent.getUserEmail()).orElseThrow(
+    public void registerEvent(UserAccountDetails userAccountDetails, NewEventDTO newEvent) {
+        User user = userRepository.findByEmail(userAccountDetails.getEmail()).orElseThrow(
                 () -> new EmailNotFoundException(
-                        String.format("Nenhum usuário encontrado com o email '%s'.", newEvent.getUserEmail())));
+                        String.format("Nenhum usuário encontrado com o email '%s'.", userAccountDetails.getEmail())));
 
         City city = cityRepository.findById(newEvent.getCityId()).orElseThrow(
                 () -> new CityNotFoundException(

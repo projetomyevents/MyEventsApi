@@ -3,11 +3,13 @@ package br.com.myevents.controller;
 import br.com.myevents.model.Event;
 import br.com.myevents.model.dto.EventDTO;
 import br.com.myevents.model.dto.NewEventDTO;
+import br.com.myevents.security.UserAccountDetails;
 import br.com.myevents.service.EventService;
 import br.com.myevents.utils.SimpleMessage;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,8 +29,11 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping("/register")
-    public ResponseEntity<Object> registerEvent(@Validated @RequestBody NewEventDTO newEvent) {
-        eventService.registerEvent(newEvent);
+    public ResponseEntity<Object> registerEvent(
+            @AuthenticationPrincipal UserAccountDetails userAccountDetails,
+            @Validated @RequestBody NewEventDTO newEvent
+    ) {
+        eventService.registerEvent(userAccountDetails, newEvent);
         return ResponseEntity.ok(SimpleMessage.builder().message("Registrado com sucesso!").build());
     }
 
