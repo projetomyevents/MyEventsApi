@@ -44,18 +44,16 @@ public class UserAccountAuthorizationFilter extends BasicAuthenticationFilter {
 
     /**
      * Retorna um {@link UserAccountAuthenticationToken} com as informações básicas de autenticação
-     * de uma conta de usuário a partir de um token.
+     * de uma conta de usuário a partir de um token de autenticação.
      *
      * @param token o token
      * @return o token com as informações básicas de autenticação de uma conta de usuário
      */
     private UserAccountAuthenticationToken getAuthentication(String token) {
-        if (tokenService.isValid(token)) {
-            UserAccountDetails userAccountDetails =
-                    userAccountDetailsService.loadUserAccoutByEmail(tokenService.getEmail(token));
-            return new UserAccountAuthenticationToken(userAccountDetails, null, userAccountDetails.getAuthorities());
-        }
-        return null;
+        return tokenService.isValid(token)
+                ? new UserAccountAuthenticationToken(
+                        userAccountDetailsService.loadUserAccoutByEmail(tokenService.getEmail(token)), null)
+                : null;
     }
 
 }

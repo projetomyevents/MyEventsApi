@@ -79,8 +79,8 @@ public class NewEventDTO implements Serializable {
      * O CEP do endereço postal.
      */
     // TODO: validar cep
-    @NotBlank(message = "O cep não deve ficar em branco.")
-    private String cep;
+    @NotBlank(message = "O CEP não deve ficar em branco.")
+    private String CEP;
 
     /**
      * O identificador da cidade em que o endereço postal reside.
@@ -89,19 +89,19 @@ public class NewEventDTO implements Serializable {
     private Integer cityId;
 
     /**
-     * O nome do bairro do endereço postal.
+     * O bairro do endereço postal.
      */
     @NotBlank(message = "O bairro não deve ficar em branco.")
     private String neighborhood;
 
     /**
-     * O nome do logradouro do endereço postal.
+     * O logradouro do endereço postal.
      */
     @NotBlank(message = "A rua não deve ficar em branco.")
     private String street;
 
     /**
-     * O número/identificador da residência do endereço postal. (Pode conter letras.)
+     * A identificação do local do endereço postal.
      */
     private String number;
 

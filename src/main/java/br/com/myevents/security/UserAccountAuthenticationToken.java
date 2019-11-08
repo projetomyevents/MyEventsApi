@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -15,20 +16,20 @@ public class UserAccountAuthenticationToken extends AbstractAuthenticationToken 
     private static final long serialVersionUID = 1L;
 
     /**
-     * O email da conta de usuário.
+     * O email da conta do usuário.
      */
     private final Object principal;
 
     /**
-     * As credenciais da conta de usuário.
+     * As credenciais da conta do usuário.
      */
     private Object credentials;
 
     public UserAccountAuthenticationToken(Object principal, Object credentials) {
-        super(null);
+        super(new ArrayList<>());
         this.principal = principal;
         this.credentials = credentials;
-        this.setAuthenticated(false);
+        this.setAuthenticated(true);
     }
 
     public UserAccountAuthenticationToken(

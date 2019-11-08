@@ -72,7 +72,7 @@ public class Guest implements Serializable {
      */
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false, foreignKey = @ForeignKey(name = "event_guest_fkey"))
+    @JoinColumn(name = "event_id", nullable = false, foreignKey = @ForeignKey(name = "guest_event_fkey"))
     private Event event;
 
 }

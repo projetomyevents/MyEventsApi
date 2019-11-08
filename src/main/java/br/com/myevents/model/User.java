@@ -24,7 +24,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Representa um usuário.
@@ -89,21 +88,13 @@ public class User implements Serializable {
      */
     @ElementCollection(fetch= FetchType.EAGER)
     @CollectionTable(name="ROLE", foreignKey = @ForeignKey(name = "user_role_fkey"))
-    @Column(name = "role_id")
-    @Singular private Set<Integer> roles;
+    @Column(name = "role_name")
+    @Singular private Set<Role> roles;
 
     /**
      * Os eventos de um usuário.
      */
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
     @Singular private Set<Event> events;
-
-    //<editor-fold desc="Custom getters and setters">
-
-    public Set<Role> getRoles() {
-        return roles.stream().map(Role::of).collect(Collectors.toSet());
-    }
-
-    //</editor-fold>
 
 }

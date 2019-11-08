@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * Representa um contrato de um usuário simples.
+ * Representa um contrato com as informações básicas de um usuário.
  */
 @Builder
 @Data

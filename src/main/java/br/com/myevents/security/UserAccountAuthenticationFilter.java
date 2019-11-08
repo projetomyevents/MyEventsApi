@@ -1,8 +1,7 @@
 package br.com.myevents.security;
 
 import br.com.myevents.error.RequestError;
-import br.com.myevents.model.dto.UserCredentialsDTO;
-import br.com.myevents.utils.SimpleMessage;
+import br.com.myevents.model.dto.UserAccountCredentialsDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -18,10 +17,9 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
- * Filtro responsável por processar qualquer requisição de autenticação na url <strong>/user/login</strong>.
+ * Filtro responsável por processar qualquer requisição de autenticação no endpoint <strong>/user/login</strong>.
  */
 public class UserAccountAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -49,16 +47,16 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
                     String.format("Método '%s' de autenticação não suportado.", request.getMethod()));
         }
 
-        UserCredentialsDTO userCredentials;
+        UserAccountCredentialsDTO userAccountCredentials;
         try {
-            userCredentials = objectMapper.readValue(request.getInputStream(), UserCredentialsDTO.class);
+            userAccountCredentials = objectMapper.readValue(request.getInputStream(), UserAccountCredentialsDTO.class);
         } catch (Exception e) {
             throw new AuthenticationServiceException(
-                    "Formato do corpo da requisição inválido para as credenciais de usuário.");
+                    "O conteúdo da requisição não forma as credenciais necessárias para uma conta de usuário.");
         }
 
         return authenticationManager.authenticate(new UserAccountAuthenticationToken(
-                userCredentials.getEmail(), userCredentials.getPassword(), new ArrayList<>()));
+                userAccountCredentials.getEmail(), userAccountCredentials.getPassword()));
     }
 
     @Override
@@ -68,13 +66,8 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
             FilterChain chain,
             Authentication authResult
     ) throws IOException {
-        response.addHeader("Authorization", String.format(
-                "Bearer %s", tokenService.generateToken(authResult.getPrincipal().toString())));
-        response.addHeader("access-control-expose-headers", "Authorization");
-        response.setContentType("application/json");
-        response.getWriter().append(objectMapper.writeValueAsString(SimpleMessage.builder()
-                .message("Autenticação bem sucedida.")
-                .build()));
+        response.sendRedirect(String.format("/user/sucessful-authentication/%s",
+                tokenService.generateAuthenticationToken(authResult.getPrincipal().toString())));
     }
 
     @Override

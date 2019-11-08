@@ -17,45 +17,45 @@ public class UserAccountDetails {
     private static final long serialVersionUID = 1L;
 
     /**
-     * O identificador da conta de usuário.
+     * O identificador da conta do usuário.
      */
     @Getter private Integer id;
 
     /**
-     * O email usado para autenticar a conta de usuário.
+     * O email da conta do usuário.
      */
     private String email;
 
     /**
-     * A senha usada para autenticar a conta de usuário.
+     * A senha da conta do usuário.
      */
     private String password;
 
     /**
-     * As permissões da conta de um usuário.
+     * As permissões da conta do usuário.
      */
     @Singular private Collection<? extends GrantedAuthority> authorities;
 
     /**
-     * Indica se a conta de usuário está ativada.
+     * Indica se a conta do usuário está ativada.
      * Uma conta de usuário desativada não pode ser autenticada.
      */
     private boolean enabled;
 
     /**
-     * Indica se a conta de usuário está expirada.
+     * Indica se a conta do usuário está expirada.
      * Uma conta de usuário expirada não pode ser autenticada.
      */
     private boolean accountNonExpired;
 
     /**
-     * Indica se a conta de usuário está bloqueada.
+     * Indica se a conta do usuário está bloqueada.
      * Uma conta de usuário bloqueada não pode ser autenticada.
      */
     private boolean accountNonLocked;
 
     /**
-     * Indica se as credenciais da conta de usuário (senha) está expirada.
+     * Indica se as credenciais da conta do usuário está expirada.
      * Uma conta de usuário com credenciais expiradas não pode ser autenticada.
      */
     private boolean credentialsNonExpired;

@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Representa um erro de um objeto.
+ * Representa um erro em um {@link Object}.
  */
 @SuperBuilder
 @Data

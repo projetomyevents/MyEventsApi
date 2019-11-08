@@ -1,6 +1,6 @@
 package br.com.myevents.repository;
 
-import br.com.myevents.model.ConfirmationToken;
+import br.com.myevents.model.ActivationToken;
 import br.com.myevents.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,15 +10,15 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Responsável pela persistência de {@link ConfirmationToken}.
+ * Responsável pela persistência de {@link ActivationToken}.
  */
 @Repository
-public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Long> {
+public interface ActivationTokenRepository extends JpaRepository<ActivationToken, Long> {
 
     @Transactional(readOnly = true)
-    Optional<ConfirmationToken> findByToken(String token);
+    Optional<ActivationToken> findByValue(String value);
 
     @Transactional(readOnly = true)
-    List<ConfirmationToken> findAllByUser(User user);
+    List<ActivationToken> findAllByUser(User user);
 
 }

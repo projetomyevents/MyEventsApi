@@ -20,14 +20,14 @@ import org.springframework.core.io.ClassPathResource;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class InitConfig {
 
-    private final CityRepository cityRepository;
     private final StateRepository stateRepository;
+    private final CityRepository cityRepository;
 
     /**
-     * Registrar todos os estados do Brasil na base de dados.
+     * Registra todos os estados do Brasil.
      */
     @Bean
-    protected void initializeStates() throws Exception {
+    protected void registerBrazilStates() throws Exception {
         for (StateDTO state :new ObjectMapper().readValue(
                 new ClassPathResource("br_states.json").getInputStream(), StateDTO[].class)) {
             stateRepository.save(State.builder()
@@ -38,10 +38,10 @@ public class InitConfig {
     }
 
     /**
-     * Registrar todos as cidades do Brasil na base de dados.
+     * Registra todos as cidades do Brasil.
      */
     @Bean
-    protected void initializeCities() throws Exception {
+    protected void registerBrazilCities() throws Exception {
         for (CityDTO city :new ObjectMapper().readValue(
                 new ClassPathResource("br_cities.json").getInputStream(), CityDTO[].class)) {
             cityRepository.save(City.builder()

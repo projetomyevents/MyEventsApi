@@ -13,18 +13,12 @@ public class GuestPresenceStatusConverter implements AttributeConverter<Presence
 
     @Override
     public String convertToDatabaseColumn(PresenceStatus presenceStatus) {
-        if (presenceStatus == null) {
-            return null;
-        }
-        return presenceStatus.getName();
+        return presenceStatus == null ? null : presenceStatus.getName();
     }
 
     @Override
     public PresenceStatus convertToEntityAttribute(String presenceStatus) {
-        if (presenceStatus == null) {
-            return null;
-        }
-        return PresenceStatus.of(presenceStatus);
+        return presenceStatus == null ? null : PresenceStatus.of(presenceStatus);
     }
 
 }

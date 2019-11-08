@@ -6,7 +6,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Representa um erro de um atributo em um objeto.
+ * Representa um erro em um atributo de um {@link Object}.
  */
 @SuperBuilder
 @Data
@@ -20,7 +20,7 @@ public class FieldError extends ObjectError {
     private String field;
 
     /**
-     * O valor rejeitado pela validação.
+     * O valor rejeitado.
      */
     private Object rejectedValue;
 

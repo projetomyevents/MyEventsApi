@@ -57,7 +57,7 @@ public class EventService {
                 .minAge(newEvent.getMinAge())
                 .attire(newEvent.getAttire())
                 .address(Address.builder()
-                        .CEP(newEvent.getCep())
+                        .CEP(newEvent.getCEP())
                         .city(city)
                         .neighborhood(newEvent.getNeighborhood())
                         .street(newEvent.getStreet())
@@ -90,7 +90,7 @@ public class EventService {
                 .admissionPrice(event.getAdmissionPrice())
                 .minAge(event.getMinAge())
                 .attire(event.getAttire())
-                .cep(event.getAddress().getCEP())
+                .CEP(event.getAddress().getCEP())
                 .stateName(event.getAddress().getCity().getState().getName())
                 .cityName(event.getAddress().getCity().getName())
                 .neighborhood(event.getAddress().getNeighborhood())
@@ -108,10 +108,10 @@ public class EventService {
     }
 
     /**
-     * Retorna uma lista com todos os eventos do usuário.
+     * Retorna todos os eventos de um usuário.
      *
-     * @param userAccountDetails o usuário
-     * @return uma lista com todos os eventos do usuário
+     * @param userAccountDetails a conta do usuário
+     * @return todos os eventos do usuário
      */
     public List<SimpleEventDTO> retrieveEvents(UserAccountDetails userAccountDetails) {
         return eventRepository.findAllByUser_Email(userAccountDetails.getEmail()).stream()

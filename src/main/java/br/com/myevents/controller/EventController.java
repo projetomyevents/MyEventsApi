@@ -6,7 +6,7 @@ import br.com.myevents.model.dto.NewEventDTO;
 import br.com.myevents.model.dto.SimpleEventDTO;
 import br.com.myevents.security.UserAccountDetails;
 import br.com.myevents.service.EventService;
-import br.com.myevents.utils.SimpleMessage;
+import br.com.myevents.model.dto.SimpleMessage;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

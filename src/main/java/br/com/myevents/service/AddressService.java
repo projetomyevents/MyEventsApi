@@ -24,6 +24,11 @@ public class AddressService {
     private final CityRepository cityRepository;
     private final StateRepository stateRepository;
 
+    /**
+     * Retorna todos as cidades do Brasil.
+     *
+     * @return as cidades do Brasil
+     */
     public List<CityDTO> retrieveAllCities() {
         return cityRepository.findAll().stream()
                 .map(city -> CityDTO.builder()
@@ -34,6 +39,11 @@ public class AddressService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retorna todos os estados do Brasil.
+     *
+     * @return os estados do Brasil
+     */
     public List<StateDTO> retrieveAllStates() {
         return stateRepository.findAll().stream()
                 .map(state -> StateDTO.builder()

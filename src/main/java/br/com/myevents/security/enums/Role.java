@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 @ToString
 public enum Role {
 
-    ADMIN(0, "ROLE_ADMIN"),
-    USER(1, "ROLE_USER");
+    ADMIN(0, "ADMIN"),
+    USER(1, "USER");
 
     /**
      * O identificador de um cargo.
@@ -33,15 +33,29 @@ public enum Role {
      *
      * @param id o identificador de um cargo
      * @return o cargo de um usuário
-     * @throws IllegalArgumentException se não existir um cargo cadastrado para o identificador
-     *      especificado
+     * @throws IllegalArgumentException se não existir um cargo registrado para o identificador especificado
      */
     public static Role of(int id) {
         return Stream.of(Role.values())
                 .filter(g -> g.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("Nenhum cargo cadastrado para o identificador %d.", id)));
+                        String.format("Nenhum cargo com o identificador '%d' registrado.", id)));
+    }
+
+    /**
+     * Retorna o cargo de um convidado contendo o nome especificado.
+     *
+     * @param name o nome de um cargo
+     * @return o cargo de um convidado
+     * @throws IllegalArgumentException se não existir um cargo registrado para o identificador
+     */
+    public static Role of(String name) {
+        return Stream.of(Role.values())
+                .filter(g -> g.getName().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("Nenhum cargo com o nome '%s' registrado.", name)));
     }
 
 }

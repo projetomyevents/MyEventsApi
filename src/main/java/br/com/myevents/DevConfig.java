@@ -28,9 +28,8 @@ import java.util.Arrays;
  * Configuração de uma execução do aplicativo em modo dev.
  */
 @Configuration
-@ConditionalOnProperty(prefix = "spring.jpa.hibernate", name = "ddl-auto",
-        havingValue = "create-drop")
-@DependsOn({"initializeStates", "initializeCities"})
+@ConditionalOnProperty(prefix = "spring.jpa.hibernate", name = "ddl-auto", havingValue = "create-drop")
+@DependsOn({"registerBrazilStates", "registerBrazilCities"})
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class DevConfig {
 
@@ -50,7 +49,7 @@ public class DevConfig {
                 .name("admin")
                 .CPF("52829612884")
                 .phone("8888888888")
-                .role(Role.ADMIN.getId())
+                .role(Role.ADMIN)
                 .enabled(true)
                 .build();
 
@@ -60,7 +59,7 @@ public class DevConfig {
                 .name("user1")
                 .CPF("02115206835")
                 .phone("8888888888")
-                .role(Role.USER.getId())
+                .role(Role.USER)
                 .enabled(true)
                 .build();
 
@@ -70,7 +69,7 @@ public class DevConfig {
                 .name("user2")
                 .CPF("01771591200")
                 .phone("8888888888")
-                .role(Role.USER.getId())
+                .role(Role.USER)
                 .enabled(true)
                 .build();
 
@@ -79,6 +78,7 @@ public class DevConfig {
         Event event1 = Event.builder()
                 .name("Pagodinho")
                 .startDate(LocalDate.now().plus(8, ChronoUnit.DAYS))
+                .companionLimit((byte) 10)
                 .description("bruh")
                 .schedule("18:00 -> Começa")
                 .address(Address.builder()
@@ -94,6 +94,7 @@ public class DevConfig {
         Event event2 = Event.builder()
                 .name("Reunião")
                 .startDate(LocalDate.now().plus(9, ChronoUnit.DAYS))
+                .companionLimit((byte) 10)
                 .description("?")
                 .schedule("16:00 -> Começa")
                 .address(Address.builder()
@@ -110,6 +111,7 @@ public class DevConfig {
         Event event3 = Event.builder()
                 .name("Reunião 2")
                 .startDate(LocalDate.now().plus(10, ChronoUnit.DAYS))
+                .companionLimit((byte) 10)
                 .description("?")
                 .schedule("9:00 -> Começa")
                 .address(Address.builder()
@@ -135,7 +137,7 @@ public class DevConfig {
         Guest guest2 = Guest.builder()
                 .name("guest2")
                 .email("guest2@guest")
-                .confirmedCompanions((byte) 0)
+                .confirmedCompanions((byte) 2)
                 .presenceStatus(PresenceStatus.PENDING)
                 .event(event1)
                 .build();
@@ -143,7 +145,7 @@ public class DevConfig {
         Guest guest3 = Guest.builder()
                 .name("guest3")
                 .email("guest3@guest")
-                .confirmedCompanions((byte) 0)
+                .confirmedCompanions((byte) 5)
                 .presenceStatus(PresenceStatus.DENIED)
                 .event(event2)
                 .build();

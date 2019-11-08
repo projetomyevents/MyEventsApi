@@ -48,26 +48,26 @@ public class Address implements Serializable {
     private String CEP;
 
     /**
-     * A cidade em que o endereço postal reside.
+     * A cidade em que o endereço postal reside. (Estado implícito.)
      */
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false, foreignKey = @ForeignKey(name = "address_city_fkey"))
     private City city;
 
     /**
-     * O nome do bairro do endereço postal.
+     * O bairro do endereço postal.
      */
     @Column(nullable = false)
     private String neighborhood;
 
     /**
-     * O nome do logradouro do endereço postal.
+     * O logradouro do endereço postal.
      */
     @Column(nullable = false)
     private String street;
 
     /**
-     * O número/identificador da residência do endereço postal. (Pode conter letras.)
+     * A identificação do local do endereço postal.
      */
     private String number;
 

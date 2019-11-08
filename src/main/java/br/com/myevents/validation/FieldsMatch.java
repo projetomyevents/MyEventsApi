@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * O {@link Object} com esta anotação deverá conter os dois atributos informados iguais.
+ * O {@link Object} com esta anotação deverá conter os dois atributos especificados iguais.
  */
 @Constraint(validatedBy = FieldsMatchValidator.class)
 @Target({ ElementType.TYPE })

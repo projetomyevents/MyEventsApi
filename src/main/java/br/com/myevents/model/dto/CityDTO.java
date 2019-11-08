@@ -32,4 +32,5 @@ public class CityDTO implements Serializable {
      * O identificador do estado em que a cidade reside.
      */
     private Integer stateId;
+
 }

@@ -42,7 +42,7 @@ public enum PresenceStatus {
                 .filter(g -> g.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("Nenhum status de presença cadastrado para o identificador %d.", id)));
+                        String.format("Nenhum status de presença com o identificador '%d' registrado.", id)));
     }
 
     /**
@@ -57,7 +57,7 @@ public enum PresenceStatus {
                 .filter(g -> g.getName().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("Nenhum status de presença '%s' registrado.", name)));
+                        String.format("Nenhum status de presença com o nome '%s' registrado.", name)));
     }
 
 }

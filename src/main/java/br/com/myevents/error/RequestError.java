@@ -17,7 +17,7 @@ import java.time.Instant;
 public class RequestError {
 
     /**
-     * O código de status HTTP.
+     * O status HTTP.
      */
     private HttpStatus status;
 
@@ -37,7 +37,7 @@ public class RequestError {
     private String debugMessage;
 
     /**
-     * O nome da exceção.
+     * A exceção.
      */
     private String exception;
 

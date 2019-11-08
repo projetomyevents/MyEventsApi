@@ -1,7 +1,5 @@
 package br.com.myevents.controller;
 
-import br.com.myevents.model.City;
-import br.com.myevents.model.State;
 import br.com.myevents.model.dto.CityDTO;
 import br.com.myevents.model.dto.StateDTO;
 import br.com.myevents.service.AddressService;
@@ -14,9 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * A classe responsável pelo tratamento de requisições de {@link City} e {@link State}.
- */
 @RestController
 @RequestMapping("/address")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)

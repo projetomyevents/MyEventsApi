@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * A classe responsável pela formatação de exceções e erros em respostas HTTP.
+ * Implementação do tratamento de exceções e erros em respostas HTTP.
  */
 @ControllerAdvice
 public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -47,7 +47,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .debugMessage(ex.getLocalizedMessage())
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .debugMessage(ex.getLocalizedMessage())
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .debugMessage(ex.getLocalizedMessage())
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -99,7 +99,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .debugMessage(ex.getLocalizedMessage())
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -129,7 +129,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                         .collect(Collectors.toSet()))
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -145,7 +145,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .debugMessage(ex.getLocalizedMessage())
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -175,7 +175,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                         .collect(Collectors.toSet()))
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     @Override
@@ -192,7 +192,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .debugMessage(ex.getLocalizedMessage())
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     @ExceptionHandler({
@@ -201,7 +201,9 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
             TokenNotFoundException.class,
             TokenExpiredException.class,
             TokenUserNotFoundException.class,
-            UserAccountNotFoundException.class
+            UserAccountNotFoundException.class,
+            CityNotFoundException.class,
+            EventNotFoundException.class
     })
     public ResponseEntity<Object> handleMessageException(
             RuntimeException ex
@@ -211,7 +213,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(ex.getLocalizedMessage())
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     @ExceptionHandler({ Exception.class })
@@ -222,15 +224,16 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
                 .debugMessage(ex.getLocalizedMessage())
                 .exception(ex.getClass().getSimpleName())
                 .build();
-        return new ResponseEntity<>(requestError, getUTF8Headers(), requestError.getStatus());
+        return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
     /**
-     * Retorna um cabeçalho HTTP com codificação de caratéres UTF8 e tipo de conteúdo "application/json".
+     * Retorna um cabeçalho HTTP especificando o tipo de conteúdo para "application/json"
+     * e codificação de caractéres para UTF-8.
      *
      * @return o cabeçalho HTTP
      */
-    private HttpHeaders getUTF8Headers() {
+    private HttpHeaders getApplicationJsonUTF8Headers() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", StandardCharsets.UTF_8));
         return headers;

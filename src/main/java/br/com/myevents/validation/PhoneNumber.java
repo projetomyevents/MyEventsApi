@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A variável com esta anotação deverá ser um número de celular ou telefone brasileiro válido.
+ * O atributo com esta anotação deverá ser um número de celular ou telefone brasileiro válido.
  */
 @Pattern(regexp = "[1-9][0-9]9?[2-9][0-9]{7}")
 @ReportAsSingleViolation

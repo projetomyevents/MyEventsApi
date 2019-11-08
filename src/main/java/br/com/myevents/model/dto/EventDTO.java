@@ -67,9 +67,9 @@ public class EventDTO implements Serializable {
     private String attire;
 
     /**
-     * O cep do endereço postal.
+     * O CEP do endereço postal.
      */
-    private String cep;
+    private String CEP;
 
     /**
      * O nome do estado do endereço postal.
@@ -82,17 +82,17 @@ public class EventDTO implements Serializable {
     private String cityName;
 
     /**
-     * O nome do bairro do endereço postal.
+     * O bairro do endereço postal.
      */
     private String neighborhood;
 
     /**
-     * O nome do logradouro do endereço postal.
+     * O logradouro do endereço postal.
      */
     private String street;
 
     /**
-     * O número/identificador da residência do endereço postal. (Pode conter letras.)
+     * A identificação do local do endereço postal.
      */
     private String number;
 
@@ -112,7 +112,7 @@ public class EventDTO implements Serializable {
     @Singular private List<byte[]> attachments;
 
     /**
-     * Informações básicas do usuário dono do evento.
+     * As informações básicas do usuário dono do evento.
      */
     private SimpleUserDTO user;
 

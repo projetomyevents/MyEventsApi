@@ -67,6 +67,7 @@ public class Event implements Serializable {
     /**
      * O limite de acompanhantes do evento.
      */
+    @Column(nullable = false)
     private byte companionLimit;
 
     /**
@@ -121,7 +122,7 @@ public class Event implements Serializable {
      * O dono do evento.
      */
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "user_event_fkey"))
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "event_user_fkey"))
     private User user;
 
     /**

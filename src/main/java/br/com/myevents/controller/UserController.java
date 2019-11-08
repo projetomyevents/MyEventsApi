@@ -3,11 +3,14 @@ package br.com.myevents.controller;
 import br.com.myevents.model.User;
 import br.com.myevents.model.dto.NewPasswordDTO;
 import br.com.myevents.model.dto.NewUserDTO;
-import br.com.myevents.model.dto.UserDTO;
+import br.com.myevents.model.dto.SimpleMessage;
+import br.com.myevents.model.dto.SimpleUserDTO;
+import br.com.myevents.security.TokenService;
 import br.com.myevents.service.UserService;
-import br.com.myevents.utils.SimpleMessage;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final TokenService tokenService;
 
     @PostMapping("/register")
     public ResponseEntity<Object> registerUser(@Validated @RequestBody NewUserDTO newUser) {
@@ -36,32 +40,36 @@ public class UserController {
                 .build());
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable String email) {
-        return ResponseEntity.ok(userService.retrieveUser(email));
+    @GetMapping("/sucessful-authentication/{token}")
+    public ResponseEntity<SimpleUserDTO> sucessfulAuthentication(@PathVariable String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", String.format("Bearer %s", token));
+        headers.set("access-control-expose-headers", "Authorization");
+        return new ResponseEntity<>(
+                userService.retrieveSimpleUser(tokenService.getEmail(token)), headers, HttpStatus.OK);
     }
 
-    @GetMapping("/confirm")
-    public ResponseEntity<Object> confirmUser(@RequestParam("token") String token) {
-        return ResponseEntity.ok(userService.confirmUser(token));
+    @GetMapping("/activate")
+    public ResponseEntity<Object> activateUserAccount(@RequestParam("token") String token) {
+        return ResponseEntity.ok(userService.activateUserAccount(token));
     }
 
-    @GetMapping("/resend-confirmation/{email}")
-    public ResponseEntity<Object> resendUserConfirmation(@PathVariable String email) {
-        return ResponseEntity.ok(userService.resendUserConfirmation(email));
+    @GetMapping("/resend-activation/{email}")
+    public ResponseEntity<Object> resendUserAccountActivation(@PathVariable String email) {
+        return ResponseEntity.ok(userService.resendUserAccountActivation(email));
     }
 
     @PostMapping("/password-reset")
-    public ResponseEntity<Object> resetUserPassword(
+    public ResponseEntity<Object> resetUserAccountPassword(
             @RequestParam("token") String token,
             @Validated @RequestBody NewPasswordDTO newPassword
     ) {
-        return ResponseEntity.ok(userService.resetUserPassword(token, newPassword));
+        return ResponseEntity.ok(userService.resetUserAccountPassword(token, newPassword));
     }
 
     @GetMapping("/send-password-reset/{email}")
-    public ResponseEntity<Object> sendUserPasswordReset(@PathVariable String email) {
-        return ResponseEntity.ok(userService.sendUserPasswordReset(email));
+    public ResponseEntity<Object> sendUserAccountPasswordReset(@PathVariable String email) {
+        return ResponseEntity.ok(userService.sendUserAccountPasswordReset(email));
     }
 
 }

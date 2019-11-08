@@ -23,12 +23,12 @@ public class TokenService {
             "cd+Pr1js+w2qfT2BoCD+tPcYp9LbjpmhSMEJqUob1mcxZ7+Wmik4AYdjX+DlDjmE4yporzQ9tm7v3z/j+QbdYg==";
 
     /**
-     * Gera um token a partir de um email.
+     * Gera um token a partir de um email com duração de 7 dias.
      *
      * @param email o email
      * @return o token
      */
-    public String generateToken(String email) {
+    public String generateAuthenticationToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(Date.from(Instant.now()))
@@ -55,7 +55,7 @@ public class TokenService {
     }
 
     /**
-     * Recuperar o email que foi usado para montar o token.
+     * Retorna o email que foi usado para montar o token.
      *
      * @param token o token
      * @return o email
@@ -66,7 +66,7 @@ public class TokenService {
     }
 
     /**
-     * Retorna um corpo JSON contido em {@link Claims} com as informações do token.
+     * Retorna {@link Claims} com as informações do token.
      *
      * @param token o token
      * @return as informações do token

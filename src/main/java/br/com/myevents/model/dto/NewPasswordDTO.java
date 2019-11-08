@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
- * Representa uma nova senha para um usuário.
+ * Representa um contrato de uma nova senha para um usuário.
  */
 @Builder
 @Data

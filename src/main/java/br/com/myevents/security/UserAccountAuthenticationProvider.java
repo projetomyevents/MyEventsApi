@@ -32,20 +32,20 @@ public class UserAccountAuthenticationProvider implements AuthenticationProvider
 
         UserAccountDetails userAccountDetails = userAccountDetailsService.loadUserAccoutByEmail(email);
         if (!passwordEncoder.matches(password, userAccountDetails.getPassword())) {
-            throw new BadCredentialsException("A senha da conta de usuário está incorreta.");
+            throw new BadCredentialsException("A senha da conta do usuário está incorreta.");
         }
 
         // checar por anomalias na conta do usuário
         if (!userAccountDetails.isEnabled()) {
-            throw new UserAccountDisabledException("A conta de usuário está desativada.");
+            throw new UserAccountDisabledException("A conta do usuário está desativada.");
         }
 
         if (!userAccountDetails.isAccountNonLocked()) {
-            throw new UserAccountLockedException("A conta de usuário está bloqueada.");
+            throw new UserAccountLockedException("A conta do usuário está bloqueada.");
         }
 
         if (!userAccountDetails.isAccountNonExpired()) {
-            throw new UserAccountExpiredException("A conta de usuário está expirada.");
+            throw new UserAccountExpiredException("A conta do usuário está expirada.");
         }
 
         return new UserAccountAuthenticationToken(email, password, userAccountDetails.getAuthorities());

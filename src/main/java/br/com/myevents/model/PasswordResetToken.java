@@ -25,7 +25,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 /**
- * Representa um token de redefinição da senha de um usuário.
+ * Representa um token de redefinição de senha de uma conta de usuário.
  */
 @Entity
 @Table(name = "rtoken")
@@ -41,27 +41,27 @@ public class PasswordResetToken implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * A chave primária do token de redefinição da senha.
+     * A chave primária do token de redefinição de senha.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * O valor do token de redefinição da senha.
+     * O valor do token de redefinição de senha. (Uma sequência de caractéres gerada aleatóriamente.)
      */
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE) @Builder.Default private final String token = UUID.randomUUID().toString();
+    @Setter(AccessLevel.NONE) @Builder.Default private final String value = UUID.randomUUID().toString();
 
     /**
-     * O usuário vinculado ao token de redefinição da senha.
+     * O usuário vinculado ao token de redefinição de senha.
      */
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "rtoken_user_fkey"))
     private User user;
 
     /**
-     * A data de expiração do token de redefinição da senha.
+     * A data de expiração do token de redefinição de senha. (Cada token dura 24 horas.)
      */
     @Setter(AccessLevel.NONE) @Builder.Default private final Instant expiration =
             Instant.now().plus(1, ChronoUnit.DAYS);

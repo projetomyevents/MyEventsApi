@@ -25,10 +25,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 /**
- * Representa um token de confirmação de um usuário.
+ * Representa um token de ativação de uma conta de usuário.
  */
 @Entity
-@Table(name = "ctoken")
+@Table(name = "atoken")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,34 +36,34 @@ import java.util.UUID;
 @Setter
 @EqualsAndHashCode(of = "id")
 @ToString
-public class ConfirmationToken implements Serializable {
+public class ActivationToken implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * A chave primária do token de confirmação.
+     * A chave primária do token de ativação.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * O valor do token de confirmação.
+     * O valor do token de ativação. (Uma sequência de caractéres gerada aleatóriamente.)
      */
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE) @Builder.Default private final String token = UUID.randomUUID().toString();
+    @Setter(AccessLevel.NONE) @Builder.Default private final String value = UUID.randomUUID().toString();
 
     /**
-     * O usuário vinculado ao token de confirmação.
+     * O usuário vinculado ao token de ativação.
      */
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "ctoken_user_fkey"))
+    @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "atoken_user_fkey"))
     private User user;
 
     /**
-     * A data de expiração do token de confirmação.
+     * A data de expiração do token de ativação. (Cada token dura 72 horas.)
      */
     @Setter(AccessLevel.NONE) @Builder.Default private final Instant expiration =
-            Instant.now().plus(1, ChronoUnit.DAYS);
+            Instant.now().plus(3, ChronoUnit.DAYS);
 
 }

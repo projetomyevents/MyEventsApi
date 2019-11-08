@@ -22,7 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
- * Configuração de uma execução do aplicativo em modo web e seguro.
+ * Configuração de uma execução do aplicativo em modo web seguro.
  */
 @Configuration
 @EnableWebSecurity
@@ -33,27 +33,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenService tokenService;
 
     /**
-     * URLs do usuário com acesso liberado pra geral.
+     * POST endpoints com acesso liberado pra geral.
      */
-    private static final String[] PUBLIC_POST_MATCHERS_USER = {
+    private static final String[] PUBLIC_POST_MATCHERS = {
             "/user/register",
             "/user/login",
             "/user/password-reset"
     };
 
-    private static final String[] PUBLIC_GET_MATCHERS_USER = {
-            "/user/confirm**",
-            "/user/resend-confirmation/**",
+    /**
+     * GET endpoints com acesso liberado pra geral.
+     */
+    private static final String[] PUBLIC_GET_MATCHERS = {
+            "/user/sucessful-authentication/**",
+            "/user/activate**",
+            "/user/resend-activation/**",
             "/user/send-password-reset/**"
     };
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.cors()
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_POST_MATCHERS_USER).permitAll()
+                .csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.GET, PUBLIC_GET_MATCHERS_USER).permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_POST_MATCHERS).permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, PUBLIC_GET_MATCHERS).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new UserAccountAuthorizationFilter(

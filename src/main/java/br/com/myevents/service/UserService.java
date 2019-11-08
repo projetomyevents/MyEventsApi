@@ -7,17 +7,17 @@ import br.com.myevents.exception.TokenExpiredException;
 import br.com.myevents.exception.TokenNotFoundException;
 import br.com.myevents.exception.TokenUserNotFoundException;
 import br.com.myevents.exception.UserAccountNotFoundException;
-import br.com.myevents.model.ConfirmationToken;
+import br.com.myevents.model.ActivationToken;
 import br.com.myevents.model.PasswordResetToken;
 import br.com.myevents.model.User;
 import br.com.myevents.model.dto.NewPasswordDTO;
 import br.com.myevents.model.dto.NewUserDTO;
-import br.com.myevents.model.dto.UserDTO;
-import br.com.myevents.repository.ConfirmationTokenRepository;
+import br.com.myevents.model.dto.SimpleUserDTO;
+import br.com.myevents.repository.ActivationTokenRepository;
 import br.com.myevents.repository.PasswordResetTokenRepository;
 import br.com.myevents.repository.UserRepository;
 import br.com.myevents.security.enums.Role;
-import br.com.myevents.utils.SimpleMessage;
+import br.com.myevents.model.dto.SimpleMessage;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,7 +34,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final ActivationTokenRepository activationTokenRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final MailSenderService mailSenderService;
@@ -62,7 +62,7 @@ public class UserService {
                 .name(newUser.getName())
                 .CPF(newUser.getCPF())
                 .phone(newUser.getPhone())
-                .role(Role.USER.getId())
+                .role(Role.USER)
                 .build());
 
         // enviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
@@ -76,53 +76,51 @@ public class UserService {
                                 "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
                         user.getName(),
                         // criar e salvar o token de confirmação para a conta de usuário na base de dados
-                        confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build())
-                                .getToken()));
+                        activationTokenRepository.save(ActivationToken.builder().user(user).build())
+                                .getValue()));
     }
 
     /**
-     * Retorna um usuário da base de dados a partir do seu email.
+     * Retorna as informações básicas de uma conta de usuário da base de dados a partir do seu email.
      *
      * @param email o email
      * @return o usuário
      */
-    public UserDTO retrieveUser(String email) {
+    public SimpleUserDTO retrieveSimpleUser(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new EmailNotFoundException(
                         String.format("O email '%s' não está vinculado a nenhum usuário conhecido.", email)));
 
-        return UserDTO.builder()
+        return SimpleUserDTO.builder()
                 .email(user.getEmail())
-                .password(user.getPassword())
                 .name(user.getName())
-                .CPF(user.getCPF())
                 .phone(user.getPhone())
                 .build();
     }
 
     /**
-     * Ativa um usuário através do seu token de confirmação.
+     * Ativa uma conta de usuário através do seu token de ativação.
      *
-     * @param token o token de confirmação
+     * @param token o token de ativação
      * @return o resultado
      */
-    public SimpleMessage confirmUser(String token) {
-        ConfirmationToken confirmationToken = confirmationTokenRepository.findByToken(token).orElseThrow(
-                () -> new TokenNotFoundException("O token de confirmação não existe."));
+    public SimpleMessage activateUserAccount(String token) {
+        ActivationToken activationToken = activationTokenRepository.findByValue(token).orElseThrow(
+                () -> new TokenNotFoundException("O token de ativação não existe."));
 
-        if (confirmationToken.getExpiration().isBefore(Instant.now())) {
+        if (activationToken.getExpiration().isBefore(Instant.now())) {
             throw new TokenExpiredException("O token de confirmação expirou.");
         }
 
-        User user = Optional.of(confirmationToken.getUser()).orElseThrow(
-                () -> new TokenUserNotFoundException("O token de confirmação não está vinculado a nenhum usuário."));
+        User user = Optional.of(activationToken.getUser()).orElseThrow(
+                () -> new TokenUserNotFoundException("O token de ativação não está vinculado a nenhum usuário."));
 
         // ativar a conta do usuário
         user.setEnabled(true);
         userRepository.save(user);
 
         // com a conta do usuário ativada podemos remover todos os tokens de confirmação vinculados a ela
-        confirmationTokenRepository.findAllByUser(user).forEach(confirmationTokenRepository::delete);
+        activationTokenRepository.findAllByUser(user).forEach(activationTokenRepository::delete);
 
         // enviar mensagem confirmando que a conta foi ativada para o email do usuário
         mailSenderService.sendHtml(
@@ -138,14 +136,14 @@ public class UserService {
     }
 
     /**
-     * Reenvia a mensagem de email com um link de confirmação de usuário.
+     * Reenvia a mensagem de email com um link de ativação de conta de usuário.
      *
-     * @param email o email do usuário
+     * @param email o email da conta de usuário
      * @return o resultado
      */
-    public SimpleMessage resendUserConfirmation(String email) {
+    public SimpleMessage resendUserAccountActivation(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UserAccountNotFoundException("O email não pertence a nenhum usuário conhecido."));
+                () -> new UserAccountNotFoundException("O email não pertence a nenhuma conta de usuário conhecido."));
 
         // não fazer nada e retornar uma mensagem caso a conta de usuário já esteja ativada
         if (user.isEnabled()) {
@@ -163,7 +161,7 @@ public class UserService {
                                 "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
                         user.getName(),
                         // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
-                        confirmationTokenRepository.save(ConfirmationToken.builder().user(user).build()).getToken()));
+                        activationTokenRepository.save(ActivationToken.builder().user(user).build()).getValue()));
 
         return SimpleMessage.builder()
                 .message("Mensagem enviada! Verifique seu email e siga o link para ativar sua conta.")
@@ -171,14 +169,14 @@ public class UserService {
     }
 
     /**
-     * Realiza a redefinição da senha do usuário.
+     * Realiza a redefinição de senha da conta de usuário.
      *
      * @param token o token
      * @param newPassword a nova senha
      * @return o resultado
      */
-    public SimpleMessage resetUserPassword(String token, NewPasswordDTO newPassword) {
-        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token).orElseThrow(
+    public SimpleMessage resetUserAccountPassword(String token, NewPasswordDTO newPassword) {
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByValue(token).orElseThrow(
                 () -> new TokenNotFoundException("O token de redefinição de senha não existe."));
 
         if (passwordResetToken.getExpiration().isBefore(Instant.now())) {
@@ -187,7 +185,7 @@ public class UserService {
 
         User user = Optional.of(passwordResetToken.getUser()).orElseThrow(
                 () -> new TokenUserNotFoundException(
-                        "O token de redefinição de senha não está vinculado a nenhum usuário."));
+                        "O token de redefinição de senha não está vinculado a nenhuma conta de usuário."));
 
         // atualizar a senha do usuário
         user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
@@ -200,14 +198,14 @@ public class UserService {
     }
 
     /**
-     * Envia uma mensagem de email com um link de redefinição de senha de usuário.
+     * Envia uma mensagem de email com um link de redefinição de senha da conta de usuário.
      *
-     * @param email o email do usuário
+     * @param email o email da conta de usuário
      * @return o resultado
      */
-    public SimpleMessage sendUserPasswordReset(String email) {
+    public SimpleMessage sendUserAccountPasswordReset(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UserAccountNotFoundException("O email não pertence a nenhum usuário conhecido."));
+                () -> new UserAccountNotFoundException("O email não pertence a nenhuma conta de usuário conhecida."));
 
         // enviar mensagme com o link para a página de redefinição de senha
         mailSenderService.sendHtml(
@@ -220,7 +218,7 @@ public class UserService {
                                 "Caso voçê não tenha requisitado uma redefinição de senha ignore esta mensagem.",
                         user.getName(),
                         // criar e salvar um novo token de redefinição de senha para a conta de usuário na base de dados
-                        passwordResetTokenRepository.save(PasswordResetToken.builder().user(user).build()).getToken()));
+                        passwordResetTokenRepository.save(PasswordResetToken.builder().user(user).build()).getValue()));
 
         return SimpleMessage.builder()
                 .message("Mensagem enviada! Verifique seu email e siga o link para redefinir sua senha.")

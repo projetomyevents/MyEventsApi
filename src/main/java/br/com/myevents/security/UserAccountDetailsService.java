@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
 import java.util.stream.Collectors;
 
 /**
- * A classe responsável pela lógica de serviços de {@link UserAccountDetails}.
+ * Implementa a lógica de serviços de {@link UserAccountDetails}.
  */
 @Service
 @Transactional
@@ -22,16 +22,16 @@ public class UserAccountDetailsService {
     private final UserRepository userRepository;
 
     /**
-     * Localiza um usuário pelo seu email e retorna os detalhes da sua conta.
+     * Retorna os detalhes de uma conta de usuário a partir do seu email.
      *
-     * @param email o email que será usado para localizar o usuário
-     * @return os detalhes da conta de usuário
+     * @param email o email do usuário
+     * @return os detalhes da conta do usuário
      * @throws EmailNotFoundException se o email não está vinculado a nenhum usuário conhecido
      */
     public UserAccountDetails loadUserAccoutByEmail(String email) throws EmailNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> {
             throw new EmailNotFoundException(
-                    String.format("O email '%s' não está vinculado a nenhum usuário conhecido.", email));
+                    String.format("O email '%s' não está vinculado a nenhuma conta de usuário conhecido.", email));
         });
 
         return UserAccountDetails.builder()
