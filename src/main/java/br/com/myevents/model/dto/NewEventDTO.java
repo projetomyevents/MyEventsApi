@@ -1,5 +1,6 @@
 package br.com.myevents.model.dto;
 
+import br.com.myevents.validation.CEP;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -78,8 +79,8 @@ public class NewEventDTO implements Serializable {
     /**
      * O CEP do endereço postal.
      */
-    // TODO: validar cep
     @NotBlank(message = "O CEP não deve ficar em branco.")
+    @CEP(message = "O CEP não é válido.")
     private String CEP;
 
     /**
