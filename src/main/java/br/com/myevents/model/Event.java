@@ -73,13 +73,13 @@ public class Event implements Serializable {
     /**
      * A descrição do evento.
      */
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String description;
 
     /**
      * O cronograma do evento.
      */
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "text")
     private String schedule;
 
     /**
