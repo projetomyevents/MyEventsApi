@@ -3,9 +3,7 @@ package br.com.myevents;
 import br.com.myevents.model.Address;
 import br.com.myevents.model.City;
 import br.com.myevents.model.Event;
-import br.com.myevents.model.Guest;
 import br.com.myevents.model.User;
-import br.com.myevents.model.enums.PresenceStatus;
 import br.com.myevents.repository.EventRepository;
 import br.com.myevents.repository.GuestRepository;
 import br.com.myevents.repository.UserRepository;
@@ -76,81 +74,170 @@ public class DevConfig {
         userRepository.saveAll(Arrays.asList(adminUser, user1, user2));
 
         Event event1 = Event.builder()
-                .name("Pagodinho")
-                .startDate(LocalDate.now().plus(8, ChronoUnit.DAYS))
-                .companionLimit((byte) 10)
-                .description("bruh")
+                .name("Evento teste 1 [com imagem] [sem anexos]")
+                .startDate(LocalDate.now().plus(3, ChronoUnit.DAYS))
+                .companionLimit((byte) 6)
+                .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
+                        "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
+                        "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
                 .schedule("18:00 -> Começa")
                 .address(Address.builder()
                         .CEP("12312122")
-                        .neighborhood("bruh bairro")
-                        .street("bruh rua")
+                        .neighborhood("Bairro fictício 21")
+                        .street("Rua fictícia 15")
                         .city(City.builder().id(12).build())
                         .build())
-                .image(new ClassPathResource("test.png").getInputStream().readAllBytes())
+                .image(new ClassPathResource("event-image-1.png").getInputStream().readAllBytes())
                 .user(user1)
                 .build();
 
         Event event2 = Event.builder()
-                .name("Reunião")
-                .startDate(LocalDate.now().plus(9, ChronoUnit.DAYS))
-                .companionLimit((byte) 10)
-                .description("?")
+                .name("Evento teste 2 [com imagem] [com anexos]")
+                .startDate(LocalDate.now().plus(5, ChronoUnit.DAYS))
+                .companionLimit((byte) 13)
+                .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
+                        "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
+                        "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure " +
+                        "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
+                        "anim id est laborum.\n" +
+                        "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et " +
+                        "commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. " +
+                        "Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. " +
+                        "Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros " +
+                        "est euismod turpis, id tincidunt sapien risus a quam. Maecenas fermentum consequat mi. " +
+                        "Donec fermentum. Pellentesque malesuada nulla a mi. Duis sapien sem, aliquet nec, commodo " +
+                        "eget, consequat quis, neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl " +
+                        "adipiscing sapien, sed malesuada diam lacus eget erat. Cras mollis scelerisque nunc. " +
+                        "Nullam arcu. Aliquam consequat. Curabitur augue lorem, dapibus quis, laoreet et, " +
+                        "pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu, feugiat in, orci. " +
+                        "In hac habitasse platea dictumst.")
                 .schedule("16:00 -> Começa")
                 .address(Address.builder()
                         .CEP("12313123")
-                        .neighborhood("? bairro")
-                        .street("? rua")
+                        .neighborhood("Bairro fictício 4561")
+                        .street("Rua fictícia 87")
                         .city(City.builder().id(512).build())
                         .build())
-                .attachment(new ClassPathResource("test.png").getInputStream().readAllBytes())
-                .attachment(new ClassPathResource("test.png").getInputStream().readAllBytes())
+                .image(new ClassPathResource("event-image-1.png").getInputStream().readAllBytes())
+                .attachment(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
+                .attachment(new ClassPathResource("event-attachment-2.txt").getInputStream().readAllBytes())
+                .attachment(new ClassPathResource("event-attachment-3.txt").getInputStream().readAllBytes())
                 .user(user2)
                 .build();
 
         Event event3 = Event.builder()
-                .name("Reunião 2")
-                .startDate(LocalDate.now().plus(10, ChronoUnit.DAYS))
-                .companionLimit((byte) 10)
-                .description("?")
-                .schedule("9:00 -> Começa")
+                .name("Evento teste 3 [com imagem] [sem anexos]")
+                .startDate(LocalDate.now().plus(7, ChronoUnit.DAYS))
+                .companionLimit((byte) 4)
+                .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
+                        "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
+                        "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure " +
+                        "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
+                        "anim id est laborum.")
+                .schedule("07:00 -> Começa")
                 .address(Address.builder()
                         .CEP("53223411")
-                        .neighborhood("? bairro")
-                        .street("? rua")
+                        .neighborhood("Bairro fictício 75")
+                        .street("Rua fictícia 234")
                         .city(City.builder().id(1231).build())
                         .build())
-                .image(new ClassPathResource("test.png").getInputStream().readAllBytes())
+                .image(new ClassPathResource("event-image-2.jpeg").getInputStream().readAllBytes())
                 .user(user2)
                 .build();
 
-        eventRepository.saveAll(Arrays.asList(event1, event2, event3));
-
-        Guest guest1 = Guest.builder()
-                .name("guest1")
-                .email("guest1@guest")
-                .confirmedCompanions((byte) 0)
-                .presenceStatus(PresenceStatus.ACCEPTED)
-                .event(event1)
+        Event event4 = Event.builder()
+                .name("Evento teste 4 [sem imagem] [sem anexos]")
+                .startDate(LocalDate.now().plus(6, ChronoUnit.DAYS))
+                .companionLimit((byte) 19)
+                .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
+                        "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
+                        "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure " +
+                        "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
+                        "anim id est laborum.\n" +
+                        "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et " +
+                        "commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. " +
+                        "Integer in mauris eu nibh euismod gravida.")
+                .schedule("23:00 -> Começa")
+                .address(Address.builder()
+                        .CEP("53223411")
+                        .neighborhood("Bairro fictício 124")
+                        .street("Rua fictícia 568")
+                        .city(City.builder().id(1231).build())
+                        .build())
+                .user(user2)
                 .build();
 
-        Guest guest2 = Guest.builder()
-                .name("guest2")
-                .email("guest2@guest")
-                .confirmedCompanions((byte) 2)
-                .presenceStatus(PresenceStatus.PENDING)
-                .event(event1)
+        Event event5 = Event.builder()
+                .name("Evento teste 5 [sem imagem] [com anexos]")
+                .startDate(LocalDate.now().plus(42, ChronoUnit.DAYS))
+                .companionLimit((byte) 35)
+                .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
+                        "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
+                        "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure " +
+                        "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+                        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
+                        "anim id est laborum.\n" +
+                        "Curabitur pretium tincidunt lacus.")
+                .schedule("22:00 -> Começa")
+                .address(Address.builder()
+                        .CEP("53223411")
+                        .neighborhood("Bairro fictício 74")
+                        .street("Rua fictícia 724")
+                        .city(City.builder().id(1231).build())
+                        .build())
+                .attachment(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
+                .attachment(new ClassPathResource("event-attachment-2.txt").getInputStream().readAllBytes())
+                .user(user2)
                 .build();
 
-        Guest guest3 = Guest.builder()
-                .name("guest3")
-                .email("guest3@guest")
-                .confirmedCompanions((byte) 5)
-                .presenceStatus(PresenceStatus.DENIED)
-                .event(event2)
+        Event event6 = Event.builder()
+                .name("Evento teste 6 [com imagem] [com anexos]")
+                .startDate(LocalDate.now().plus(72, ChronoUnit.DAYS))
+                .companionLimit((byte) 15)
+                .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
+                        "incididunt ut labore et dolore magna aliqua.")
+                .schedule("11:00 -> Começa")
+                .address(Address.builder()
+                        .CEP("53223411")
+                        .neighborhood("Bairro fictício 568")
+                        .street("Rua fictícia 689")
+                        .city(City.builder().id(1231).build())
+                        .build())
+                .image(new ClassPathResource("event-image-3.jpeg").getInputStream().readAllBytes())
+                .attachment(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
+                .user(user2)
                 .build();
 
-        guestRepository.saveAll(Arrays.asList(guest1, guest2, guest3));
+        eventRepository.saveAll(Arrays.asList(event1, event2, event3, event4, event5, event6));
+
+//        Guest guest1 = Guest.builder()
+//                .name("guest1")
+//                .email("guest1@guest")
+//                .confirmedCompanions((byte) 0)
+//                .presenceStatus(PresenceStatus.ACCEPTED)
+//                .event(event1)
+//                .build();
+//
+//        Guest guest2 = Guest.builder()
+//                .name("guest2")
+//                .email("guest2@guest")
+//                .confirmedCompanions((byte) 2)
+//                .presenceStatus(PresenceStatus.PENDING)
+//                .event(event1)
+//                .build();
+//
+//        Guest guest3 = Guest.builder()
+//                .name("guest3")
+//                .email("guest3@guest")
+//                .confirmedCompanions((byte) 5)
+//                .presenceStatus(PresenceStatus.DENIED)
+//                .event(event2)
+//                .build();
+//
+//        guestRepository.saveAll(Arrays.asList(guest1, guest2, guest3));
     }
 
 }
