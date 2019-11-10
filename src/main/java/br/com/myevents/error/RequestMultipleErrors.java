@@ -20,6 +20,7 @@ public class RequestMultipleErrors extends RequestError {
     /**
      * A coleção de sub-erros.
      */
-    @Singular private Set<ObjectError> errors;
+    @Singular
+    private Set<ObjectError> errors;
 
 }

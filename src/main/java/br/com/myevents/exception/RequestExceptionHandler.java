@@ -216,7 +216,7 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(requestError, getApplicationJsonUTF8Headers(), requestError.getStatus());
     }
 
-    @ExceptionHandler({ Exception.class })
+    @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleAll(Exception ex) {
         RequestError requestError = RequestError.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -17,14 +17,16 @@ import java.time.Instant;
 public class RequestError {
 
     /**
+     * O instante em que o erro ocorreu.
+     */
+    @Setter(AccessLevel.NONE)
+    @Builder.Default
+    private final Instant timestamp = Instant.now();
+
+    /**
      * O status HTTP.
      */
     private HttpStatus status;
-
-    /**
-     * O instante em que o erro ocorreu.
-     */
-    @Setter(AccessLevel.NONE) @Builder.Default private final Instant timestamp = Instant.now();
 
     /**
      * A mensagem sobre o erro.

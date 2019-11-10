@@ -22,7 +22,8 @@ public enum PresenceStatus {
     /**
      * O identificador de um estado de presença.
      */
-    @ToString.Exclude private int id;
+    @ToString.Exclude
+    private int id;
 
     /**
      * O nome de um estado de presença.
@@ -35,7 +36,7 @@ public enum PresenceStatus {
      * @param id o identificador de um status de presença
      * @return o status de presença de um convidado
      * @throws IllegalArgumentException se não existir um status de presença registrado para o identificador
-     *      especificado
+     * especificado
      */
     public static PresenceStatus of(int id) {
         return Stream.of(PresenceStatus.values())

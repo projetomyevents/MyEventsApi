@@ -21,7 +21,8 @@ public enum Role {
     /**
      * O identificador de um cargo.
      */
-    @ToString.Exclude private int id;
+    @ToString.Exclude
+    private int id;
 
     /**
      * O nome de um cargo.

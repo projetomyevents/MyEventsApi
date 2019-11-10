@@ -28,7 +28,7 @@ public class InitConfig {
      */
     @Bean
     protected void registerBrazilStates() throws Exception {
-        for (StateDTO state :new ObjectMapper().readValue(
+        for (StateDTO state : new ObjectMapper().readValue(
                 new ClassPathResource("br_states.json").getInputStream(), StateDTO[].class)) {
             stateRepository.save(State.builder()
                     .id(state.getId())
@@ -42,7 +42,7 @@ public class InitConfig {
      */
     @Bean
     protected void registerBrazilCities() throws Exception {
-        for (CityDTO city :new ObjectMapper().readValue(
+        for (CityDTO city : new ObjectMapper().readValue(
                 new ClassPathResource("br_cities.json").getInputStream(), CityDTO[].class)) {
             cityRepository.save(City.builder()
                     .id(city.getId())

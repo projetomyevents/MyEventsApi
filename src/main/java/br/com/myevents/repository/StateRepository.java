@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
  * Responsável pela persistência de {@link State}.
  */
 @Repository
-public interface StateRepository extends JpaRepository<State, Integer> { }
+public interface StateRepository extends JpaRepository<State, Integer> {
+}

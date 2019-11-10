@@ -51,19 +51,23 @@ public class ActivationToken implements Serializable {
      * O valor do token de ativação. (Uma sequência de caractéres gerada aleatóriamente.)
      */
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE) @Builder.Default private final String value = UUID.randomUUID().toString();
+    @Setter(AccessLevel.NONE)
+    @Builder.Default
+    private final String value = UUID.randomUUID().toString();
+
+    /**
+     * A data de expiração do token de ativação. (Cada token dura 72 horas.)
+     */
+    @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
+    @Builder.Default
+    private final Instant expiration = Instant.now().plus(3, ChronoUnit.DAYS);
 
     /**
      * O usuário vinculado ao token de ativação.
      */
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "atoken_user_fkey"))
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "atoken_user_fkey"))
     private User user;
-
-    /**
-     * A data de expiração do token de ativação. (Cada token dura 72 horas.)
-     */
-    @Setter(AccessLevel.NONE) @Builder.Default private final Instant expiration =
-            Instant.now().plus(3, ChronoUnit.DAYS);
 
 }

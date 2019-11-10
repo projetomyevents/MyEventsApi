@@ -113,10 +113,11 @@ public class Event implements Serializable {
     /**
      * Os anexos do evento.
      */
-    @ElementCollection(fetch= FetchType.EAGER)
-    @CollectionTable(name="ATTACHMENT", foreignKey = @ForeignKey(name = "event_attachments_fkey"))
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ATTACHMENT", foreignKey = @ForeignKey(name = "event_attachments_fkey"))
     @Column(name = "attachment_data")
-    @Singular private List<byte[]> attachments;
+    @Singular
+    private List<byte[]> attachments;
 
     /**
      * O dono do evento.
@@ -130,6 +131,7 @@ public class Event implements Serializable {
      */
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", orphanRemoval = true)
-    @Singular private Set<Guest> guests;
+    @Singular
+    private Set<Guest> guests;
 
 }

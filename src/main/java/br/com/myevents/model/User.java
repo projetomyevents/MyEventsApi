@@ -86,15 +86,17 @@ public class User implements Serializable {
     /**
      * Os cargos do usuário.
      */
-    @ElementCollection(fetch= FetchType.EAGER)
-    @CollectionTable(name="ROLE", foreignKey = @ForeignKey(name = "user_role_fkey"))
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ROLE", foreignKey = @ForeignKey(name = "user_role_fkey"))
     @Column(name = "role_name")
-    @Singular private Set<Role> roles;
+    @Singular
+    private Set<Role> roles;
 
     /**
      * Os eventos de um usuário.
      */
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
-    @Singular private Set<Event> events;
+    @Singular
+    private Set<Event> events;
 
 }

@@ -51,19 +51,23 @@ public class PasswordResetToken implements Serializable {
      * O valor do token de redefinição de senha. (Uma sequência de caractéres gerada aleatóriamente.)
      */
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE) @Builder.Default private final String value = UUID.randomUUID().toString();
+    @Setter(AccessLevel.NONE)
+    @Builder.Default
+    private final String value = UUID.randomUUID().toString();
+
+    /**
+     * A data de expiração do token de redefinição de senha. (Cada token dura 24 horas.)
+     */
+    @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
+    @Builder.Default
+    private final Instant expiration = Instant.now().plus(1, ChronoUnit.DAYS);
 
     /**
      * O usuário vinculado ao token de redefinição de senha.
      */
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "rtoken_user_fkey"))
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "rtoken_user_fkey"))
     private User user;
-
-    /**
-     * A data de expiração do token de redefinição de senha. (Cada token dura 24 horas.)
-     */
-    @Setter(AccessLevel.NONE) @Builder.Default private final Instant expiration =
-            Instant.now().plus(1, ChronoUnit.DAYS);
 
 }

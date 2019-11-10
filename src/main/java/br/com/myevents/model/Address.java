@@ -38,7 +38,7 @@ public class Address implements Serializable {
      * A chave primária do endereço postal.
      */
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**

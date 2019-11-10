@@ -109,7 +109,8 @@ public class EventDTO implements Serializable {
     /**
      * Os anexos do evento.
      */
-    @Singular private List<byte[]> attachments;
+    @Singular
+    private List<byte[]> attachments;
 
     /**
      * As informações básicas do usuário dono do evento.

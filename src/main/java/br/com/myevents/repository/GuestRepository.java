@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
  * Responsável pela persistência de {@link Guest}.
  */
 @Repository
-public interface GuestRepository extends JpaRepository<Guest, Long> { }
+public interface GuestRepository extends JpaRepository<Guest, Long> {
+}

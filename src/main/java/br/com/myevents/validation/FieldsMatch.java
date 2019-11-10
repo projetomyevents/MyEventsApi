@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * O {@link Object} com esta anotação deverá conter os dois atributos especificados iguais.
  */
 @Constraint(validatedBy = FieldsMatchValidator.class)
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface FieldsMatch {
@@ -24,9 +24,10 @@ public @interface FieldsMatch {
     Class<? extends Payload>[] payload() default {};
 
     String firstField();
+
     String secondField();
 
-    @Target({ ElementType.TYPE })
+    @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
     @interface List {

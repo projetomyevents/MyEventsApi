@@ -24,14 +24,14 @@ import java.lang.annotation.Target;
         ElementType.PARAMETER,
         ElementType.TYPE_USE
 })
-@Constraint(validatedBy = { })
+@Constraint(validatedBy = {})
 @Documented
 public @interface PhoneNumber {
 
     String message() default "O número de telefone é inválido.";
 
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default { };
+    Class<? extends Payload>[] payload() default {};
 
 }

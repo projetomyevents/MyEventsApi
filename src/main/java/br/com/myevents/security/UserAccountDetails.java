@@ -19,7 +19,8 @@ public class UserAccountDetails {
     /**
      * O identificador da conta do usuário.
      */
-    @Getter private Integer id;
+    @Getter
+    private Integer id;
 
     /**
      * O email da conta do usuário.
@@ -34,7 +35,8 @@ public class UserAccountDetails {
     /**
      * As permissões da conta do usuário.
      */
-    @Singular private Collection<? extends GrantedAuthority> authorities;
+    @Singular
+    private Collection<? extends GrantedAuthority> authorities;
 
     /**
      * Indica se a conta do usuário está ativada.

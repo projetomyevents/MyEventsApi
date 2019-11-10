@@ -29,9 +29,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserAccountDetailsService userAccountDetailsService;
-    private final TokenService tokenService;
-
     /**
      * POST endpoints com acesso liberado pra geral.
      */
@@ -50,6 +47,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/user/resend-activation/**",
             "/user/send-password-reset/**"
     };
+
+    private final UserAccountDetailsService userAccountDetailsService;
+    private final TokenService tokenService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

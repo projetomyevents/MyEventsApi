@@ -118,6 +118,7 @@ public class NewEventDTO implements Serializable {
     /**
      * Os anexos do evento.
      */
-    @Singular private List<byte[]> attachments;
+    @Singular
+    private List<byte[]> attachments;
 
 }
