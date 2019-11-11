@@ -56,6 +56,13 @@ public class Guest implements Serializable {
     private String email;
 
     /**
+     * O status de presença do convidado.
+     */
+    @Column(nullable = false)
+    @Builder.Default
+    private PresenceStatus presenceStatus = PresenceStatus.PENDING;
+
+    /**
      * O limite de acompanhantes do convidado.
      */
     private byte companionLimit;
@@ -66,13 +73,6 @@ public class Guest implements Serializable {
     @Column(nullable = false)
     @Builder.Default
     private byte confirmedCompanions = 0;
-
-    /**
-     * O status de presença do convidado.
-     */
-    @Column(nullable = false)
-    @Builder.Default
-    private PresenceStatus presenceStatus = PresenceStatus.PENDING;
 
     /**
      * O evento do convidado.

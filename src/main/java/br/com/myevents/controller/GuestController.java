@@ -2,8 +2,6 @@ package br.com.myevents.controller;
 
 import br.com.myevents.model.Guest;
 import br.com.myevents.model.dto.NewGuestDTO;
-import br.com.myevents.model.dto.SimpleEventDTO;
-import br.com.myevents.model.dto.SimpleGuestDTO;
 import br.com.myevents.model.dto.SimpleMessage;
 import br.com.myevents.security.UserAccountDetails;
 import br.com.myevents.service.GuestService;
@@ -13,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,20 +29,26 @@ public class GuestController {
 
     private final GuestService guestService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Object> registerEvent(
+    @PostMapping("/update/{eventId}")
+    public ResponseEntity<Object> updateEventGuestList(
             @AuthenticationPrincipal UserAccountDetails userAccountDetails,
-            @Validated @RequestBody List<NewGuestDTO> newGuestsDTO
+            @Validated @RequestBody List<NewGuestDTO> guestList,
+            @PathVariable Long eventId
     ) {
-        guestService.registerGuests(userAccountDetails, newGuestsDTO);
-        return ResponseEntity.ok(SimpleMessage.builder().message("Registrado com sucesso!").build());
+        guestService.updateEventGuestList(userAccountDetails.getEmail(), guestList, eventId);
+        return ResponseEntity.ok(SimpleMessage.builder()
+                .message("Lista de convidados atualizada com sucesso!")
+                .build());
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<SimpleGuestDTO>> getGuests(
-            Long id
+    @GetMapping("/list/{eventId}")
+    public ResponseEntity<List<?>> getGuestList(
+            @AuthenticationPrincipal UserAccountDetails userAccountDetails,
+            @PathVariable Long eventId
     ) {
-        return ResponseEntity.ok(guestService.retrieveGuests(id));
+        return ResponseEntity.ok(userAccountDetails == null
+                ? guestService.retrieveGuestList(eventId)
+                : guestService.retrieveGuestList(userAccountDetails.getEmail(), eventId));
     }
 
 }

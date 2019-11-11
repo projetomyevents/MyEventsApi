@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Responsável pela persistência de {@link Event}.
@@ -15,5 +16,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Transactional(readOnly = true)
     List<Event> findAllByUser_Email(String userEmail);
+
+    @Transactional(readOnly = true)
+    Optional<Event> findByUser_EmailAndId(String userEmail, Long eventId);
 
 }

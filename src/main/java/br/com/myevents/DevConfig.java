@@ -3,7 +3,9 @@ package br.com.myevents;
 import br.com.myevents.model.Address;
 import br.com.myevents.model.City;
 import br.com.myevents.model.Event;
+import br.com.myevents.model.Guest;
 import br.com.myevents.model.User;
+import br.com.myevents.model.enums.PresenceStatus;
 import br.com.myevents.repository.EventRepository;
 import br.com.myevents.repository.GuestRepository;
 import br.com.myevents.repository.UserRepository;
@@ -213,31 +215,31 @@ public class DevConfig {
 
         eventRepository.saveAll(Arrays.asList(event1, event2, event3, event4, event5, event6));
 
-//        Guest guest1 = Guest.builder()
-//                .name("guest1")
-//                .email("guest1@guest")
-//                .confirmedCompanions((byte) 0)
-//                .presenceStatus(PresenceStatus.ACCEPTED)
-//                .event(event1)
-//                .build();
-//
-//        Guest guest2 = Guest.builder()
-//                .name("guest2")
-//                .email("guest2@guest")
-//                .confirmedCompanions((byte) 2)
-//                .presenceStatus(PresenceStatus.PENDING)
-//                .event(event1)
-//                .build();
-//
-//        Guest guest3 = Guest.builder()
-//                .name("guest3")
-//                .email("guest3@guest")
-//                .confirmedCompanions((byte) 5)
-//                .presenceStatus(PresenceStatus.DENIED)
-//                .event(event2)
-//                .build();
-//
-//        guestRepository.saveAll(Arrays.asList(guest1, guest2, guest3));
+        Guest guest1 = Guest.builder()
+                .name("guest1")
+                .email("guest1@guest")
+                .confirmedCompanions((byte) 0)
+                .presenceStatus(PresenceStatus.ACCEPTED)
+                .event(event2)
+                .build();
+
+        Guest guest2 = Guest.builder()
+                .name("guest2")
+                .email("guest2@guest")
+                .confirmedCompanions((byte) 2)
+                .presenceStatus(PresenceStatus.PENDING)
+                .event(event2)
+                .build();
+
+        Guest guest3 = Guest.builder()
+                .name("guest3")
+                .email("guest3@guest")
+                .confirmedCompanions((byte) 5)
+                .presenceStatus(PresenceStatus.DENIED)
+                .event(event2)
+                .build();
+
+        guestRepository.saveAll(Arrays.asList(guest1, guest2, guest3));
     }
 
 }

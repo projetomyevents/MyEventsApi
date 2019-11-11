@@ -1,25 +1,19 @@
 package br.com.myevents.service;
 
-import br.com.myevents.exception.EmailNotFoundException;
 import br.com.myevents.exception.EventNotFoundException;
 import br.com.myevents.model.Event;
 import br.com.myevents.model.Guest;
-import br.com.myevents.model.User;
-import br.com.myevents.model.dto.EventDTO;
 import br.com.myevents.model.dto.GuestDTO;
 import br.com.myevents.model.dto.NewGuestDTO;
 import br.com.myevents.model.dto.SimpleGuestDTO;
-import br.com.myevents.model.dto.SimpleUserDTO;
-import br.com.myevents.model.enums.PresenceStatus;
 import br.com.myevents.repository.EventRepository;
 import br.com.myevents.repository.GuestRepository;
-import br.com.myevents.repository.UserRepository;
-import br.com.myevents.security.UserAccountDetails;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementa a lógica de serviços de {@link Guest}.
@@ -29,43 +23,83 @@ import java.util.List;
 public class GuestService {
 
     private final GuestRepository guestRepository;
-
     private final EventRepository eventRepository;
 
-    private final UserRepository userRepository;
+    /**
+     * Atualiza a lista de convidados de um evento.
+     *
+     * @param userEmail o email do usuário
+     * @param guestList a lista de convidados atualizada
+     */
+    public void updateEventGuestList(String userEmail, List<NewGuestDTO> guestList, Long eventId) {
+        Event event = eventRepository.findByUser_EmailAndId(userEmail, eventId).orElseThrow(
+                () -> new EventNotFoundException("Evento não encontrado ou o usuário não é dono do evento."));
 
-    public Guest registerGuests(UserAccountDetails userAccountDetails, List<NewGuestDTO> newGuestsDTO) {
-        User user = userRepository.findByEmail(userAccountDetails.getEmail()).orElseThrow(
-                () -> new EmailNotFoundException(
-                        String.format("Nenhum usuário encontrado com o email '%s'.", userAccountDetails.getEmail())));
+        guestRepository.saveAll(guestList.stream()
+                .map(guest -> {
+                    Guest updatedGuest = Guest.builder()
+                            .name(guest.getName())
+                            .email(guest.getEmail())
+                            .companionLimit(guest.getCompanionLimit())  // TODO: tratar valores nulos
+                            .event(event)
+                            .build();
 
-        //corrigir esta parte dps
-        for (NewGuestDTO newGuestDTO: newGuestsDTO) {
-            Event event = eventRepository.findById(newGuestDTO.getEventId()).orElseThrow(
-                    () -> new EventNotFoundException(
-                            String.format("Nenhum evento encontrado com o id '%s'.", newGuestDTO.getEventId())));
-            Guest guest = Guest.builder().name(newGuestDTO.getName())
-                    .email(newGuestDTO.getEmail())
-                    .companionLimit(newGuestDTO.getCompanionLimit())
-                    .event(event).build();
-            guestRepository.save(guest);
-        }
+                    guestRepository.findGuestByEmail(guest.getEmail()).ifPresentOrElse(
+                            // caso o usuário já exista definir os dados atualizados antes de sua atualização na db
+                            (foundGuest) -> {
+                                updatedGuest.setId(foundGuest.getId());
+                                updatedGuest.setConfirmedCompanions(foundGuest.getConfirmedCompanions());
+                                updatedGuest.setPresenceStatus(foundGuest.getPresenceStatus());
+                            },
+                            // TODO: caso seja um convidado novo enviar email de convite
+                            () -> System.out.println("bruh"));
+
+                    return updatedGuest;
+                })
+                .collect(Collectors.toList()));
     }
 
-    public List<SimpleGuestDTO> retrieveGuests(Long id) {
-        Event event = eventRepository.findById(id).orElseThrow(
-                () -> new EventNotFoundException(
-                        String.format("Nenhum evento encontrado com o id '%s'.", id)));
-        List<Guest> guests = guestRepository.findGuestsByEvent_Id(event.getId());
-        List<SimpleGuestDTO> guestDTOS = null;
-        for (Guest guest : guests) {
-           guestDTOS.add(SimpleGuestDTO.builder()
-                    .name(guest.getName())
-                    .confirmedCompanions(guest.getConfirmedCompanions())
-                    .presenceStatus(PresenceStatus.PENDING)
-                    .build());
+    /**
+     * Retorna a lista de convidados de um evento.
+     *
+     * @param eventId o identificador do evento
+     * @return a lista de convidados do evento
+     */
+    public List<SimpleGuestDTO> retrieveGuestList(Long eventId) {
+        if (!eventRepository.existsById(eventId)) {
+            throw new EventNotFoundException("Evento não encontrado.");
         }
-        return guestDTOS;
+
+        return guestRepository.findGuestsByEvent_Id(eventId).stream()
+                .map(guest -> SimpleGuestDTO.builder()
+                        .name(guest.getName())
+                        .presenceStatus(guest.getPresenceStatus().getId())
+                        .confirmedCompanions(guest.getConfirmedCompanions())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retorna a lista de convidados de um evento para ser atualizada.
+     *
+     * @param userEmail o email do usuário
+     * @param eventId o identificador do evento
+     * @return a lista de convidados do evento
+     */
+    public List<GuestDTO> retrieveGuestList(String userEmail, Long eventId) {
+        eventRepository.findByUser_EmailAndId(userEmail, eventId).orElseThrow(
+                () -> new EventNotFoundException("Evento não encontrado ou o usuário não é dono do evento."));
+
+        return guestRepository.findGuestsByEvent_Id(eventId).stream()
+                .map(guest -> GuestDTO.builder()
+                        .id(guest.getId())
+                        .name(guest.getName())
+                        .email(guest.getEmail())
+                        .presenceStatus(guest.getPresenceStatus().getId())
+                        .companionLimit(guest.getCompanionLimit())
+                        .confirmedCompanions(guest.getConfirmedCompanions())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }

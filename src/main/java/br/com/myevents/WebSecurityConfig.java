@@ -46,7 +46,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/user/activate**",
             "/user/resend-activation/**",
             "/user/send-password-reset/**",
-            "/event/{id:[\\d+]}"
+            "/event/{eventId:[\\d+]}",
+            "/guest/list/{eventId:[\\d+]}"
     };
 
     private final UserAccountDetailsService userAccountDetailsService;

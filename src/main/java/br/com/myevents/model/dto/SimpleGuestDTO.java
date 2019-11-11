@@ -24,13 +24,13 @@ public class SimpleGuestDTO implements Serializable {
     private String name;
 
     /**
-     * O número de acompanhantes confirmados do convidado.
-     */
-    private byte confirmedCompanions;
-
-    /**
      * O identificador do status de presença do convidado.
      */
     private int presenceStatus;
+
+    /**
+     * O número de acompanhantes confirmados do convidado.
+     */
+    private byte confirmedCompanions;
 
 }

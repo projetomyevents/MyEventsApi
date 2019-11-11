@@ -9,7 +9,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 
@@ -44,6 +43,13 @@ public class GuestDTO implements Serializable {
     private String email;
 
     /**
+     * O identificador do status de presença do convidado.
+     */
+    @Min(message = "O identificador do status de presença não deve ser menor que 0.", value = 0)
+    @Max(message = "O identificador do status de presença não deve ser maior que 2.", value = 2)
+    private int presenceStatus;
+
+    /**
      * O limite de acompanhantes do convidado.
      */
     @Min(message = "O limite de acompanhantes não deve ser menor que 0.", value = 0)
@@ -56,18 +62,5 @@ public class GuestDTO implements Serializable {
     @Min(message = "O número de acompanhantes confirmados não deve ser menor que 0.", value = 0)
     @Max(message = "O número de acompanhantes confirmados não deve ser maior que 127.", value = 127)
     private byte confirmedCompanions;
-
-    /**
-     * O identificador do status de presença do convidado.
-     */
-    @Min(message = "O identificador do status de presença não deve ser menor que 0.", value = 0)
-    @Max(message = "O identificador do status de presença não deve ser maior que 2.", value = 2)
-    private int presenceStatus;
-
-    /**
-     * O identificador do evento do convidado.
-     */
-    @NotNull(message = "O identificador do evento não deve ser nulo.")
-    private Long eventId;
 
 }

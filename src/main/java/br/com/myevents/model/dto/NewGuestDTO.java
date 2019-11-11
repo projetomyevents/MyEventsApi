@@ -9,7 +9,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -42,11 +41,5 @@ public class NewGuestDTO implements Serializable {
     @Min(message = "O limite de acompanhantes não deve ser menor que 0.", value = 0)
     @Max(message = "O limite de acompanhantes não deve ser maior que 127.", value = 127)
     private byte companionLimit;
-
-    /**
-     * O identificador do evento do convidado.
-     */
-    @NotNull(message = "O identificador do evento não deve ser nulo.")
-    private Long eventId;
 
 }
