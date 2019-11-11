@@ -56,6 +56,11 @@ public class Guest implements Serializable {
     private String email;
 
     /**
+     * O limite de acompanhantes do convidado.
+     */
+    private byte companionLimit;
+
+    /**
      * O número de acompanhantes confirmados do convidado.
      */
     @Column(nullable = false)
