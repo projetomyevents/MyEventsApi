@@ -37,11 +37,6 @@ public class EventDTO implements Serializable {
     private LocalDate startDate;
 
     /**
-     * O limite de acompanhantes do evento.
-     */
-    private byte companionLimit;
-
-    /**
      * A descrição do evento.
      */
     private String description;
@@ -72,29 +67,14 @@ public class EventDTO implements Serializable {
     private String CEP;
 
     /**
-     * O nome do estado do endereço postal.
+     * O estado e cidade do endereço postal.
      */
-    private String stateName;
+    private String stateCity;
 
     /**
-     * O nome da cidade do endereço postal.
+     * O bairro, rua e número do endereço postal.
      */
-    private String cityName;
-
-    /**
-     * O bairro do endereço postal.
-     */
-    private String neighborhood;
-
-    /**
-     * O logradouro do endereço postal.
-     */
-    private String street;
-
-    /**
-     * A identificação do local do endereço postal.
-     */
-    private String number;
+    private String local;
 
     /**
      * As informações adicionais do endereço postal.

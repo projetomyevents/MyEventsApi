@@ -94,7 +94,7 @@ public class UserService {
         return SimpleUserDTO.builder()
                 .email(user.getEmail())
                 .name(user.getName())
-                .phone(user.getPhone())
+                .phone(user.phoneRepr())
                 .build();
     }
 

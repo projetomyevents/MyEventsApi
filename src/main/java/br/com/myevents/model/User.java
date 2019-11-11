@@ -99,4 +99,16 @@ public class User implements Serializable {
     @Singular
     private Set<Event> events;
 
+    /**
+     * Retorna a representação do número de telefone ou celular no formato brasileiro.
+     *
+     * @return a representação do número de telefone ou celular no formato brasileiro
+     */
+    public String phoneRepr() {
+        return '(' + this.getPhone().substring(0, 2) + ") " +
+                (this.getPhone().length() == 11
+                        ? this.getPhone().substring(2, 7) + '-' + this.getPhone().substring(7)
+                        : this.getPhone().substring(2, 6) + '-' + this.getPhone().substring(6));
+    }
+
 }

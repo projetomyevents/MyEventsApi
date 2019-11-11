@@ -134,4 +134,35 @@ public class Event implements Serializable {
     @Singular
     private Set<Guest> guests;
 
+    /**
+     * Retorna a representação brasileira de um CEP.
+     *
+     * @return a representação brasileira de um CEP
+     */
+    public String cepRepr() {
+        String cep = this.getAddress().getCEP();
+        return cep.substring(0, 5) + '-' + cep.substring(5);
+    }
+
+    /**
+     * Retorna a representação brasileira do estado e cidade.
+     *
+     * @return a representação brasileira do estado e cidade
+     */
+    public String stateCityRepr() {
+        City city = this.getAddress().getCity();
+        return city.getState().getName() + " - " + city.getName();
+    }
+
+    /**
+     * Retorna a representação brasileira do bairro, rua e número.
+     *
+     * @return a representação brasileira do bairro, rua e número
+     */
+    public String localRepr() {
+        Address address = this.getAddress();
+        return address.getNeighborhood() + ", " + address.getStreet() +
+                (address.getNumber() != null ? ", " + address.getNumber() : "");
+    }
+
 }
