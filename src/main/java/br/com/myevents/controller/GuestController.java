@@ -43,12 +43,19 @@ public class GuestController {
 
     @GetMapping("/list/{eventId}")
     public ResponseEntity<List<?>> getGuestList(
+            @PathVariable Long eventId
+    ) {
+        return ResponseEntity.ok(guestService.retrieveGuestList(eventId));
+    }
+
+
+
+    @GetMapping("/list/detailed/{eventId}")
+    public ResponseEntity<List<?>> getGuestList(
             @AuthenticationPrincipal UserAccountDetails userAccountDetails,
             @PathVariable Long eventId
     ) {
-        return ResponseEntity.ok(userAccountDetails == null
-                ? guestService.retrieveGuestList(eventId)
-                : guestService.retrieveGuestList(userAccountDetails.getEmail(), eventId));
+        return ResponseEntity.ok(guestService.retrieveGuestList(userAccountDetails.getEmail(), eventId));
     }
 
 }
