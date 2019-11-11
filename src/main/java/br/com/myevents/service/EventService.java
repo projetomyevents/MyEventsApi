@@ -92,6 +92,7 @@ public class EventService {
                 .CEP(event.cepRepr())
                 .stateCity(event.stateCityRepr())
                 .local(event.localRepr())
+                .complement(event.getAddress().getComplement())
                 .image(event.getImage())
                 .attachments(event.getAttachments())
                 .user(SimpleUserDTO.builder()
