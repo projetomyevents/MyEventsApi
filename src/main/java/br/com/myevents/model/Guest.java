@@ -64,13 +64,15 @@ public class Guest implements Serializable {
      * O número de acompanhantes confirmados do convidado.
      */
     @Column(nullable = false)
-    private byte confirmedCompanions;
+    @Builder.Default
+    private byte confirmedCompanions = 0;
 
     /**
      * O status de presença do convidado.
      */
     @Column(nullable = false)
-    private PresenceStatus presenceStatus;
+    @Builder.Default
+    private PresenceStatus presenceStatus = PresenceStatus.PENDING;
 
     /**
      * O evento do convidado.
