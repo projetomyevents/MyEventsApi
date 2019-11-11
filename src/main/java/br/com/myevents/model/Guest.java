@@ -52,7 +52,7 @@ public class Guest implements Serializable {
     /**
      * O email do convidado.
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     /**
