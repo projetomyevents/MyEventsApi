@@ -72,7 +72,7 @@ public class UserService {
                 String.format(
                         "Olá %s, uma conta foi registrada com o seu email no site " +
                                 "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
-                                "<a href='http://localhost:4200/confirm;token=%s'>clique aqui</a>. " +
+                                "<a href='http://localhost:4200/activate;token=%s'>clique aqui</a>. " +
                                 "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
                         user.getName(),
                         // criar e salvar o token de confirmação para a conta de usuário na base de dados
@@ -157,7 +157,7 @@ public class UserService {
                 String.format(
                         "Olá %s, um novo token de confirmação foi requisitado para a sua conta em " +
                                 "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
-                                "<a href='http://localhost:4200/confirm;token=%s'>clique aqui</a>. " +
+                                "<a href='http://localhost:4200/activate;token=%s'>clique aqui</a>. " +
                                 "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
                         user.getName(),
                         // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
