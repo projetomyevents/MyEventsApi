@@ -36,7 +36,7 @@ public class EventController {
             @AuthenticationPrincipal UserAccountDetails userAccountDetails,
             @Validated @RequestBody NewEventDTO newEvent
     ) {
-        eventService.registerEvent(userAccountDetails, newEvent);
+        eventService.registerEvent(userAccountDetails.getEmail(), newEvent);
         return ResponseEntity.ok(SimpleMessage.builder().message("Registrado com sucesso!").build());
     }
 
@@ -49,7 +49,7 @@ public class EventController {
     public ResponseEntity<List<SimpleEventDTO>> getEvents(
             @AuthenticationPrincipal UserAccountDetails userAccountDetails
     ) {
-        return ResponseEntity.ok(eventService.retrieveEvents(userAccountDetails));
+        return ResponseEntity.ok(eventService.retrieveEvents(userAccountDetails.getEmail()));
     }
 
 }

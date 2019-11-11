@@ -14,7 +14,6 @@ import br.com.myevents.model.dto.SimpleUserDTO;
 import br.com.myevents.repository.CityRepository;
 import br.com.myevents.repository.EventRepository;
 import br.com.myevents.repository.UserRepository;
-import br.com.myevents.security.UserAccountDetails;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,12 +35,13 @@ public class EventService {
     /**
      * Registra um novo evento.
      *
+     * @param userEmail o email do dono do evento
      * @param newEvent o novo evento
      */
-    public void registerEvent(UserAccountDetails userAccountDetails, NewEventDTO newEvent) {
-        User user = userRepository.findByEmail(userAccountDetails.getEmail()).orElseThrow(
+    public void registerEvent(String userEmail, NewEventDTO newEvent) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(
                 () -> new EmailNotFoundException(
-                        String.format("Nenhum usuário encontrado com o email '%s'.", userAccountDetails.getEmail())));
+                        String.format("Nenhum usuário encontrado com o email '%s'.", userEmail)));
 
         City city = cityRepository.findById(newEvent.getCityId()).orElseThrow(
                 () -> new CityNotFoundException(
@@ -105,11 +105,11 @@ public class EventService {
     /**
      * Retorna todos os eventos de um usuário.
      *
-     * @param userAccountDetails a conta do usuário
+     * @param userEmail o email do usuário
      * @return todos os eventos do usuário
      */
-    public List<SimpleEventDTO> retrieveEvents(UserAccountDetails userAccountDetails) {
-        return eventRepository.findAllByUser_Email(userAccountDetails.getEmail()).stream()
+    public List<SimpleEventDTO> retrieveEvents(String userEmail) {
+        return eventRepository.findAllByUser_Email(userEmail).stream()
                 .map(event -> SimpleEventDTO.builder()
                         .id(event.getId())
                         .name(event.getName())
