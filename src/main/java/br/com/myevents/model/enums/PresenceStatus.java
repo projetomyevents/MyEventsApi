@@ -17,7 +17,7 @@ public enum PresenceStatus {
 
     PENDING(0, "Pendente"),
     ACCEPTED(1, "Confirmado"),
-    DENIED(1, "Recusado");
+    DENIED(2, "Recusado");
 
     /**
      * O identificador de um estado de presença.
