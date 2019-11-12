@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -38,6 +39,17 @@ public class GuestController {
         guestService.updateEventGuestList(userAccountDetails.getEmail(), guestList, eventId);
         return ResponseEntity.ok(SimpleMessage.builder()
                 .message("Lista de convidados atualizada com sucesso!")
+                .build());
+    }
+
+    @PostMapping("/update-guest")
+    public ResponseEntity<Object> updateGuest(
+            @RequestParam("token") String token,
+            @Validated @RequestBody Object guest
+    ) {
+        guestService.updateGuest(token, guest);
+        return ResponseEntity.ok(SimpleMessage.builder()
+                .message("Seus dados foram atualizados.")
                 .build());
     }
 
