@@ -2,16 +2,15 @@ package br.com.myevents.model.dto;
 
 import br.com.myevents.validation.CEP;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
@@ -19,10 +18,9 @@ import java.util.List;
 /**
  * Representa um contrato de um novo evento.
  */
-@Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class NewEventDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -43,9 +41,8 @@ public class NewEventDTO implements Serializable {
      * O limite de acompanhantes do evento.
      */
     @NotNull(message = "O limite de acompanhantes não deve ser nulo.")
-    @Min(message = "O limite de acompanhantes não deve ser menor que 0.", value = 0)
-    @Max(message = "O limite de acompanhantes não deve ser maior que 127.", value = 127)
-    private byte companionLimit;
+    @PositiveOrZero(message = "O limite de acompanhantes deve ser positivo ou zero.")
+    private Integer companionLimit;
 
     /**
      * A descrição do evento.
@@ -67,9 +64,9 @@ public class NewEventDTO implements Serializable {
     /**
      * A idade mínima permitida no evento.
      */
-    @Min(message = "A idade mínima não deve ser menor que 0.", value = 0)
-    @Max(message = "A idade mínima não deve ser maior que 127.", value = 127)
-    private byte minAge;
+    @PositiveOrZero(message = "A idade mínima deve ser positiva ou zero.")
+    @Max(message = "A idade mínima não deve ser maior que 122.", value = 122)
+    private Integer minimumAge;
 
     /**
      * O traje recomendado para o evento.
@@ -80,7 +77,7 @@ public class NewEventDTO implements Serializable {
      * O CEP do endereço postal.
      */
     @NotBlank(message = "O CEP não deve ficar em branco.")
-    @CEP(message = "O CEP não é válido.")
+    @CEP(message = "O CEP é inválido.")
     private String CEP;
 
     /**
@@ -112,7 +109,7 @@ public class NewEventDTO implements Serializable {
     private String complement;
 
     /**
-     * Uma imagem ilustrativa do evento.
+     * A imagem ilustrativa do evento.
      */
     private byte[] image;
 

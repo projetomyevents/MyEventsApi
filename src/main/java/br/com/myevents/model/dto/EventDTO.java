@@ -14,9 +14,9 @@ import java.util.List;
  * Representa um contrato de um evento.
  */
 @Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class EventDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +54,7 @@ public class EventDTO implements Serializable {
     /**
      * A idade mínima permitida no evento.
      */
-    private byte minAge;
+    private Integer minimumAge;
 
     /**
      * O traje recomendado para o evento.
@@ -62,27 +62,42 @@ public class EventDTO implements Serializable {
     private String attire;
 
     /**
-     * O CEP do endereço postal.
+     * O CEP do endereço postal do evento.
      */
     private String CEP;
 
     /**
-     * O estado e cidade do endereço postal.
+     * O nome do estado do endereço postal do evento.
      */
-    private String stateCity;
+    private String stateName;
 
     /**
-     * O bairro, rua e número do endereço postal.
+     * O nome da cidade do endereço postal do evento.
      */
-    private String local;
+    private String cityName;
 
     /**
-     * As informações adicionais do endereço postal.
+     * O bairro do endereço postal do evento.
+     */
+    private String neighborhood;
+
+    /**
+     * O logradouro do endereço postal do evento.
+     */
+    private String street;
+
+    /**
+     * A identificação do local do endereço postal do evento.
+     */
+    private String number;
+
+    /**
+     * As informações adicionais do endereço postal do evento.
      */
     private String complement;
 
     /**
-     * Uma imagem ilustrativa do evento.
+     * A imagem ilustrativa do evento.
      */
     private byte[] image;
 

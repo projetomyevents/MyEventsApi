@@ -1,7 +1,6 @@
 package br.com.myevents.model.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,10 +9,9 @@ import java.io.Serializable;
 /**
  * Representa um contrato com as informações básicas de um usuário.
  */
-@Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class SimpleUserDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;

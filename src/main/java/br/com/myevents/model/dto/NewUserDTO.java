@@ -3,7 +3,6 @@ package br.com.myevents.model.dto;
 import br.com.myevents.validation.FieldsMatch;
 import br.com.myevents.validation.PhoneNumber;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CPF;
@@ -16,10 +15,9 @@ import java.io.Serializable;
 /**
  * Representa um contrato de um novo usuário.
  */
-@Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @FieldsMatch(message = "As senhas são diferentes.", firstField = "password", secondField = "confirmedPassword")
 public class NewUserDTO implements Serializable {
 
@@ -29,14 +27,14 @@ public class NewUserDTO implements Serializable {
      * O email do usuário.
      */
     @NotBlank(message = "O email não deve ficar em branco.")
-    @Email(message = "O email não deve ser inválido.")
+    @Email(message = "O email deve ser válido.")
     private String email;
 
     /**
      * A senha do usuário.
      */
     @NotBlank(message = "A senha não deve ficar em branco.")
-    @Size(message = "A senha deve ter entre 6 e 127 caractéres.", min = 6, max = 127)
+    @Size(message = "A senha deve ter entre 6 e 255 caractéres.", min = 6, max = 255)
     private String password;
 
     /**
@@ -54,14 +52,14 @@ public class NewUserDTO implements Serializable {
      * O CPF do usuário.
      */
     @NotBlank(message = "O CPF não deve ficar em branco.")
-    @CPF(message = "O CPF não é válido.")
+    @CPF(message = "O CPF é inválido.")
     private String CPF;
 
     /**
      * O número de celular ou telefone do usuário.
      */
     @NotBlank(message = "O número de celular ou telefone não deve ficar em branco.")
-    @PhoneNumber(message = "O número de celular ou telefone não é válido.")
+    @PhoneNumber(message = "O número de celular ou telefone é inválido.")
     private String phone;
 
 }

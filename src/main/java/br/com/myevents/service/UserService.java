@@ -2,35 +2,33 @@ package br.com.myevents.service;
 
 import br.com.myevents.exception.CPFExistsException;
 import br.com.myevents.exception.EmailExistsException;
-import br.com.myevents.exception.EmailNotFoundException;
 import br.com.myevents.exception.TokenExpiredException;
 import br.com.myevents.exception.TokenNotFoundException;
-import br.com.myevents.exception.TokenUserNotFoundException;
-import br.com.myevents.exception.UserAccountNotFoundException;
+import br.com.myevents.exception.UserNotFoundException;
 import br.com.myevents.model.ActivationToken;
 import br.com.myevents.model.PasswordResetToken;
 import br.com.myevents.model.User;
 import br.com.myevents.model.dto.NewPasswordDTO;
 import br.com.myevents.model.dto.NewUserDTO;
-import br.com.myevents.model.dto.SimpleMessage;
 import br.com.myevents.model.dto.SimpleUserDTO;
 import br.com.myevents.repository.ActivationTokenRepository;
 import br.com.myevents.repository.PasswordResetTokenRepository;
 import br.com.myevents.repository.UserRepository;
 import br.com.myevents.security.enums.Role;
+import br.com.myevents.utils.SimpleMessage;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Optional;
 
 /**
  * Implementa a lógica de serviços de {@link User}.
  */
 @Service
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserService {
 
     private final UserRepository userRepository;
@@ -39,23 +37,24 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final MailSenderService mailSenderService;
 
+    @Value("${website.url}")
+    private String WEBSITE_URL;
+
     /**
      * Registra um novo usuário.
      *
      * @param newUser o novo usuário
+     * @return o resultado
      */
-    public void registerUser(NewUserDTO newUser) {
-        if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
-            throw new EmailExistsException(
-                    String.format("O email '%s' já está vinculado a um usuário.", newUser.getEmail()));
+    public SimpleMessage registerUser(NewUserDTO newUser) {
+        if (userRepository.existsByEmail(newUser.getEmail())) {
+            throw new EmailExistsException("O email já está sendo usado por outro usuário.");
         }
 
-        if (userRepository.findByCPF(newUser.getCPF()).isPresent()) {
-            throw new CPFExistsException(
-                    String.format("O CPF '%s' já está vinculado a um usuário.", newUser.getCPF()));
+        if (userRepository.existsByCPF(newUser.getCPF())) {
+            throw new CPFExistsException("O CPF já está sendo usado por outro usuário.");
         }
 
-        // após passar pelas validações, salvar o usuário (desativado) na base de dados
         User user = userRepository.save(User.builder()
                 .email(newUser.getEmail())
                 .password(passwordEncoder.encode(newUser.getPassword()))
@@ -65,37 +64,32 @@ public class UserService {
                 .role(Role.USER)
                 .build());
 
-        // enviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
         mailSenderService.sendHtml(
                 user.getEmail(),
                 "Verificação de Conta MyEvents",
                 String.format(
-                        "Olá %s, uma conta foi registrada com o seu email no site " +
-                                "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
-                                "<a href='http://localhost:4200/activate;token=%s'>clique aqui</a>. " +
-                                "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
+                        "Olá %1$s, uma conta foi registrada com o seu email no site <a href='%2$s'>MyEvents</a>, " +
+                                "para ativá-la siga este <a href='%2$sactivate;token=%3$s'>link</a>. " +
+                                "Caso você não tenha criado uma conta neste site ignore esta mensagem. " +
+                                "<strong>Este token de ativação dura apenas 72 horas.</strong>",
                         user.getName(),
-                        // criar e salvar o token de confirmação para a conta de usuário na base de dados
-                        activationTokenRepository.save(ActivationToken.builder().user(user).build())
-                                .getValue()));
+                        WEBSITE_URL,
+                        activationTokenRepository.save(new ActivationToken(user)).getToken()));
+
+        return new SimpleMessage("Registrado com sucesso! Verifique sua caixa de entrada e ative sua conta.");
     }
 
     /**
-     * Retorna as informações básicas de uma conta de usuário da base de dados a partir do seu email.
+     * Retorna as informações básicas de um usuário da base de dados a partir do seu email.
      *
-     * @param email o email
-     * @return o usuário
+     * @param email o email do usuário
+     * @return as informações básicas do usuário
      */
     public SimpleUserDTO retrieveSimpleUser(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new EmailNotFoundException(
-                        String.format("O email '%s' não está vinculado a nenhum usuário conhecido.", email)));
+                () -> new UserNotFoundException("O email não está vinculado a nenhum usuário."));
 
-        return SimpleUserDTO.builder()
-                .email(user.getEmail())
-                .name(user.getName())
-                .phone(user.phoneRepr())
-                .build();
+        return new SimpleUserDTO(user.getEmail(), user.getName(), user.getPhone());
     }
 
     /**
@@ -105,124 +99,113 @@ public class UserService {
      * @return o resultado
      */
     public SimpleMessage activateUserAccount(String token) {
-        ActivationToken activationToken = activationTokenRepository.findByValue(token).orElseThrow(
-                () -> new TokenNotFoundException("O token de ativação não existe."));
+        ActivationToken activationToken = activationTokenRepository.findByToken(token).orElseThrow(
+                () -> new TokenNotFoundException("Token de ativação inválido."));
 
         if (activationToken.getExpiration().isBefore(Instant.now())) {
-            throw new TokenExpiredException("O token de confirmação expirou.");
+            throw new TokenExpiredException("Token de ativação expirado.");
         }
 
-        User user = Optional.of(activationToken.getUser()).orElseThrow(
-                () -> new TokenUserNotFoundException("O token de ativação não está vinculado a nenhum usuário."));
+        User user = activationToken.getUser();
 
-        // ativar a conta do usuário
         user.setEnabled(true);
         userRepository.save(user);
 
-        // com a conta do usuário ativada podemos remover todos os tokens de confirmação vinculados a ela
-        activationTokenRepository.findAllByUser(user).forEach(activationTokenRepository::delete);
+        activationTokenRepository.deleteAllByUser_Id(user.getId());
 
-        // enviar mensagem confirmando que a conta foi ativada para o email do usuário
         mailSenderService.sendHtml(
                 user.getEmail(),
                 "Ativação de Conta MyEvents",
                 String.format(
-                        "Olá %s, sua conta no site " +
-                                "<a href='http://localhost:4200/'>MyEvents</a> foi ativada com sucesso, " +
-                                "<a href='http://localhost:4200/signin'>clique aqui</a> para entrar.",
-                        user.getName()));
+                        "Olá %1$s, sua conta no site " +
+                                "<a href='%2$s'>MyEvents</a> foi ativada com sucesso, " +
+                                "<a href='%2$ssignin'>clique aqui</a> para realizar login.",
+                        user.getName(),
+                        WEBSITE_URL));
 
-        return SimpleMessage.builder().message("Sua conta foi ativada.").build();
+        return new SimpleMessage("Conta ativada.");
     }
 
     /**
-     * Reenvia a mensagem de email com um link de ativação de conta de usuário.
+     * Reenvia a mensagem de email com um link para realizar a ativação de uma conta de usuário.
      *
      * @param email o email da conta de usuário
      * @return o resultado
      */
     public SimpleMessage resendUserAccountActivation(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UserAccountNotFoundException("O email não pertence a nenhuma conta de usuário conhecido."));
+                () -> new UserNotFoundException("O email não está vinculado a nenhum usuário."));
 
-        // não fazer nada e retornar uma mensagem caso a conta de usuário já esteja ativada
         if (user.isEnabled()) {
-            return SimpleMessage.builder().message("Sua conta já está ativada.").build();
+            return new SimpleMessage("Conta já foi ativada.");
         }
 
-        // reenviar mensagem de confirmação com o link para a ativação de conta para o email do usuário
         mailSenderService.sendHtml(
                 user.getEmail(),
                 "Verificação de Conta MyEvents",
-                String.format(
-                        "Olá %s, um novo token de confirmação foi requisitado para a sua conta em " +
-                                "<a href='http://localhost:4200/'>MyEvents</a>, para ativá-la " +
-                                "<a href='http://localhost:4200/activate;token=%s'>clique aqui</a>. " +
-                                "Caso voçê não tenha criado uma conta neste site ignore esta mensagem.",
+                String.format("Olá %1$s, um novo token de confirmação foi solicitado para a sua conta em " +
+                                "<a href='%2$s/'>MyEvents</a>, para ativá-la siga este " +
+                                "<a href='%2$sactivate;token=%3$s'>link</a>. " +
+                                "Caso você não tenha criado uma conta neste site ignore esta mensagem. " +
+                                "<strong>Este token de ativação dura apenas 72 horas.</strong>",
                         user.getName(),
-                        // criar e salvar um novo token de confirmação para a conta de usuário na base de dados
-                        activationTokenRepository.save(ActivationToken.builder().user(user).build()).getValue()));
+                        WEBSITE_URL,
+                        activationTokenRepository.save(new ActivationToken(user)).getToken()));
 
-        return SimpleMessage.builder()
-                .message("Mensagem enviada! Verifique seu email e siga o link para ativar sua conta.")
-                .build();
+        return new SimpleMessage(
+                "Mensagem enviada! Verifique sua caixa de entrada e siga o link para ativar sua conta.");
     }
 
     /**
-     * Realiza a redefinição de senha da conta de usuário.
+     * Realiza a redefinição de senha de uma conta de usuário.
      *
-     * @param token o token
+     * @param token o token de redefinição de senha
      * @param newPassword a nova senha
      * @return o resultado
      */
     public SimpleMessage resetUserAccountPassword(String token, NewPasswordDTO newPassword) {
-        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByValue(token).orElseThrow(
-                () -> new TokenNotFoundException("O token de redefinição de senha não existe."));
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token).orElseThrow(
+                () -> new TokenNotFoundException("Token de redefinição de senha inválido."));
 
         if (passwordResetToken.getExpiration().isBefore(Instant.now())) {
-            throw new TokenExpiredException("O token de redefinição de senha expirou.");
+            throw new TokenExpiredException("Token de redefinição de senha expirado.");
         }
 
-        User user = Optional.of(passwordResetToken.getUser()).orElseThrow(
-                () -> new TokenUserNotFoundException(
-                        "O token de redefinição de senha não está vinculado a nenhuma conta de usuário."));
+        User user = passwordResetToken.getUser();
 
-        // atualizar a senha do usuário
         user.setPassword(passwordEncoder.encode(newPassword.getPassword()));
         userRepository.save(user);
 
-        // com a senha do usuário atualizada podemos remover todos os tokens de redefinição de senha vinculados a ele
-        passwordResetTokenRepository.findAllByUser(user).forEach(passwordResetTokenRepository::delete);
+        passwordResetTokenRepository.deleteAllByUser_Id(user.getId());
 
-        return SimpleMessage.builder().message("Sua senha foi atualizada.").build();
+        return new SimpleMessage("Sua senha foi atualizada.");
     }
 
     /**
-     * Envia uma mensagem de email com um link de redefinição de senha da conta de usuário.
+     * Envia uma mensagem de email com um link para realizar a redefinição de senha de uma conta de usuário.
      *
      * @param email o email da conta de usuário
      * @return o resultado
      */
     public SimpleMessage sendUserAccountPasswordReset(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UserAccountNotFoundException("O email não pertence a nenhuma conta de usuário conhecida."));
+                () -> new UserNotFoundException("O email não está vinculado a nenhum usuário."));
 
-        // enviar mensagme com o link para a página de redefinição de senha
         mailSenderService.sendHtml(
                 user.getEmail(),
                 "Redefinição de Senha MyEvents",
                 String.format(
-                        "Olá %s, um token de redefinição de senha foi requisitado para a sua conta em " +
-                                "<a href='http://localhost:4200/'>MyEvents</a>, para atualizar sua senha " +
-                                "<a href='http://localhost:4200/password-reset;token=%s'>clique aqui</a>. " +
-                                "Caso voçê não tenha requisitado uma redefinição de senha ignore esta mensagem.",
+                        "Olá %1$s, um token de redefinição de senha foi solicitado para a sua conta em " +
+                                "<a href='%2$s'>MyEvents</a>, para atualizar sua senha siga este " +
+                                "<a href='%2$spassword-reset;token=%3$s'>link</a>. " +
+                                "Caso você não tenha requisitado uma redefinição de senha ignore esta mensagem. " +
+                                "<strong>Este token de redefinição de senha dura apenas 24 horas.</strong>",
                         user.getName(),
-                        // criar e salvar um novo token de redefinição de senha para a conta de usuário na base de dados
-                        passwordResetTokenRepository.save(PasswordResetToken.builder().user(user).build()).getValue()));
+                        WEBSITE_URL,
+                        passwordResetTokenRepository.save(new PasswordResetToken(user)).getToken()));
 
-        return SimpleMessage.builder()
-                .message("Mensagem enviada! Verifique seu email e siga o link para redefinir sua senha.")
-                .build();
+        return new SimpleMessage(
+                "Mensagem enviada! Verifique sua caixa de entrada e siga o link para redefinir sua senha.");
     }
 
 }

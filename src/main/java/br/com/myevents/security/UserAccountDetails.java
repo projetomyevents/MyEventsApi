@@ -1,10 +1,13 @@
 package br.com.myevents.security;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Singular;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -12,14 +15,15 @@ import java.util.Collection;
  */
 @Builder
 @Getter
-public class UserAccountDetails {
+@EqualsAndHashCode
+@ToString
+public class UserAccountDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * O identificador da conta do usuário.
      */
-    @Getter
     private Integer id;
 
     /**

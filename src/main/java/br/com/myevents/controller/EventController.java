@@ -2,13 +2,15 @@ package br.com.myevents.controller;
 
 import br.com.myevents.model.Event;
 import br.com.myevents.model.dto.EventDTO;
+import br.com.myevents.model.dto.GuestDTO;
 import br.com.myevents.model.dto.NewEventDTO;
 import br.com.myevents.model.dto.SimpleEventDTO;
-import br.com.myevents.model.dto.SimpleMessage;
+import br.com.myevents.model.dto.SimpleGuestDTO;
 import br.com.myevents.security.UserAccountDetails;
 import br.com.myevents.service.EventService;
+import br.com.myevents.service.GuestService;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -22,22 +24,22 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * A classe responsável pelo tratamento de requisições de {@link Event}.
+ * Trata requisições de {@link Event}.
  */
 @RestController
 @RequestMapping("/event")
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventController {
 
     private final EventService eventService;
+    private final GuestService guestService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Object> registerEvent(
+    @PostMapping("/create")
+    public ResponseEntity<Object> postEvent(
             @AuthenticationPrincipal UserAccountDetails userAccountDetails,
             @Validated @RequestBody NewEventDTO newEvent
     ) {
-        eventService.registerEvent(userAccountDetails.getEmail(), newEvent);
-        return ResponseEntity.ok(SimpleMessage.builder().message("Registrado com sucesso!").build());
+        return ResponseEntity.ok(eventService.createEvent(userAccountDetails.getEmail(), newEvent));
     }
 
     @GetMapping("/{id}")
@@ -50,6 +52,21 @@ public class EventController {
             @AuthenticationPrincipal UserAccountDetails userAccountDetails
     ) {
         return ResponseEntity.ok(eventService.retrieveEvents(userAccountDetails.getEmail()));
+    }
+
+    @GetMapping("/{id}/guests")
+    public ResponseEntity<List<SimpleGuestDTO>> getGuests(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(guestService.retrieveGuests(id));
+    }
+
+    @GetMapping("/{id}/guests/edit")
+    public ResponseEntity<List<GuestDTO>> getGuests(
+            @AuthenticationPrincipal UserAccountDetails userAccountDetails,
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(guestService.retrieveGuests(userAccountDetails.getEmail(), id));
     }
 
 }

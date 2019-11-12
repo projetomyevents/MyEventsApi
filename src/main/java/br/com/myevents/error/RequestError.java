@@ -1,25 +1,32 @@
 package br.com.myevents.error;
 
-import lombok.AccessLevel;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
-import lombok.Data;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Singular;
+import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serializable;
 import java.time.Instant;
+import java.util.Set;
 
 /**
  * Representa um erro de requisição HTTP.
  */
-@SuperBuilder
-@Data
-public class RequestError {
+@Builder
+@Getter
+@EqualsAndHashCode
+@ToString
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class RequestError implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * O instante em que o erro ocorreu.
      */
-    @Setter(AccessLevel.NONE)
     @Builder.Default
     private final Instant timestamp = Instant.now();
 
@@ -34,13 +41,14 @@ public class RequestError {
     private String message;
 
     /**
-     * A mensagem de depuração sobre o erro.
+     * O caminho para onde a requisição foi enviada.
      */
-    private String debugMessage;
+    private String path;
 
     /**
-     * A exceção.
+     * A coleção de sub-erros.
      */
-    private String exception;
+    @Singular
+    private Set<ObjectError> subErrors;
 
 }

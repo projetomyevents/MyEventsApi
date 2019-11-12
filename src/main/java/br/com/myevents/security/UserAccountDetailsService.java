@@ -1,10 +1,10 @@
 package br.com.myevents.security;
 
-import br.com.myevents.exception.EmailNotFoundException;
 import br.com.myevents.model.User;
 import br.com.myevents.repository.UserRepository;
+import br.com.myevents.security.exception.UserAccountNotFoundException;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserAccountDetailsService {
 
     private final UserRepository userRepository;
@@ -24,22 +24,20 @@ public class UserAccountDetailsService {
     /**
      * Retorna os detalhes de uma conta de usuário a partir do seu email.
      *
-     * @param email o email do usuário
+     * @param email o email da conta do usuário
      * @return os detalhes da conta do usuário
-     * @throws EmailNotFoundException se o email não está vinculado a nenhum usuário conhecido
+     * @throws UserAccountNotFoundException se o email não está vinculado a nenhum usuário conhecido
      */
-    public UserAccountDetails loadUserAccoutByEmail(String email) throws EmailNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> {
-            throw new EmailNotFoundException(
-                    String.format("O email '%s' não está vinculado a nenhuma conta de usuário conhecido.", email));
-        });
+    public UserAccountDetails loadUserAccoutByEmail(String email) throws UserAccountNotFoundException {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserAccountNotFoundException("Conta de usuário não existe."));
 
         return UserAccountDetails.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .authorities(user.getRoles()
-                        .stream().map(role -> new SimpleGrantedAuthority(role.getName()))
+                .authorities(user.getRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getName()))
                         .collect(Collectors.toSet()))
                 .enabled(user.isEnabled())
                 .accountNonExpired(true)

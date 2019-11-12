@@ -1,8 +1,5 @@
 package br.com.myevents.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,13 +22,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 /**
- * Representa um token de redefinição de senha de uma conta de usuário.
+ * Representa um token de redefinição de senha de um usuário.
  */
 @Entity
 @Table(name = "rtoken")
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -51,16 +46,12 @@ public class PasswordResetToken implements Serializable {
      * O valor do token de redefinição de senha. (Uma sequência de caractéres gerada aleatóriamente.)
      */
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE)
-    @Builder.Default
-    private final String value = UUID.randomUUID().toString();
+    private final String token = UUID.randomUUID().toString();
 
     /**
-     * A data de expiração do token de redefinição de senha. (Cada token dura 24 horas.)
+     * O instante de expiração do token de redefinição de senha. (Cada token dura 24 horas.)
      */
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE)
-    @Builder.Default
     private final Instant expiration = Instant.now().plus(1, ChronoUnit.DAYS);
 
     /**
@@ -69,5 +60,9 @@ public class PasswordResetToken implements Serializable {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "rtoken_user_fkey"))
     private User user;
+
+    public PasswordResetToken(User user) {
+        this.user = user;
+    }
 
 }

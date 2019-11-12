@@ -1,5 +1,6 @@
 package br.com.myevents.model.dto;
 
+import br.com.myevents.model.enums.PresenceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +12,9 @@ import java.io.Serializable;
  * Representa um contrato com as informações básicas de um convidado.
  */
 @Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class SimpleGuestDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -24,13 +25,13 @@ public class SimpleGuestDTO implements Serializable {
     private String name;
 
     /**
-     * O identificador do status de presença do convidado.
+     * O status de presença do convidado.
      */
-    private int presenceStatus;
+    private PresenceStatus presenceStatus;
 
     /**
      * O número de acompanhantes confirmados do convidado.
      */
-    private byte confirmedCompanions;
+    private Integer confirmedCompanions;
 
 }

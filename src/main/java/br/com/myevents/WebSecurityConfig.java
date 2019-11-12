@@ -6,7 +6,7 @@ import br.com.myevents.security.UserAccountAuthenticationProvider;
 import br.com.myevents.security.UserAccountAuthorizationFilter;
 import br.com.myevents.security.UserAccountDetailsService;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,7 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  */
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
@@ -46,8 +46,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/user/activate**",
             "/user/resend-activation/**",
             "/user/send-password-reset/**",
-            "/event/{eventId:[\\d+]}",
-            "/guest/list/{eventId:[\\d+]}"
+            "/event/{id:[\\d+]}",
+            "/event/{id:[\\d+]}/guests"
     };
 
     private final UserAccountDetailsService userAccountDetailsService;

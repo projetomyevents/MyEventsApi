@@ -1,8 +1,5 @@
 package br.com.myevents.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,13 +22,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 /**
- * Representa um token de ativação de uma conta de usuário.
+ * Representa um token de ativação de um usuário.
  */
 @Entity
 @Table(name = "atoken")
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -51,16 +46,12 @@ public class ActivationToken implements Serializable {
      * O valor do token de ativação. (Uma sequência de caractéres gerada aleatóriamente.)
      */
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE)
-    @Builder.Default
-    private final String value = UUID.randomUUID().toString();
+    private final String token = UUID.randomUUID().toString();
 
     /**
-     * A data de expiração do token de ativação. (Cada token dura 72 horas.)
+     * O instante de expiração do token de ativação. (Cada token dura 72 horas.)
      */
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE)
-    @Builder.Default
     private final Instant expiration = Instant.now().plus(3, ChronoUnit.DAYS);
 
     /**
@@ -69,5 +60,9 @@ public class ActivationToken implements Serializable {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "atoken_user_fkey"))
     private User user;
+
+    public ActivationToken(User user) {
+        this.user = user;
+    }
 
 }

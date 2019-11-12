@@ -1,7 +1,7 @@
 package br.com.myevents.security;
 
 import br.com.myevents.error.RequestError;
-import br.com.myevents.model.dto.UserAccountCredentialsDTO;
+import br.com.myevents.security.exception.UserAccountCredentialsNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -19,44 +19,36 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Filtro responsável por processar qualquer requisição de autenticação no endpoint <strong>/user/login</strong>.
+ * Processa uma requisição de autenticação em <strong>/user/login</strong>.
  */
 public class UserAccountAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
-    private final ObjectMapper objectMapper;
-
     public UserAccountAuthenticationFilter(AuthenticationManager authenticationManager, TokenService tokenService) {
         super(new AntPathRequestMatcher("/user/login", "POST"));
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
-        this.objectMapper = new ObjectMapper();
-
-        // especificar como uma data deve ser convertida pelo ObjectMapper
-        this.objectMapper.registerModule(new JavaTimeModule());
-        this.objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
         if (!request.getMethod().equals("POST")) {
-            throw new AuthenticationServiceException(
-                    String.format("Método '%s' de autenticação não suportado.", request.getMethod()));
+            throw new AuthenticationServiceException("Método de autenticação não suportado, utilize o método POST.");
         }
 
-        UserAccountCredentialsDTO userAccountCredentials;
         try {
-            userAccountCredentials = objectMapper.readValue(request.getInputStream(), UserAccountCredentialsDTO.class);
-        } catch (Exception e) {
-            throw new AuthenticationServiceException(
-                    "O conteúdo da requisição não forma as credenciais necessárias para uma conta de usuário.");
-        }
+            UserAccountCredentials userAccountCredentials = new ObjectMapper()
+                    .readValue(request.getInputStream(), UserAccountCredentials.class);
 
-        return authenticationManager.authenticate(new UserAccountAuthenticationToken(
-                userAccountCredentials.getEmail(), userAccountCredentials.getPassword()));
+            return authenticationManager.authenticate(new UserAccountAuthenticationToken(
+                    userAccountCredentials.getEmail(), userAccountCredentials.getPassword()));
+        } catch (IOException e) {
+            throw new UserAccountCredentialsNotFoundException(
+                    "Corpo da requisição não forma as credenciais de uma conta de usuário.");
+        }
     }
 
     @Override
@@ -78,12 +70,14 @@ public class UserAccountAuthenticationFilter extends AbstractAuthenticationProce
     ) throws IOException {
         response.setStatus(401);
         response.setContentType("application/json");
-        response.getWriter().append(objectMapper.writeValueAsString(
-                RequestError.builder()
-                        .status(HttpStatus.UNAUTHORIZED)
-                        .message(failed.getLocalizedMessage())
-                        .exception(failed.getClass().getSimpleName())
-                        .build()));
+        response.getWriter()
+                .append(new ObjectMapper()
+                        .registerModule(new JavaTimeModule())
+                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                        .writeValueAsString(RequestError.builder()
+                                .status(HttpStatus.UNAUTHORIZED)
+                                .message(failed.getLocalizedMessage())
+                                .build()));
     }
 
 }

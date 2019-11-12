@@ -9,10 +9,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
- * Filtro responsável por processar qualquer requisição de autenticação com o cabeçalho
- * <strong>Authorization</strong>.
+ * Processa o cabeçalho de autorização de uma requisição HTTP,
+ * colocando o resultado em <code>SecurityContextHolder</code>.
  */
 public class UserAccountAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -32,27 +33,25 @@ public class UserAccountAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        String header = request.getHeader("Authorization");
-        if (header != null && header.startsWith("Bearer ")) {
-            UserAccountAuthenticationToken authenticationToken = getAuthentication(header.substring(7));
-            if (authenticationToken != null) {
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        Optional.ofNullable(request.getHeader("Authorization")).ifPresent(authorization -> {
+            if (authorization.startsWith("Bearer ")) {
+                Optional.ofNullable(getAuthentication(authorization.substring(7))).ifPresent(
+                        token -> SecurityContextHolder.getContext().setAuthentication(token));
             }
-        }
+        });
         chain.doFilter(request, response);
     }
 
     /**
-     * Retorna um {@link UserAccountAuthenticationToken} com as informações básicas de autenticação
-     * de uma conta de usuário a partir de um token de autenticação.
+     * Cria e retorna um {@link UserAccountAuthenticationToken} com senha nula a partir do token de autenticação.
      *
-     * @param token o token
-     * @return o token com as informações básicas de autenticação de uma conta de usuário
+     * @param token o token de autenticação
+     * @return o {@link UserAccountAuthenticationToken} com senha nula
      */
     private UserAccountAuthenticationToken getAuthentication(String token) {
         return tokenService.isValid(token)
-                ? new UserAccountAuthenticationToken(
-                        userAccountDetailsService.loadUserAccoutByEmail(tokenService.getEmail(token)), null)
+                ? new UserAccountAuthenticationToken(userAccountDetailsService.loadUserAccoutByEmail(
+                        tokenService.getEmail(token)))
                 : null;
     }
 

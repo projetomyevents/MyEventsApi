@@ -4,11 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Implementação dos serviços de JWT (Json Web Tokens).
@@ -16,64 +18,60 @@ import java.util.Date;
 @Service
 public class TokenService {
 
-    /**
-     * Chave usada pelo algoritmo de assinatura.
-     */
-    private final String secret =
-            "cd+Pr1js+w2qfT2BoCD+tPcYp9LbjpmhSMEJqUob1mcxZ7+Wmik4AYdjX+DlDjmE4yporzQ9tm7v3z/j+QbdYg==";
+    @Value("${jwt.secret}")
+    private String SECRET;
 
     /**
-     * Gera um token a partir de um email com duração de 7 dias.
+     * Gera um token de autenticação a partir de um email com duração de 7 dias.
      *
      * @param email o email
-     * @return o token
+     * @return o token de autenticação
      */
     public String generateAuthenticationToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plus(7, ChronoUnit.DAYS)))
-                .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
+                .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(SECRET))
                 .compact();
     }
 
     /**
-     * Checa se o token é válido.
+     * Checa se o token de autenticação é válido.
      *
-     * @param token o token
-     * @return {@code true} se o token é válido, {@code false} caso contrário
+     * @param token o token de autenticação
+     * @return {@code true} se o token de autenticação válido, {@code false} caso contrário
      */
     public boolean isValid(String token) {
-        Claims claims = getClaims(token);
-        if (claims != null) {
-            Instant expiration = claims.getExpiration().toInstant();
-            return claims.getSubject() != null
-                    && expiration != null
-                    && Instant.now().isBefore(expiration);
-        }
-        return false;
+        return Optional.ofNullable(getClaims(token))
+                .map(claims -> {
+                    Instant expiration = claims.getExpiration().toInstant();
+                    return claims.getSubject() != null && expiration != null && Instant.now().isBefore(expiration);
+                })
+                .orElse(false);
     }
 
     /**
-     * Retorna o email que foi usado para montar o token.
+     * Retorna o email que foi usado para montar o token de autenticação.
      *
-     * @param token o token
+     * @param token o token de autenticação
      * @return o email
      */
     public String getEmail(String token) {
-        Claims claims = getClaims(token);
-        return claims != null ? claims.getSubject() : null;
+        return Optional.ofNullable(getClaims(token))
+                .map(Claims::getSubject)
+                .orElse(null);
     }
 
     /**
-     * Retorna {@link Claims} com as informações do token.
+     * Retorna {@link Claims} com as informações do token de autenticação.
      *
-     * @param token o token
-     * @return as informações do token
+     * @param token o token de autenticação
+     * @return as informações do token de autenticação
      */
     private Claims getClaims(String token) {
         try {
-            return Jwts.parser().setSigningKey(TextCodec.BASE64.decode(secret)).parseClaimsJws(token).getBody();
+            return Jwts.parser().setSigningKey(TextCodec.BASE64.decode(SECRET)).parseClaimsJws(token).getBody();
         } catch (Exception e) {
             return null;
         }

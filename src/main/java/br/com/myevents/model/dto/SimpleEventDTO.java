@@ -6,14 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * Representa um contrato com as informações básicas de um evento.
  */
 @Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class SimpleEventDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,6 +28,11 @@ public class SimpleEventDTO implements Serializable {
      * O nome do evento.
      */
     private String name;
+
+    /**
+     * A data de inicio do evento.
+     */
+    private LocalDate startDate;
 
     /**
      * A descrição do evento.

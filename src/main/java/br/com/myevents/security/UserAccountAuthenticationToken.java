@@ -25,11 +25,17 @@ public class UserAccountAuthenticationToken extends AbstractAuthenticationToken 
      */
     private Object credentials;
 
+    public UserAccountAuthenticationToken(Object principal) {
+        super(new ArrayList<>());
+        this.principal = principal;
+        setAuthenticated(true);
+    }
+
     public UserAccountAuthenticationToken(Object principal, Object credentials) {
         super(new ArrayList<>());
         this.principal = principal;
         this.credentials = credentials;
-        this.setAuthenticated(true);
+        setAuthenticated(true);
     }
 
     public UserAccountAuthenticationToken(
@@ -40,7 +46,7 @@ public class UserAccountAuthenticationToken extends AbstractAuthenticationToken 
         super(authorities);
         this.principal = principal;
         this.credentials = credentials;
-        this.setAuthenticated(true);
+        setAuthenticated(true);
     }
 
     @Override

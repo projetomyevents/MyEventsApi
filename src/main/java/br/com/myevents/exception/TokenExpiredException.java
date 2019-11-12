@@ -1,7 +1,7 @@
 package br.com.myevents.exception;
 
 /**
- * Levantada se um token passou da sua data de validade.
+ * Lançada se um token está expirado.
  */
 public class TokenExpiredException extends RuntimeException {
 

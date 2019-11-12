@@ -1,7 +1,7 @@
 package br.com.myevents.exception;
 
 /**
- * Levantada se uma cidade não existe.
+ * Lançada se uma cidade não existe.
  */
 public class CityNotFoundException extends RuntimeException {
 

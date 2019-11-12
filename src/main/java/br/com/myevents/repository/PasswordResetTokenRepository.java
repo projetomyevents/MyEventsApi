@@ -1,24 +1,22 @@
 package br.com.myevents.repository;
 
 import br.com.myevents.model.PasswordResetToken;
-import br.com.myevents.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
  * Responsável pela persistência de {@link PasswordResetToken}.
  */
 @Repository
+@Transactional(readOnly = true)
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
 
-    @Transactional(readOnly = true)
-    Optional<PasswordResetToken> findByValue(String value);
+    Optional<PasswordResetToken> findByToken(String token);
 
-    @Transactional(readOnly = true)
-    List<PasswordResetToken> findAllByUser(User user);
+    @Transactional
+    void deleteAllByUser_Id(Integer id);
 
 }

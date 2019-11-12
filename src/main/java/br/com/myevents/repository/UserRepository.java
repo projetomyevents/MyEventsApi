@@ -11,12 +11,13 @@ import java.util.Optional;
  * Responsável pela persistência de {@link User}.
  */
 @Repository
+@Transactional(readOnly = true)
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    @Transactional(readOnly = true)
     Optional<User> findByEmail(String email);
 
-    @Transactional(readOnly = true)
-    Optional<User> findByCPF(String CPF);
+    boolean existsByEmail(String email);
+
+    boolean existsByCPF(String CPF);
 
 }

@@ -1,7 +1,7 @@
 package br.com.myevents.exception;
 
 /**
- * Levantada se um CPF de um usuário já está vinculado a outro usuário.
+ * Lançada se um CPF de um usuário já está vinculado a um usuário.
  */
 public class CPFExistsException extends RuntimeException {
 

@@ -6,18 +6,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Responsável pela persistência de {@link Guest}.
  */
 @Repository
+@Transactional(readOnly = true)
 public interface GuestRepository extends JpaRepository<Guest, Long> {
 
-    @Transactional(readOnly = true)
-    Optional<Guest> findGuestByEmail(String guestEmail);
-
-    @Transactional(readOnly = true)
-    List<Guest> findGuestsByEvent_Id(Long eventId);
+    List<Guest> findGuestsByEvent_Id(Long id);
 
 }

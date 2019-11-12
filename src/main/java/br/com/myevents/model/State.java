@@ -1,6 +1,5 @@
 package br.com.myevents.model;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -19,8 +18,8 @@ import java.io.Serializable;
  */
 @Entity
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -40,5 +39,9 @@ public class State implements Serializable {
      */
     @Column(unique = true, nullable = false)
     private String name;
+
+    public State(Integer id) {
+        this.id = id;
+    }
 
 }

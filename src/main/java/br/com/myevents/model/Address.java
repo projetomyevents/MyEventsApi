@@ -1,6 +1,5 @@
 package br.com.myevents.model;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -24,8 +23,8 @@ import java.io.Serializable;
  */
 @Entity
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -48,7 +47,7 @@ public class Address implements Serializable {
     private String CEP;
 
     /**
-     * A cidade em que o endereço postal reside. (Estado implícito.)
+     * A cidade do endereço postal. (Estado implícito.)
      */
     @ManyToOne
     @JoinColumn(name = "city_id", nullable = false, foreignKey = @ForeignKey(name = "address_city_fkey"))

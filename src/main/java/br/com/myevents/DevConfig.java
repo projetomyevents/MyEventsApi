@@ -11,7 +11,7 @@ import br.com.myevents.repository.GuestRepository;
 import br.com.myevents.repository.UserRepository;
 import br.com.myevents.security.enums.Role;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +30,7 @@ import java.util.Arrays;
 @Configuration
 @ConditionalOnProperty(prefix = "spring.jpa.hibernate", name = "ddl-auto", havingValue = "create-drop")
 @DependsOn({"registerBrazilStates", "registerBrazilCities"})
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class DevConfig {
 
     private final UserRepository userRepository;
@@ -78,7 +78,7 @@ public class DevConfig {
         Event event1 = Event.builder()
                 .name("Evento teste 1 [com imagem] [sem anexos]")
                 .startDate(LocalDate.now().plus(3, ChronoUnit.DAYS))
-                .companionLimit((byte) 6)
+                .companionLimit(6)
                 .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                         "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
                         "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
@@ -87,7 +87,7 @@ public class DevConfig {
                         .CEP("12312122")
                         .neighborhood("Bairro fictício 21")
                         .street("Rua fictícia 15")
-                        .city(City.builder().id(12).build())
+                        .city(new City(12))
                         .build())
                 .image(new ClassPathResource("event-image-1.png").getInputStream().readAllBytes())
                 .user(user1)
@@ -96,7 +96,7 @@ public class DevConfig {
         Event event2 = Event.builder()
                 .name("Evento teste 2 [com imagem] [com anexos]")
                 .startDate(LocalDate.now().plus(5, ChronoUnit.DAYS))
-                .companionLimit((byte) 13)
+                .companionLimit(13)
                 .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                         "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
                         "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure " +
@@ -119,7 +119,7 @@ public class DevConfig {
                         .CEP("12313123")
                         .neighborhood("Bairro fictício 4561")
                         .street("Rua fictícia 87")
-                        .city(City.builder().id(512).build())
+                        .city(new City(512))
                         .build())
                 .image(new ClassPathResource("event-image-1.png").getInputStream().readAllBytes())
                 .attachment(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
@@ -131,7 +131,7 @@ public class DevConfig {
         Event event3 = Event.builder()
                 .name("Evento teste 3 [com imagem] [sem anexos]")
                 .startDate(LocalDate.now().plus(7, ChronoUnit.DAYS))
-                .companionLimit((byte) 4)
+                .companionLimit(4)
                 .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                         "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
                         "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure " +
@@ -143,7 +143,7 @@ public class DevConfig {
                         .CEP("53223411")
                         .neighborhood("Bairro fictício 75")
                         .street("Rua fictícia 234")
-                        .city(City.builder().id(1231).build())
+                        .city(new City(1231))
                         .build())
                 .image(new ClassPathResource("event-image-2.jpeg").getInputStream().readAllBytes())
                 .user(user2)
@@ -152,7 +152,7 @@ public class DevConfig {
         Event event4 = Event.builder()
                 .name("Evento teste 4 [sem imagem] [sem anexos]")
                 .startDate(LocalDate.now().plus(6, ChronoUnit.DAYS))
-                .companionLimit((byte) 19)
+                .companionLimit(19)
                 .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                         "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
                         "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure " +
@@ -167,7 +167,7 @@ public class DevConfig {
                         .CEP("53223411")
                         .neighborhood("Bairro fictício 124")
                         .street("Rua fictícia 568")
-                        .city(City.builder().id(1231).build())
+                        .city(new City(1231))
                         .build())
                 .user(user2)
                 .build();
@@ -175,7 +175,7 @@ public class DevConfig {
         Event event5 = Event.builder()
                 .name("Evento teste 5 [sem imagem] [com anexos]")
                 .startDate(LocalDate.now().plus(42, ChronoUnit.DAYS))
-                .companionLimit((byte) 35)
+                .companionLimit(35)
                 .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                         "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud " +
                         "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure " +
@@ -188,7 +188,7 @@ public class DevConfig {
                         .CEP("53223411")
                         .neighborhood("Bairro fictício 74")
                         .street("Rua fictícia 724")
-                        .city(City.builder().id(1231).build())
+                        .city(new City(1231))
                         .build())
                 .attachment(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
                 .attachment(new ClassPathResource("event-attachment-2.txt").getInputStream().readAllBytes())
@@ -198,7 +198,7 @@ public class DevConfig {
         Event event6 = Event.builder()
                 .name("Evento teste 6 [com imagem] [com anexos]")
                 .startDate(LocalDate.now().plus(72, ChronoUnit.DAYS))
-                .companionLimit((byte) 15)
+                .companionLimit(15)
                 .description("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
                         "incididunt ut labore et dolore magna aliqua.")
                 .schedule("11:00 -> Começa")
@@ -206,7 +206,7 @@ public class DevConfig {
                         .CEP("53223411")
                         .neighborhood("Bairro fictício 568")
                         .street("Rua fictícia 689")
-                        .city(City.builder().id(1231).build())
+                        .city(new City(1231))
                         .build())
                 .image(new ClassPathResource("event-image-3.jpeg").getInputStream().readAllBytes())
                 .attachment(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
@@ -218,7 +218,7 @@ public class DevConfig {
         Guest guest1 = Guest.builder()
                 .name("guest1")
                 .email("guest1@guest")
-                .confirmedCompanions((byte) 0)
+                .companionLimit(0)
                 .presenceStatus(PresenceStatus.ACCEPTED)
                 .event(event2)
                 .build();
@@ -226,7 +226,8 @@ public class DevConfig {
         Guest guest2 = Guest.builder()
                 .name("guest2")
                 .email("guest2@guest")
-                .confirmedCompanions((byte) 2)
+                .companionLimit(5)
+                .confirmedCompanions(3)
                 .presenceStatus(PresenceStatus.PENDING)
                 .event(event2)
                 .build();
@@ -234,7 +235,7 @@ public class DevConfig {
         Guest guest3 = Guest.builder()
                 .name("guest3")
                 .email("guest3@guest")
-                .confirmedCompanions((byte) 5)
+                .companionLimit(5)
                 .presenceStatus(PresenceStatus.DENIED)
                 .event(event2)
                 .build();

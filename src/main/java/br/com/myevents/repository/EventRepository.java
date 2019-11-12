@@ -12,12 +12,11 @@ import java.util.Optional;
  * Responsável pela persistência de {@link Event}.
  */
 @Repository
+@Transactional(readOnly = true)
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Transactional(readOnly = true)
-    List<Event> findAllByUser_Email(String userEmail);
+    List<Event> findAllByUser_Email(String email);
 
-    @Transactional(readOnly = true)
-    Optional<Event> findByUser_EmailAndId(String userEmail, Long eventId);
+    Optional<Event> findByIdAndUser_Email(Long id, String email);
 
 }

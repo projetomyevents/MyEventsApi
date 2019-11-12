@@ -1,6 +1,5 @@
 package br.com.myevents.model;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -22,8 +21,8 @@ import java.io.Serializable;
  */
 @Entity
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -45,10 +44,14 @@ public class City implements Serializable {
     private String name;
 
     /**
-     * O estado em que a cidade reside.
+     * O estado da cidade.
      */
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false, foreignKey = @ForeignKey(name = "city_state_fkey"))
     private State state;
+
+    public City(Integer id) {
+        this.id = id;
+    }
 
 }

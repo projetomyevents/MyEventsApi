@@ -8,7 +8,7 @@ import br.com.myevents.model.dto.StateDTO;
 import br.com.myevents.repository.CityRepository;
 import br.com.myevents.repository.StateRepository;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Implementa a lógica de serviços de {@link Address}, {@link City} e {@link State}.
  */
 @Service
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class AddressService {
 
     private final CityRepository cityRepository;
@@ -29,13 +29,9 @@ public class AddressService {
      *
      * @return as cidades do Brasil
      */
-    public List<CityDTO> retrieveAllCities() {
+    public List<CityDTO> retrieveCities() {
         return cityRepository.findAll().stream()
-                .map(city -> CityDTO.builder()
-                        .id(city.getId())
-                        .name(city.getName())
-                        .stateId(city.getState().getId())
-                        .build())
+                .map(city -> new CityDTO(city.getId(), city.getName(), city.getState().getId()))
                 .collect(Collectors.toList());
     }
 
@@ -44,12 +40,9 @@ public class AddressService {
      *
      * @return os estados do Brasil
      */
-    public List<StateDTO> retrieveAllStates() {
+    public List<StateDTO> retrieveStates() {
         return stateRepository.findAll().stream()
-                .map(state -> StateDTO.builder()
-                        .id(state.getId())
-                        .name(state.getName())
-                        .build())
+                .map(state -> new StateDTO(state.getId(), state.getName()))
                 .collect(Collectors.toList());
     }
 

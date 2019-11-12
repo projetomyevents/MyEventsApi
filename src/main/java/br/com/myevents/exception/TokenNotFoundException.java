@@ -1,7 +1,7 @@
 package br.com.myevents.exception;
 
 /**
- * Levantada se um token não existe.
+ * Lançada se um token não existe.
  */
 public class TokenNotFoundException extends RuntimeException {
 

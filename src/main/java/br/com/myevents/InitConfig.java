@@ -8,16 +8,19 @@ import br.com.myevents.repository.CityRepository;
 import br.com.myevents.repository.StateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Configuração de uma execução do aplicativo.
  */
 @Configuration
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class InitConfig {
 
     private final StateRepository stateRepository;
@@ -28,13 +31,14 @@ public class InitConfig {
      */
     @Bean
     protected void registerBrazilStates() throws Exception {
-        for (StateDTO state : new ObjectMapper().readValue(
-                new ClassPathResource("br_states.json").getInputStream(), StateDTO[].class)) {
-            stateRepository.save(State.builder()
-                    .id(state.getId())
-                    .name(state.getName())
-                    .build());
-        }
+        stateRepository.saveAll(Arrays.stream(
+                new ObjectMapper()
+                        .readValue(new ClassPathResource("br_states.json").getInputStream(), StateDTO[].class))
+                .map(state -> State.builder()
+                        .id(state.getId())
+                        .name(state.getName())
+                        .build())
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -42,14 +46,15 @@ public class InitConfig {
      */
     @Bean
     protected void registerBrazilCities() throws Exception {
-        for (CityDTO city : new ObjectMapper().readValue(
-                new ClassPathResource("br_cities.json").getInputStream(), CityDTO[].class)) {
-            cityRepository.save(City.builder()
-                    .id(city.getId())
-                    .name(city.getName())
-                    .state(State.builder().id(city.getStateId()).build())  // só precisamos do id do estado
-                    .build());
-        }
+        cityRepository.saveAll(Arrays.stream(
+                new ObjectMapper()
+                        .readValue(new ClassPathResource("br_cities.json").getInputStream(), CityDTO[].class))
+                .map(city -> City.builder()
+                        .id(city.getId())
+                        .name(city.getName())
+                        .state(new State(city.getStateId()))
+                        .build())
+                .collect(Collectors.toList()));
     }
 
 }

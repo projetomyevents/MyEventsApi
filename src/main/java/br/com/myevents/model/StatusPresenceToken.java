@@ -1,8 +1,5 @@
 package br.com.myevents.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,9 +25,7 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "sptoken")
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -50,12 +45,10 @@ public class StatusPresenceToken implements Serializable {
      * O valor do token de status de presença. (Uma sequência de caractéres gerada aleatóriamente.)
      */
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE)
-    @Builder.Default
-    private final String value = UUID.randomUUID().toString();
+    private final String token = UUID.randomUUID().toString();
 
     /**
-     * A data de expiração do token de status de presença.
+     * O instante de expiração do token de status de presença.
      */
     @Column(nullable = false)
     private Instant expiration;
@@ -66,5 +59,10 @@ public class StatusPresenceToken implements Serializable {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "guest_id", nullable = false, foreignKey = @ForeignKey(name = "sptoken_guest_fkey"))
     private Guest guest;
+
+    public StatusPresenceToken(Instant expiration, Guest guest) {
+        this.expiration = expiration;
+        this.guest = guest;
+    }
 
 }

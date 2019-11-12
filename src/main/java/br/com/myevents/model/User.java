@@ -1,7 +1,7 @@
 package br.com.myevents.model;
 
 import br.com.myevents.security.enums.Role;
-import lombok.AccessLevel;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -31,8 +31,8 @@ import java.util.Set;
 @Entity
 @Table(name = "user_account")
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -73,13 +73,13 @@ public class User implements Serializable {
     private String CPF;
 
     /**
-     * O número de celular do usuário.
+     * O número de celular ou telefone do usuário.
      */
     @Column(nullable = false, length = 11)
     private String phone;
 
     /**
-     * O estado de confirmação do usuário.
+     * O estado de ativação do usuário.
      */
     private boolean enabled;
 
@@ -93,22 +93,11 @@ public class User implements Serializable {
     private Set<Role> roles;
 
     /**
-     * Os eventos de um usuário.
+     * Os eventos do usuário.
      */
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
     @Singular
     private Set<Event> events;
-
-    /**
-     * Retorna a representação do número de telefone ou celular no formato brasileiro.
-     *
-     * @return a representação do número de telefone ou celular no formato brasileiro
-     */
-    public String phoneRepr() {
-        return '(' + this.getPhone().substring(0, 2) + ") " +
-                (this.getPhone().length() == 11
-                        ? this.getPhone().substring(2, 7) + '-' + this.getPhone().substring(7)
-                        : this.getPhone().substring(2, 6) + '-' + this.getPhone().substring(6));
-    }
 
 }

@@ -1,14 +1,14 @@
 package br.com.myevents.model.dto;
 
+import br.com.myevents.model.enums.PresenceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 
@@ -16,9 +16,9 @@ import java.io.Serializable;
  * Representa um contrato de um convidado.
  */
 @Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class GuestDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,7 +26,6 @@ public class GuestDTO implements Serializable {
     /**
      * A chave primária do evento.
      */
-    @PositiveOrZero(message = "O identificador do convidado deve ser positivo ou zero.")
     private Long id;
 
     /**
@@ -39,28 +38,25 @@ public class GuestDTO implements Serializable {
      * O email do convidado.
      */
     @NotBlank(message = "O email não deve ficar em branco.")
-    @Email(message = "O email não deve ser inválido.")
+    @Email(message = "O email deve ser válido.")
     private String email;
 
     /**
-     * O identificador do status de presença do convidado.
+     * O status de presença do convidado.
      */
-    @Min(message = "O identificador do status de presença não deve ser menor que 0.", value = 0)
-    @Max(message = "O identificador do status de presença não deve ser maior que 2.", value = 2)
-    private int presenceStatus;
+    private PresenceStatus presenceStatus;
 
     /**
      * O limite de acompanhantes do convidado.
      */
-    @Min(message = "O limite de acompanhantes não deve ser menor que 0.", value = 0)
-    @Max(message = "O limite de acompanhantes não deve ser maior que 127.", value = 127)
-    private byte companionLimit;
+    @NotNull(message = "O limite de acompanhantes não deve ser nulo.")
+    @PositiveOrZero(message = "O limite de acompanhantes deve ser positivo ou zero.")
+    private Integer companionLimit;
 
     /**
      * O número de acompanhantes confirmados do convidado.
      */
-    @Min(message = "O número de acompanhantes confirmados não deve ser menor que 0.", value = 0)
-    @Max(message = "O número de acompanhantes confirmados não deve ser maior que 127.", value = 127)
-    private byte confirmedCompanions;
+    @PositiveOrZero(message = "O limite de acompanhantes deve ser positivo ou zero.")
+    private Integer confirmedCompanions;
 
 }

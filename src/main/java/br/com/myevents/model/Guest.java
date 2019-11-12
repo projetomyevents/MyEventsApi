@@ -2,7 +2,6 @@ package br.com.myevents.model;
 
 import br.com.myevents.model.enums.PresenceStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -26,8 +25,8 @@ import java.io.Serializable;
  */
 @Entity
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -65,14 +64,14 @@ public class Guest implements Serializable {
     /**
      * O limite de acompanhantes do convidado.
      */
-    private byte companionLimit;
+    private Integer companionLimit;
 
     /**
      * O número de acompanhantes confirmados do convidado.
      */
     @Column(nullable = false)
     @Builder.Default
-    private byte confirmedCompanions = 0;
+    private Integer confirmedCompanions = 0;
 
     /**
      * O evento do convidado.

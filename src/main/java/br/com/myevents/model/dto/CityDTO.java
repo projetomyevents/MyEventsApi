@@ -1,7 +1,6 @@
 package br.com.myevents.model.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,10 +9,9 @@ import java.io.Serializable;
 /**
  * Representa um contrato de uma cidade.
  */
-@Builder
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class CityDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,7 +27,7 @@ public class CityDTO implements Serializable {
     private String name;
 
     /**
-     * O identificador do estado em que a cidade reside.
+     * O identificador do estado da cidade.
      */
     private Integer stateId;
 

@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Chave usada pelo algoritmo de assinatura do JsonWebTokens."
+    },
+    {
+      "name": "website.url",
+      "type": "java.lang.String",
+      "description": "URL do website que este servidor serve."
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 package br.com.myevents.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -35,8 +35,8 @@ import java.util.Set;
  */
 @Entity
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
@@ -68,7 +68,7 @@ public class Event implements Serializable {
      * O limite de acompanhantes do evento.
      */
     @Column(nullable = false)
-    private byte companionLimit;
+    private Integer companionLimit;
 
     /**
      * A descrição do evento.
@@ -90,7 +90,8 @@ public class Event implements Serializable {
     /**
      * A idade mínima permitida no evento.
      */
-    private byte minAge;
+    @Column(columnDefinition = "smallint")
+    private Integer minimumAge;
 
     /**
      * O traje recomendado para o evento.
@@ -98,15 +99,15 @@ public class Event implements Serializable {
     private String attire;
 
     /**
-     * Endereço postal em que ocorrerá o evento.
+     * O endereço postal do evento.
      */
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "address_id", unique = true, nullable = false,
             foreignKey = @ForeignKey(name = "event_address_fkey"))
     private Address address;
 
     /**
-     * Uma imagem ilustrativa do evento.
+     * A imagem ilustrativa do evento.
      */
     private byte[] image;
 
@@ -122,6 +123,7 @@ public class Event implements Serializable {
     /**
      * O dono do evento.
      */
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "event_user_fkey"))
     private User user;
@@ -133,36 +135,5 @@ public class Event implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", orphanRemoval = true)
     @Singular
     private Set<Guest> guests;
-
-    /**
-     * Retorna a representação brasileira de um CEP.
-     *
-     * @return a representação brasileira de um CEP
-     */
-    public String cepRepr() {
-        String cep = this.getAddress().getCEP();
-        return cep.substring(0, 5) + '-' + cep.substring(5);
-    }
-
-    /**
-     * Retorna a representação brasileira do estado e cidade.
-     *
-     * @return a representação brasileira do estado e cidade
-     */
-    public String stateCityRepr() {
-        City city = this.getAddress().getCity();
-        return city.getState().getName() + " - " + city.getName();
-    }
-
-    /**
-     * Retorna a representação brasileira do bairro, rua e número.
-     *
-     * @return a representação brasileira do bairro, rua e número
-     */
-    public String localRepr() {
-        Address address = this.getAddress();
-        return address.getNeighborhood() + ", " + address.getStreet() +
-                (address.getNumber() != null ? ", " + address.getNumber() : "");
-    }
 
 }
