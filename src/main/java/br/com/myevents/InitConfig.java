@@ -75,7 +75,7 @@ public class InitConfig {
     public void resendInviteMessageForPendingGuests() {
         LocalDate today = LocalDate.now();
         eventRepository.findAll().stream()
-                .filter(event -> ChronoUnit.WEEKS.between(event.getCreatedAt(), today) > 0)
+                .filter(event -> ChronoUnit.DAYS.between(event.getCreatedAt(), today) % 7 == 0)
                 .forEach(event -> event.getGuests().stream()
                         .filter(guest -> guest.getPresenceStatus().equals(PresenceStatus.PENDING))
                         .forEach(System.out::println));
