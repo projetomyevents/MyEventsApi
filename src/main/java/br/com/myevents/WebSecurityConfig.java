@@ -39,6 +39,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     /**
+     * PUT endpoints com acesso liberado pra geral.
+     */
+    private static final String[] PUBLIC_PUT_MATCHERS = {
+            "/guest/**"
+    };
+
+    /**
      * GET endpoints com acesso liberado pra geral.
      */
     private static final String[] PUBLIC_GET_MATCHERS = {
@@ -47,7 +54,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/user/resend-activation/**",
             "/user/send-password-reset/**",
             "/event/{id:[\\d+]}",
-            "/event/{id:[\\d+]}/guests"
+            "/event/{id:[\\d+]}/guests",
+            "/guest/**"
     };
 
     private final UserAccountDetailsService userAccountDetailsService;
@@ -60,6 +68,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_POST_MATCHERS).permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.PUT, PUBLIC_PUT_MATCHERS).permitAll()
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, PUBLIC_GET_MATCHERS).permitAll()
                 .anyRequest().authenticated()

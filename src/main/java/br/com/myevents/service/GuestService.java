@@ -1,12 +1,14 @@
 package br.com.myevents.service;
 
 import br.com.myevents.exception.EventNotFoundException;
+import br.com.myevents.exception.TokenExpiredException;
 import br.com.myevents.exception.TokenNotFoundException;
 import br.com.myevents.model.Event;
 import br.com.myevents.model.Guest;
 import br.com.myevents.model.StatusPresenceToken;
 import br.com.myevents.model.dto.GuestDTO;
 import br.com.myevents.model.dto.GuestEditDTO;
+import br.com.myevents.model.dto.GuestUpdateDTO;
 import br.com.myevents.model.dto.SimpleGuestDTO;
 import br.com.myevents.repository.EventRepository;
 import br.com.myevents.repository.GuestRepository;
@@ -36,6 +38,67 @@ public class GuestService {
 
     @Value("${website.url}")
     private String WEBSITE_URL;
+
+    /**
+     * Retorna os dados do convidado que possui o token de status de presença especificado.
+     *
+     * @param token o token de status de presença
+     * @return os dados do convidado
+     */
+    public GuestDTO retrieveGuest(String token) {
+        StatusPresenceToken statusPresenceToken = statusPresenceTokenRepository.findByToken(token).orElseThrow(
+                () -> new TokenNotFoundException("Token de status de presença inválido."));
+
+        if (statusPresenceToken.getExpiration().isAfter(statusPresenceToken.getGuest().getEvent().getStartDate())) {
+            throw new TokenExpiredException("Token de status de presença expirado.");
+        }
+
+        Guest guest = statusPresenceToken.getGuest();
+        return GuestDTO.builder()
+                .name(guest.getName())
+                .email(guest.getEmail())
+                .presenceStatus(guest.getPresenceStatus())
+                .companionLimit(guest.getCompanionLimit())
+                .confirmedCompanions(guest.getConfirmedCompanions())
+                .build();
+    }
+
+    /**
+     * Atualiza os dados do convidado que possui o token de status de presença especificado.
+     *
+     * @param token o token de status de presença
+     * @param guest o convidado com informações atualizadas
+     * @return o convidado com informaçõs atualizadas
+     */
+    public GuestDTO updateGuest(String token, GuestUpdateDTO guest) {
+        StatusPresenceToken statusPresenceToken = statusPresenceTokenRepository.findByToken(token).orElseThrow(
+                () -> new TokenNotFoundException("Token de status de presença inválido."));
+
+        if (statusPresenceToken.getExpiration().isAfter(statusPresenceToken.getGuest().getEvent().getStartDate())) {
+            throw new TokenExpiredException("Token de status de presença expirado.");
+        }
+
+        Guest updatableGuest = statusPresenceToken.getGuest();
+
+        // se houver modificações atualizar na base de dados
+        if (!updatableGuest.getPresenceStatus().equals(guest.getPresenceStatus())
+                || !updatableGuest.getConfirmedCompanions().equals(guest.getConfirmedCompanions())) {
+            if (guest.getConfirmedCompanions().compareTo(updatableGuest.getCompanionLimit()) > 0) {
+                throw new RuntimeException("Número de acompanhantes confirmados inválido, " +
+                        "pois seu valor é maior do que o seu limite de acompanhantes.");
+            }
+            guestRepository.save(updatableGuest.setPresenceStatus(guest.getPresenceStatus())
+                    .setConfirmedCompanions(guest.getConfirmedCompanions()));
+        }
+
+        return GuestDTO.builder()
+                .name(updatableGuest.getName())
+                .email(updatableGuest.getEmail())
+                .presenceStatus(updatableGuest.getPresenceStatus())
+                .companionLimit(updatableGuest.getCompanionLimit())
+                .confirmedCompanions(updatableGuest.getConfirmedCompanions())
+                .build();
+    }
 
     /**
      * Retorna a lista de convidados de um evento.

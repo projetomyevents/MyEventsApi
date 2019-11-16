@@ -16,4 +16,6 @@ public interface StatusPresenceTokenRepository extends JpaRepository<StatusPrese
 
     Optional<StatusPresenceToken> findByGuest_Id(Long id);
 
+    Optional<StatusPresenceToken> findByToken(String token);
+
 }
