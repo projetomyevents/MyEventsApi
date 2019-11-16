@@ -127,6 +127,7 @@ public class Event implements Serializable {
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "event_user_fkey"))
+    @ToString.Exclude
     private User user;
 
     /**
@@ -137,7 +138,9 @@ public class Event implements Serializable {
     @Singular
     private Set<Guest> guests;
 
-    // Data da criação do evento.
+    /**
+     * A data de criação do evento.
+     */
     @CreationTimestamp
     private LocalDate createdAt;
 

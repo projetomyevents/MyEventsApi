@@ -79,6 +79,7 @@ public class Guest implements Serializable {
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false, foreignKey = @ForeignKey(name = "guest_event_fkey"))
+    @ToString.Exclude
     private Event event;
 
 }
