@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,6 +61,7 @@ public class ActivationToken implements Serializable {
      */
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "atoken_user_fkey"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     public ActivationToken(User user) {

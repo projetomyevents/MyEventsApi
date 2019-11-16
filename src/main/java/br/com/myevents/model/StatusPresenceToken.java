@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -58,6 +60,7 @@ public class StatusPresenceToken implements Serializable {
      */
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "guest_id", nullable = false, foreignKey = @ForeignKey(name = "sptoken_guest_fkey"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Guest guest;
 
     public StatusPresenceToken(LocalDate expiration, Guest guest) {
