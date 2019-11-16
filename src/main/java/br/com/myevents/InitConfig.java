@@ -71,7 +71,7 @@ public class InitConfig {
                 .collect(Collectors.toList()));
     }
 
-    @Scheduled(cron = "* * 3 * * *")
+    @Scheduled(cron = "0 0 3 * * *")
     public void resendInviteMessageForPendingGuests() {
         LocalDate today = LocalDate.now();
         eventRepository.findAll().stream()
