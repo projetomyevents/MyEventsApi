@@ -17,7 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -48,10 +48,10 @@ public class StatusPresenceToken implements Serializable {
     private final String token = UUID.randomUUID().toString();
 
     /**
-     * O instante de expiração do token de status de presença.
+     * A data de expiração do token de status de presença.
      */
     @Column(nullable = false)
-    private Instant expiration;
+    private LocalDate expiration;
 
     /**
      * O convidado vinculado ao token de status de presença.
@@ -60,7 +60,7 @@ public class StatusPresenceToken implements Serializable {
     @JoinColumn(name = "guest_id", nullable = false, foreignKey = @ForeignKey(name = "sptoken_guest_fkey"))
     private Guest guest;
 
-    public StatusPresenceToken(Instant expiration, Guest guest) {
+    public StatusPresenceToken(LocalDate expiration, Guest guest) {
         this.expiration = expiration;
         this.guest = guest;
     }
