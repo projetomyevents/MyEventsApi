@@ -37,6 +37,7 @@ public class DevConfig {
     private final EventRepository eventRepository;
     private final GuestRepository guestRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+
     /**
      * Preencher a base de dados com dados de amostra para testes.
      */
@@ -239,7 +240,15 @@ public class DevConfig {
                 .event(event2)
                 .build();
 
-        guestRepository.saveAll(Arrays.asList(guest1, guest2, guest3));
+        Guest guestEu = Guest.builder()
+                .name("Ademir Ferreira")
+                .email("ademir.ferreira.zorah@gmail.com")
+                .companionLimit(1)
+                .presenceStatus(PresenceStatus.ACCEPTED)
+                .event(event2)
+                .build();
+
+        guestRepository.saveAll(Arrays.asList(guest1, guest2, guest3, guestEu));
     }
 
 }
