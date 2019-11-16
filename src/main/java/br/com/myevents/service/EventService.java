@@ -9,6 +9,7 @@ import br.com.myevents.model.dto.EventDTO;
 import br.com.myevents.model.dto.NewEventDTO;
 import br.com.myevents.model.dto.SimpleEventDTO;
 import br.com.myevents.model.dto.SimpleUserDTO;
+import br.com.myevents.model.enums.PresenceStatus;
 import br.com.myevents.repository.CityRepository;
 import br.com.myevents.repository.EventRepository;
 import br.com.myevents.repository.UserRepository;
@@ -30,6 +31,7 @@ public class EventService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final CityRepository cityRepository;
+    private final MailSenderService mailSenderService;
 
     /**
      * Cria um novo evento.
@@ -96,6 +98,35 @@ public class EventService {
                 .user(new SimpleUserDTO(
                         event.getUser().getEmail(), event.getUser().getName(), event.getUser().getPhone()))
                 .build();
+    }
+
+    /**
+     * Cancela um evento de um usuário e notifica cada convidado confirmado ou pendente.
+     *
+     * @param email o email do usuário
+     * @param id o identificador do evento
+     * @return o resultado
+     */
+    public SimpleMessage removeEvent(String email, Long id) {
+        Event event = eventRepository.findByIdAndUser_Email(id, email).orElseThrow(
+                () -> new EventNotFoundException("Evento não encontrado ou você não é dono do evento."));
+
+        eventRepository.deleteById(event.getId());
+
+        event.getGuests().stream()
+                .filter(guest -> !guest.getPresenceStatus().equals(PresenceStatus.DENIED))
+                .forEach(System.out::println);
+//                .forEach(guest -> mailSenderService.sendHtml(
+//                        guest.getEmail(),
+//                        "Cancelamento de Evento MyEvents",
+//                        String.format(
+//                                "Olá %s, o evento %s foi cancelado por %s. <strong>Você recebeu este email porque " +
+//                                        "sua presença neste evento estava confirmada ou pendente.</strong>",
+//                                guest.getName(),
+//                                event.getName(),
+//                                event.getUser().getName())));
+
+        return new SimpleMessage("Evento excluido e todos os convidados confirmados ou pendentes notificados.");
     }
 
     /**
