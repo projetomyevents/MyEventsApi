@@ -39,4 +39,5 @@ public class MailSenderService {
             throw new MailParseException(e);
         }
     }
+
 }
