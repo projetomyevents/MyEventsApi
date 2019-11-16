@@ -37,7 +37,6 @@ public class DevConfig {
     private final EventRepository eventRepository;
     private final GuestRepository guestRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-
     /**
      * Preencher a base de dados com dados de amostra para testes.
      */

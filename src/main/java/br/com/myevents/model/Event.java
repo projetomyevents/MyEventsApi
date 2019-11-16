@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Singular;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -135,5 +136,9 @@ public class Event implements Serializable {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", orphanRemoval = true)
     @Singular
     private Set<Guest> guests;
+
+    // Data da criação do evento.
+    @CreationTimestamp
+    private LocalDate createdAt;
 
 }

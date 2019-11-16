@@ -34,11 +34,9 @@ public class MailSenderService {
             message.setTo(email);
             message.setSubject(subject);
             message.getMimeMessageHelper().setText(htmlText, true);
-
             mailSender.send(message.getMimeMessage());
         } catch (MessagingException e) {
             throw new MailParseException(e);
         }
     }
-
 }
