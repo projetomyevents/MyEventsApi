@@ -3,6 +3,7 @@ package br.com.myevents.controller;
 import br.com.myevents.model.Event;
 import br.com.myevents.model.dto.EventDTO;
 import br.com.myevents.model.dto.GuestDTO;
+import br.com.myevents.model.dto.GuestEditDTO;
 import br.com.myevents.model.dto.NewEventDTO;
 import br.com.myevents.model.dto.SimpleEventDTO;
 import br.com.myevents.model.dto.SimpleGuestDTO;
@@ -18,11 +19,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Trata requisições de {@link Event}.
@@ -76,6 +79,15 @@ public class EventController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(guestService.retrieveGuests(userAccountDetails.getEmail(), id));
+    }
+
+    @PutMapping("/{id}/guests/edit")
+    public ResponseEntity<Object> putGuests(
+            @AuthenticationPrincipal UserAccountDetails userAccountDetails,
+            @PathVariable Long id,
+            @Validated @RequestBody Set<GuestEditDTO> guests
+    ) {
+        return ResponseEntity.ok(guestService.updateGuests(userAccountDetails.getEmail(), id, guests));
     }
 
 }

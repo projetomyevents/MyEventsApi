@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +32,7 @@ import java.io.Serializable;
 @Setter
 @EqualsAndHashCode(of = "id")
 @ToString
+@Accessors(chain = true)
 public class Guest implements Serializable {
 
     private static final long serialVersionUID = 1L;
