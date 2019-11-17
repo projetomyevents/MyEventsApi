@@ -115,16 +115,15 @@ public class EventService {
 
         event.getGuests().stream()
                 .filter(guest -> !guest.getPresenceStatus().equals(PresenceStatus.DENIED))
-                .forEach(System.out::println);
-//                .forEach(guest -> mailSenderService.sendHtml(
-//                        guest.getEmail(),
-//                        "Cancelamento de Evento MyEvents",
-//                        String.format(
-//                                "Olá %s, o evento %s foi cancelado por %s. <strong>Você recebeu este email porque " +
-//                                        "sua presença neste evento estava confirmada ou pendente.</strong>",
-//                                guest.getName(),
-//                                event.getName(),
-//                                event.getUser().getName())));
+                .forEach(guest -> mailSenderService.sendHtml(
+                        guest.getEmail(),
+                        "Cancelamento de Evento MyEvents",
+                        String.format(
+                                "Olá %s, o evento %s foi cancelado por %s. <strong>Você recebeu este email porque " +
+                                        "sua presença neste evento estava confirmada ou pendente.</strong>",
+                                guest.getName(),
+                                event.getName(),
+                                event.getUser().getName())));
 
         return new SimpleMessage("Evento excluido e todos os convidados confirmados ou pendentes notificados.");
     }

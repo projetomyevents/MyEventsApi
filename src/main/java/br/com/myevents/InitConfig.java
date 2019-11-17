@@ -78,20 +78,19 @@ public class InitConfig {
                 .filter(event -> ChronoUnit.DAYS.between(event.getCreatedAt(), today) % 7 == 0)
                 .forEach(event -> event.getGuests().stream()
                         .filter(guest -> guest.getPresenceStatus().equals(PresenceStatus.PENDING))
-                        .forEach(System.out::println));
-//                        .forEach(guest -> mailSenderService.sendHtml(
-//                                guest.getEmail(),
-//                                "Lembrete de Evento MyEvents",
-//                                String.format(
-//                                        "Olá %s, você foi convidado por %s para o evento " +
-//                                                "<a href='%sevent/%d'>%s</a>, por favor confirme ou recuse " +
-//                                                "sua presença neste evento. <strong>Você recebeu este email porque " +
-//                                                "sua presença neste evento está pendente.</strong>",
-//                                        guest.getName(),
-//                                        event.getUser().getName(),
-//                                        WEBSITE_URL,
-//                                        event.getId(),
-//                                        event.getName()))));
+                        .forEach(guest -> mailSenderService.sendHtml(
+                                guest.getEmail(),
+                                "Lembrete de Evento MyEvents",
+                                String.format(
+                                        "Olá %s, você foi convidado por %s para o evento " +
+                                                "<a href='%sevent/%d'>%s</a>, por favor confirme ou recuse " +
+                                                "sua presença neste evento. <strong>Você recebeu este email porque " +
+                                                "sua presença neste evento está pendente.</strong>",
+                                        guest.getName(),
+                                        event.getUser().getName(),
+                                        WEBSITE_URL,
+                                        event.getId(),
+                                        event.getName()))));
     }
 
 }
