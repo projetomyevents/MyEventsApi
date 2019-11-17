@@ -70,7 +70,7 @@ public class GuestService {
      * @param guest o convidado com informações atualizadas
      * @return o convidado com informaçõs atualizadas
      */
-    public GuestDTO updateGuest(String token, GuestUpdateDTO guest) {
+    public SimpleMessage updateGuest(String token, GuestUpdateDTO guest) {
         StatusPresenceToken statusPresenceToken = statusPresenceTokenRepository.findByToken(token).orElseThrow(
                 () -> new TokenNotFoundException("Token de status de presença inválido."));
 
@@ -91,13 +91,7 @@ public class GuestService {
                     .setConfirmedCompanions(guest.getConfirmedCompanions()));
         }
 
-        return GuestDTO.builder()
-                .name(updatableGuest.getName())
-                .email(updatableGuest.getEmail())
-                .presenceStatus(updatableGuest.getPresenceStatus())
-                .companionLimit(updatableGuest.getCompanionLimit())
-                .confirmedCompanions(updatableGuest.getConfirmedCompanions())
-                .build();
+        return new SimpleMessage("Seus dados foram atualizados.");
     }
 
     /**
@@ -170,12 +164,11 @@ public class GuestService {
                             mailSenderService.sendHtml(
                                     updatedGuest.getEmail(),
                                     "Atualização de Dados MyEvents",
-                                    // TODO: atualizar link quando implementado
                                     String.format(
                                             "Olá %1$s, seus dados de convidados foram atualizados pelo dono " +
                                                     "do evento (%2$s) no evento <a href='%3$sevent/%4$d'>%5$s</a>. " +
                                                     "Para atualizar sua presença no evento siga este " +
-                                                    "<a href='%3$slink-a-ser-feito-lol=%6$s'>link</a>.",
+                                                    "<a href='%3$sguest;token=%6$s'>link</a>.",
                                             updatedGuest.getName(),
                                             event.getUser().getName(),
                                             WEBSITE_URL,
@@ -200,12 +193,11 @@ public class GuestService {
                             mailSenderService.sendHtml(
                                     updatedGuest.getEmail(),
                                     "Convite de Evento MyEvents",
-                                    // TODO: atualizar link quando implementado
                                     String.format(
                                             "Olá %1$s, você foi convidado para o evento " +
                                                     "<a href='%2$sevent/%3$d'>%4$s</a> organizado por %5$s. " +
                                                     "Para atualizar sua presença no evento siga este " +
-                                                    "<a href='%2$slink-a-ser-feito-lol=%6$s'>link</a>. " +
+                                                    "<a href='%2$sguest;token=%6$s'>link</a>. " +
                                                     "<strong>Este link dura até o início do evento.</strong>",
                                             updatedGuest.getName(),
                                             WEBSITE_URL,

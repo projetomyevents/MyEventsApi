@@ -31,7 +31,7 @@ public class GuestController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<GuestDTO> putGuest(
+    public ResponseEntity<Object> putGuest(
             @RequestParam("token") String token,
             @Validated @RequestBody GuestUpdateDTO guest
     ) {
