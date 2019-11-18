@@ -109,16 +109,7 @@ public class DevConfig {
                         "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
                         "anim id est laborum.\n" +
                         "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et " +
-                        "commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. " +
-                        "Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. " +
-                        "Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros " +
-                        "est euismod turpis, id tincidunt sapien risus a quam. Maecenas fermentum consequat mi. " +
-                        "Donec fermentum. Pellentesque malesuada nulla a mi. Duis sapien sem, aliquet nec, commodo " +
-                        "eget, consequat quis, neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl " +
-                        "adipiscing sapien, sed malesuada diam lacus eget erat. Cras mollis scelerisque nunc. " +
-                        "Nullam arcu. Aliquam consequat. Curabitur augue lorem, dapibus quis, laoreet et, " +
-                        "pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu, feugiat in, orci. " +
-                        "In hac habitasse platea dictumst.")
+                        "commodo pharetra, est eros bibendum elit, nec luctus magna.")
                 .schedule("16:00 -> Começa")
                 .address(Address.builder()
                         .CEP("12313123")
@@ -183,10 +174,7 @@ public class DevConfig {
                         "exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure " +
                         "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
                         "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit " +
-                        "anim id est laborum.\n" +
-                        "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et " +
-                        "commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. " +
-                        "Integer in mauris eu nibh euismod gravida.")
+                        "anim id est laborum.")
                 .schedule("23:00 -> Começa")
                 .address(Address.builder()
                         .CEP("53223411")
@@ -286,6 +274,7 @@ public class DevConfig {
                 .email("ademir.ferreira.zorah@gmail.com")
                 .companionLimit(1)
                 .presenceStatus(PresenceStatus.ACCEPTED)
+                .confirmedCompanions(1)
                 .event(event2)
                 .build();
 
