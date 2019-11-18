@@ -5,7 +5,9 @@ import br.com.myevents.exception.EventNotFoundException;
 import br.com.myevents.exception.UserNotFoundException;
 import br.com.myevents.model.Address;
 import br.com.myevents.model.Event;
+import br.com.myevents.model.File;
 import br.com.myevents.model.dto.EventDTO;
+import br.com.myevents.model.dto.FileDTO;
 import br.com.myevents.model.dto.NewEventDTO;
 import br.com.myevents.model.dto.SimpleEventDTO;
 import br.com.myevents.model.dto.SimpleUserDTO;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -58,8 +61,19 @@ public class EventService {
                         .number(newEvent.getNumber())
                         .complement(newEvent.getComplement())
                         .build())
-                .image(newEvent.getImage())
-                .attachments(newEvent.getAttachments())
+                .image(Optional.ofNullable(newEvent.getImage())
+                        .map(image -> File.builder()
+                                .name(image.getName())
+                                .type(image.getType())
+                                .content(image.getContent())
+                                .build())
+                        .orElse(null))
+                .attachments(newEvent.getAttachments().stream().map(attachment -> File.builder()
+                        .name(attachment.getName())
+                        .type(attachment.getType())
+                        .content(attachment.getContent())
+                        .build())
+                        .collect(Collectors.toSet()))
                 .user(userRepository.findByEmail(email).orElseThrow(
                         () -> new UserNotFoundException("O email não está vinculado a nenhum usuário.")))
                 .build());
@@ -93,8 +107,19 @@ public class EventService {
                 .street(event.getAddress().getStreet())
                 .number(event.getAddress().getNumber())
                 .complement(event.getAddress().getComplement())
-                .image(event.getImage())
-                .attachments(event.getAttachments())
+                .image(Optional.ofNullable(event.getImage())
+                        .map(image -> FileDTO.builder()
+                                .name(image.getName())
+                                .type(image.getType())
+                                .content(image.getContent())
+                                .build())
+                        .orElse(null))
+                .attachments(event.getAttachments().stream().map(attachment -> FileDTO.builder()
+                        .name(attachment.getName())
+                        .type(attachment.getType())
+                        .content(attachment.getContent())
+                        .build())
+                        .collect(Collectors.toSet()))
                 .user(new SimpleUserDTO(
                         event.getUser().getEmail(), event.getUser().getName(), event.getUser().getPhone()))
                 .build();
@@ -141,7 +166,13 @@ public class EventService {
                         .name(event.getName())
                         .startDate(event.getStartDate())
                         .description(event.getDescription())
-                        .image(event.getImage())
+                        .image(Optional.ofNullable(event.getImage())
+                                .map(image -> FileDTO.builder()
+                                        .name(image.getName())
+                                        .type(image.getType())
+                                        .content(image.getContent())
+                                        .build())
+                                .orElse(null))
                         .build())
                 .collect(Collectors.toList());
     }

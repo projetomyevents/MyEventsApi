@@ -99,13 +99,13 @@ public class EventDTO implements Serializable {
     /**
      * A imagem ilustrativa do evento.
      */
-    private byte[] image;
+    private FileDTO image;
 
     /**
      * Os anexos do evento.
      */
     @Singular
-    private List<byte[]> attachments;
+    private List<FileDTO> attachments;
 
     /**
      * As informações básicas do usuário dono do evento.

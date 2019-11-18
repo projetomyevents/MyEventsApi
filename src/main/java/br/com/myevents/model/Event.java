@@ -13,9 +13,7 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -28,7 +26,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -110,16 +107,18 @@ public class Event implements Serializable {
     /**
      * A imagem ilustrativa do evento.
      */
-    private byte[] image;
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "file_image_id", unique = true, foreignKey = @ForeignKey(name = "event_file_image_fkey"))
+    private File image;
 
     /**
      * Os anexos do evento.
      */
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "ATTACHMENT", foreignKey = @ForeignKey(name = "event_attachments_fkey"))
-    @Column(name = "attachment_data")
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "file_attachment_id", unique = true,
+            foreignKey = @ForeignKey(name = "event_file_attachment_fkey"))
     @Singular
-    private List<byte[]> attachments;
+    private Set<File> attachments;
 
     /**
      * O dono do evento.

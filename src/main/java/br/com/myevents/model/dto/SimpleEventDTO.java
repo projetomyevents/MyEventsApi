@@ -42,6 +42,6 @@ public class SimpleEventDTO implements Serializable {
     /**
      * Uma imagem ilustrativa do evento.
      */
-    private byte[] image;
+    private FileDTO image;
 
 }

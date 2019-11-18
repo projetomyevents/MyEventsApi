@@ -3,7 +3,10 @@ package br.com.myevents;
 import br.com.myevents.model.Address;
 import br.com.myevents.model.City;
 import br.com.myevents.model.Event;
+import br.com.myevents.model.File;
+import br.com.myevents.model.Guest;
 import br.com.myevents.model.User;
+import br.com.myevents.model.enums.PresenceStatus;
 import br.com.myevents.repository.EventRepository;
 import br.com.myevents.repository.GuestRepository;
 import br.com.myevents.repository.UserRepository;
@@ -87,7 +90,11 @@ public class DevConfig {
                         .street("Rua fictícia 15")
                         .city(new City(12))
                         .build())
-                .image(new ClassPathResource("event-image-1.png").getInputStream().readAllBytes())
+                .image(File.builder()
+                        .name("event-image-1.png")
+                        .type("image/png")
+                        .content(new ClassPathResource("event-image-1.png").getInputStream().readAllBytes())
+                        .build())
                 .user(user1)
                 .build();
 
@@ -119,10 +126,26 @@ public class DevConfig {
                         .street("Rua fictícia 87")
                         .city(new City(512))
                         .build())
-                .image(new ClassPathResource("event-image-1.png").getInputStream().readAllBytes())
-                .attachment(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
-                .attachment(new ClassPathResource("event-attachment-2.txt").getInputStream().readAllBytes())
-                .attachment(new ClassPathResource("event-attachment-3.txt").getInputStream().readAllBytes())
+                .image(File.builder()
+                        .name("event-image-1.png")
+                        .type("image/png")
+                        .content(new ClassPathResource("event-image-1.png").getInputStream().readAllBytes())
+                        .build())
+                .attachment(File.builder()
+                        .name("event-attachment-2.txt")
+                        .type("text/plain")
+                        .content(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
+                        .build())
+                .attachment(File.builder()
+                        .name("event-attachment-2.txt")
+                        .type("text/plain")
+                        .content(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
+                        .build())
+                .attachment(File.builder()
+                        .name("event-attachment-3.txt")
+                        .type("text/plain")
+                        .content(new ClassPathResource("event-attachment-3.txt").getInputStream().readAllBytes())
+                        .build())
                 .user(user2)
                 .build();
 
@@ -143,7 +166,11 @@ public class DevConfig {
                         .street("Rua fictícia 234")
                         .city(new City(1231))
                         .build())
-                .image(new ClassPathResource("event-image-2.jpeg").getInputStream().readAllBytes())
+                .image(File.builder()
+                        .name("event-image-1.jpeg")
+                        .type("image/jpeg")
+                        .content(new ClassPathResource("event-image-2.jpeg").getInputStream().readAllBytes())
+                        .build())
                 .user(user2)
                 .build();
 
@@ -188,8 +215,16 @@ public class DevConfig {
                         .street("Rua fictícia 724")
                         .city(new City(1231))
                         .build())
-                .attachment(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
-                .attachment(new ClassPathResource("event-attachment-2.txt").getInputStream().readAllBytes())
+                .attachment(File.builder()
+                        .name("event-attachment-1.txt")
+                        .type("text/plain")
+                        .content(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
+                        .build())
+                .attachment(File.builder()
+                        .name("event-attachment-2.txt")
+                        .type("text/plain")
+                        .content(new ClassPathResource("event-attachment-2.txt").getInputStream().readAllBytes())
+                        .build())
                 .user(user2)
                 .build();
 
@@ -206,47 +241,55 @@ public class DevConfig {
                         .street("Rua fictícia 689")
                         .city(new City(1231))
                         .build())
-                .image(new ClassPathResource("event-image-3.jpeg").getInputStream().readAllBytes())
-                .attachment(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
+                .image(File.builder()
+                        .name("event-image-3.jpeg")
+                        .type("image/jpeg")
+                        .content(new ClassPathResource("event-image-3.jpeg").getInputStream().readAllBytes())
+                        .build())
+                .attachment(File.builder()
+                        .name("event-attachment-1.txt")
+                        .type("text/plain")
+                        .content(new ClassPathResource("event-attachment-1.txt").getInputStream().readAllBytes())
+                        .build())
                 .user(user2)
                 .build();
 
         eventRepository.saveAll(Arrays.asList(event1, event2, event3, event4, event5, event6));
 
-//        Guest guest1 = Guest.builder()
-//                .name("guest1")
-//                .email("guest1@guest")
-//                .companionLimit(0)
-//                .presenceStatus(PresenceStatus.ACCEPTED)
-//                .event(event2)
-//                .build();
-//
-//        Guest guest2 = Guest.builder()
-//                .name("guest2")
-//                .email("guest2@guest")
-//                .companionLimit(5)
-//                .confirmedCompanions(3)
-//                .presenceStatus(PresenceStatus.PENDING)
-//                .event(event2)
-//                .build();
-//
-//        Guest guest3 = Guest.builder()
-//                .name("guest3")
-//                .email("guest3@guest")
-//                .companionLimit(5)
-//                .presenceStatus(PresenceStatus.DENIED)
-//                .event(event2)
-//                .build();
-//
-//        Guest guestEu = Guest.builder()
-//                .name("Ademir Ferreira")
-//                .email("ademir.ferreira.zorah@gmail.com")
-//                .companionLimit(1)
-//                .presenceStatus(PresenceStatus.ACCEPTED)
-//                .event(event2)
-//                .build();
-//
-//        guestRepository.saveAll(Arrays.asList(guest1, guest2, guest3, guestEu));
+        Guest guest1 = Guest.builder()
+                .name("guest1")
+                .email("guest1@guest")
+                .companionLimit(0)
+                .presenceStatus(PresenceStatus.ACCEPTED)
+                .event(event2)
+                .build();
+
+        Guest guest2 = Guest.builder()
+                .name("guest2")
+                .email("guest2@guest")
+                .companionLimit(5)
+                .confirmedCompanions(3)
+                .presenceStatus(PresenceStatus.PENDING)
+                .event(event2)
+                .build();
+
+        Guest guest3 = Guest.builder()
+                .name("guest3")
+                .email("guest3@guest")
+                .companionLimit(5)
+                .presenceStatus(PresenceStatus.DENIED)
+                .event(event2)
+                .build();
+
+        Guest guestEu = Guest.builder()
+                .name("Ademir Ferreira")
+                .email("ademir.ferreira.zorah@gmail.com")
+                .companionLimit(1)
+                .presenceStatus(PresenceStatus.ACCEPTED)
+                .event(event2)
+                .build();
+
+        guestRepository.saveAll(Arrays.asList(guest1, guest2, guest3, guestEu));
     }
 
 }
