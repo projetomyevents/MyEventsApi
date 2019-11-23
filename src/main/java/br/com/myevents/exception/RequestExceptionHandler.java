@@ -189,7 +189,8 @@ public class RequestExceptionHandler extends ResponseEntityExceptionHandler {
             TokenSubjectNotFoundException.class,
             UserNotFoundException.class,
             EventNotFoundException.class,
-            CityNotFoundException.class
+            CityNotFoundException.class,
+            MaxFileSizeException.class
     })
     public ResponseEntity<Object> handleCustomException(RuntimeException ex) {
         return ResponseEntity.badRequest()

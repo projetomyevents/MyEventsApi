@@ -2,6 +2,7 @@ package br.com.myevents.service;
 
 import br.com.myevents.exception.CityNotFoundException;
 import br.com.myevents.exception.EventNotFoundException;
+import br.com.myevents.exception.MaxFileSizeException;
 import br.com.myevents.exception.UserNotFoundException;
 import br.com.myevents.model.Address;
 import br.com.myevents.model.Event;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +45,21 @@ public class EventService {
      * @param newEvent o novo evento
      */
     public SimpleMessage createEvent(String email, NewEventDTO newEvent) {
+        Set<File> attachments = newEvent.getAttachments().stream().map(attachment -> File.builder()
+                .name(attachment.getName())
+                .type(attachment.getType())
+                .content(attachment.getContent())
+                .build())
+                .collect(Collectors.toSet());
+
+        int attachmentsSize = attachments.stream()
+                .map(attachment -> attachment.getContent().length)
+                .reduce(0, Integer::sum);
+
+        if (attachmentsSize > 100000000) {
+            throw new MaxFileSizeException("Os anexos excederam o tamanho máximo de 100mb.");
+        }
+
         eventRepository.save(Event.builder()
                 .name(newEvent.getName())
                 .startDate(newEvent.getStartDate())
@@ -62,18 +79,19 @@ public class EventService {
                         .complement(newEvent.getComplement())
                         .build())
                 .image(Optional.ofNullable(newEvent.getImage())
-                        .map(image -> File.builder()
-                                .name(image.getName())
-                                .type(image.getType())
-                                .content(image.getContent())
-                                .build())
+                        .map(image -> {
+                            if (image.getContent().length > 20000000) {
+                                throw new MaxFileSizeException("A imagem do evento excedeu o tamanho máximo de 20mb.");
+                            }
+
+                            return File.builder()
+                                    .name(image.getName())
+                                    .type(image.getType())
+                                    .content(image.getContent())
+                                    .build();
+                        })
                         .orElse(null))
-                .attachments(newEvent.getAttachments().stream().map(attachment -> File.builder()
-                        .name(attachment.getName())
-                        .type(attachment.getType())
-                        .content(attachment.getContent())
-                        .build())
-                        .collect(Collectors.toSet()))
+                .attachments(attachments)
                 .user(userRepository.findByEmail(email).orElseThrow(
                         () -> new UserNotFoundException("O email não está vinculado a nenhum usuário.")))
                 .build());
